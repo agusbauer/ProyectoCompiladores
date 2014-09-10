@@ -1,0 +1,214 @@
+
+/* ----------------------Preliminary Declarations Section--------------------*/
+   
+/* Import the class java_cup.runtime.*  */
+package tpcompiladores;
+import java_cup.runtime.*;
+import java.lang.*;
+import ir.*;
+import tabladesimbolos.*;
+
+
+   
+/* Parser code to change the way the parser reports errors (include
+   line and column number of the error). */
+parser code {:
+    
+    /* Change the method report_error so it will display the line and
+       column of where the error occurred in the input as well as the
+       reason for the error which is passed into the method in the
+       String 'message'. */
+    public void report_error(String message, Object info) {
+   
+        /* Create a StringBuilder called 'm' with the string 'Error' in it. */
+        StringBuilder m = new StringBuilder("Error");
+   
+        /* Check if the information passed to the method is the same
+           type as the type java_cup.runtime.Symbol. */
+        if (info instanceof java_cup.runtime.Symbol) {
+            /* Declare a java_cup.runtime.Symbol object 's' with the
+               information in the object info that is being typecasted
+               as a java_cup.runtime.Symbol object. */
+            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
+   
+            /* Check if the line number in the input is greater or
+               equal to zero. */
+            if (s.left >= 0) {                
+                /* Add to the end of the StringBuilder error message
+                   the line number of the error in the input. */
+                m.append(" in line "+(s.left+1));   
+                /* Check if the column number in the input is greater
+                   or equal to zero. */
+                if (s.right >= 0)                    
+                    /* Add to the end of the StringBuilder error message
+                       the column number of the error in the input. */
+                    m.append(", column "+(s.right+1));
+            }
+        }
+   
+        /* Add to the end of the StringBuilder error message created in
+           this method the message that was passed into this method. */
+        m.append(" : "+message);
+   
+        /* Print the contents of the StringBuilder 'm', which contains
+           an error message, out on a line. */
+        System.err.println(m);
+    }
+   
+    /* Change the method report_fatal_error so when it reports a fatal
+       error it will display the line and column number of where the
+       fatal error occurred in the input as well as the reason for the
+       fatal error which is passed into the method in the object
+       'message' and then exit.*/
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+:};
+   
+
+   
+/* ------------Declaration of Terminals and Non Terminals Section----------- */
+   
+/* Terminals (tokens returned by the scanner).*/
+
+/*LITERALES*/
+terminal	Number  INT_LITERAL; 
+terminal	Number  FLOAT_LITERAL;
+terminal	String  STRING_LITERAL;
+terminal	Character CHAR_LITERAL;
+/*OPERADORES*/
+terminal    PLUS, MINUS, TIMES, DIVIDE, MOD, AND, OR, NOT, EQ, NOTEQ, GT, LT, EQEQ, LTEQ, GTEQ, PLUSEQ, MINUSEQ;
+/*SEPARADORES*/
+terminal	SEMI,COMMA, LPAREN, RPAREN, LKEY, RKEY, LBRACKET, RBRACKET;	
+/*PALABRAS RESERVADAS*/
+terminal	BOOLEAN, BREAK, CLASS, CONTINUE, ELSE, IF, FOR, WHILE, FLOAT, INT, RETURN, VOID, EXTERNINVK;
+terminal	Boolean TRUE;
+terminal	Boolean FALSE;
+/*IDENTIFICADORES*/
+terminal	String IDENTIFIER;
+   
+/* Non terminals used in the grammar section.*/
+non terminal      parameters, program, decl, field_decl,  method_decl, type, method_type, method_call, location, expr , externinvk_parameters, externinvk_arg_sequence,externinvk_arg, id, id_sequence, expr_sequence, block_content, method, statement_decl, extern;
+non terminal Statement statement;
+non terminal Block block;
+ 
+/*operadores*/
+non terminal 	UnaryOpExpr unary_op;
+non terminal 	BinOpExpr bin_op, arith_op, rel_op, eq_op, cond_op, assign_op;
+/*literales*/
+non terminal 	Literal literal;
+non terminal 	IntLiteral int_literal;
+non terminal 	BoolLiteral bool_literal;
+non terminal 	FloatLiteral float_literal;
+non terminal 	string_literal;
+
+   
+
+/* -------------Precedence and Associatively of Terminals Section----------- */
+
+precedence left OR;
+precedence left AND;
+precedence left LT, GT, LTEQ, GTEQ, NOTEQ, EQEQ;
+precedence left PLUS, MINUS;   
+precedence left TIMES, DIVIDE, MOD;
+precedence left NOT, MINUS;
+
+/* ----------------------------Grammar Section-------------------- */
+   
+   
+   program ::= CLASS id LKEY decl  RKEY 
+			   |CLASS id LKEY RKEY;
+
+   decl ::= field_decl
+			| method_decl
+			| field_decl method_decl;
+
+
+   field_decl ::= type id_sequence	SEMI
+				 | field_decl type id_sequence SEMI;
+
+   id_sequence ::= location
+				| id_sequence COMMA location;
+	
+
+   method_decl ::= method
+					| method_decl method;
+
+   method	 ::= type id LPAREN RPAREN block
+				    |VOID id LPAREN RPAREN block
+					| VOID id LPAREN parameters RPAREN block 
+					| type id LPAREN parameters RPAREN block ;
+
+   parameters ::= type id
+				| parameters COMMA type id;
+
+
+   block ::=  LKEY block_content RKEY ;
+
+   block_content ::= statement_decl
+					| field_decl
+					| field_decl statement_decl
+					|;
+
+   type ::= INT | FLOAT | BOOLEAN;
+
+   statement_decl ::= statement
+						| statement_decl statement;
+
+   statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e) ; :}
+			| method_call SEMI
+			| extern SEMI
+			| IF LPAREN expr RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(expr,b1,b2) ; :}
+			| IF LPAREN expr RPAREN block {: RESULT = new IfStmt(expr,block) ; :}
+			| FOR id EQ expr COMMA expr block
+			| WHILE expr block
+			| RETURN expr SEMI {: RESULT = new ReturnStmt(expr) ; :}
+			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
+			| BREAK SEMI 
+			| CONTINUE SEMI
+			| SEMI
+			| block {: RESULT = block ; :};
+
+
+	assign_op ::= EQ | PLUSEQ | MINUSEQ;
+
+	method_call ::= id LPAREN RPAREN
+				| id LPAREN expr_sequence RPAREN;
+
+	extern ::=  EXTERNINVK LPAREN string_literal COMMA type RPAREN
+				| EXTERNINVK LPAREN string_literal COMMA VOID RPAREN
+				| EXTERNINVK LPAREN string_literal COMMA type COMMA externinvk_arg_sequence RPAREN
+				| EXTERNINVK LPAREN string_literal COMMA VOID COMMA externinvk_arg_sequence RPAREN;
+
+	location ::= id {: RESULT =id ; :} | id LBRACKET expr RBRACKET {: RESULT =  ; :};
+
+	expr_sequence ::= expr:e {: RESULT =e ; :} 
+					| expr_sequence COMMA expr ; // ojo aca eh!!!!
+
+	expr ::= location:loc {: RESULT =loc ; :}
+		 | method_call:mc {: RESULT = mc ; :}
+		 | extern
+		 | literal:l {: RESULT =l ; :} 
+		 | expr:e bin_op:op expr:e2 {: RESULT = new BinOpExpr(e,op,e2) ; :}
+		 | unary_op expr {: RESULT = ; :} // ojo aca eh!!!!
+		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
+
+	externinvk_arg_sequence ::= externinvk_arg
+								| externinvk_arg_sequence COMMA externinvk_arg;
+		 
+	externinvk_arg ::= expr | string_literal;
+	
+	unary_op ::= NOT | MINUS ;
+	bin_op ::= arith_op | rel_op | eq_op | cond_op;
+	arith_op ::= PLUS | MINUS | TIMES | MOD | DIVIDE;
+	rel_op ::= LT | GT | LTEQ | GTEQ;
+	eq_op ::= EQEQ | NOTEQ;
+	cond_op ::= AND {: RESULT = BinOpType.AND  ;:} | OR;
+	literal ::= int_literal:il {: RESULT = il ; :} | float_literal:fl {: RESULT = fl ; :} | bool_literal:bl {: RESULT = bl ; :};
+	id ::= IDENTIFIER:i {: RESULT = i ;:};
+	int_literal ::= INT_LITERAL:n {: RESULT = n ;:};
+	bool_literal ::= TRUE:t {: RESULT = new BooleanLiteral(t) ;:} 
+					| FALSE:f {: RESULT = new BooleanLiteral(f) ;:} ;
+	float_literal ::= FLOAT_LITERAL:f {: RESULT = new FloatLiteral(f);:} ;
+	string_literal ::= STRING_LITERAL:s {: RESULT = s ;:};

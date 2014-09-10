@@ -13,10 +13,15 @@ import ir.ASTVisitor;
 public class FloatLiteral extends Literal {
 
     private Float value;
+
+    public FloatLiteral(Float value) {
+        this.value = value;
+        type = Type.FLOAT;
+    }
     
     @Override
     public Type getType() {
-        return Type.FLOAT;
+        return type;
     }
 
     public Float getValue() {

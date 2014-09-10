@@ -11,11 +11,12 @@ public class IntLiteral extends Literal {
 	 */
 	public IntLiteral(Integer val){
 		value = val; // Will convert to int value in semantic check
+                type = Type.INT;
 	}
 
 	@Override
 	public Type getType() {
-		return Type.INT;
+		return type;
 	}
 
 

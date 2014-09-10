@@ -15,11 +15,12 @@ public class BooleanLiteral extends Literal {
     
     public BooleanLiteral(Boolean val){
 		value = val; 
+                type = Type.BOOL;
 	}
 
 	@Override
 	public Type getType() {
-		return Type.INT;
+		return type;
 	}
 
     public boolean isValue() {

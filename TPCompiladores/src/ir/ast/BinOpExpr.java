@@ -11,6 +11,7 @@ public class BinOpExpr extends Expression {
 		operator = op;
 		lOperand = l;
 		rOperand = r;
+                
 	}
 	
         /*public BinOpExpr(Expression e, TempExpression t) {

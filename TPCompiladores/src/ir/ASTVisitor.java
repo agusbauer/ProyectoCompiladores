@@ -17,6 +17,7 @@ public interface ASTVisitor<T> {
 	T visit(BinOpExpr expr);
         T visit(UnaryOpExpr expr);
         T visit(MethodCall expr);
+        T visit(Extern expr);
 	
 // visit literals	
 	T visit(IntLiteral lit);       

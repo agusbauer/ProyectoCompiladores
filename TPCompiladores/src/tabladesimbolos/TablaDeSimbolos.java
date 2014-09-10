@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tpcompiladores;
+package tabladesimbolos;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -25,7 +25,7 @@ public class TablaDeSimbolos {
         cantidad++;
     }
     
-    public void pop(){
+    public void pop(){      
         pila.removeFirst();
         cantidad--;
     }

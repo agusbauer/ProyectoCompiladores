@@ -4,7 +4,7 @@ public enum Type {
 	INT,
 	INTARRAY,
 	VOID,
-	UNDEFINED, FLOAT;
+	UNDEFINED, FLOAT, BOOL;
 	
 	@Override
 	public String toString() {
@@ -17,6 +17,10 @@ public enum Type {
 				return "undefined";
 			case INTARRAY:
 				return "int[]";
+                        case BOOL:
+                                return "boolean";
+                        case FLOAT:
+                                return "float";
 		}
 		
 		return null;
