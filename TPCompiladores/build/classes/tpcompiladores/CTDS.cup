@@ -117,7 +117,7 @@ precedence left NOT, MINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY decl  RKEY 
+   program ::= CLASS id LKEY {:TablaDeSimbolos t = new TablaDeSimbolos();:} decl:d  RKEY {:RESULT = d;:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -144,72 +144,98 @@ precedence left NOT, MINUS;
 				| parameters COMMA type id;
 
 
-   block ::=  LKEY block_content RKEY ;
+   block ::=  LKEY block_content:b RKEY  {: RESULT = b;:} ;
 
    block_content ::= statement_decl
 					| field_decl
 					| field_decl statement_decl
 					|;
 
-   type ::= INT | FLOAT | BOOLEAN;
+   type ::= INT {: RESULT = Type.INT ; :}
+			| FLOAT {: RESULT = Type.FLOAT ; :}
+			| BOOLEAN {: RESULT = Type.BOOL ; :};
 
-   statement_decl ::= statement
-						| statement_decl statement;
+   statement_decl ::= statement:s {: LinkedList<Statement> l = new LinkedList<Statement>() ;
+									l.add(s);
+									RESULT = l :} 
+						| statement_decl:sd statement:s {:  sd.add(s);
+															RESULT = sd ; :};
 
    statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e) ; :}
-			| method_call SEMI
-			| extern SEMI
+			| method_call:m SEMI {: RESULT = m ; :}
+			| extern:e SEMI {: RESULT = e ; :}
 			| IF LPAREN expr RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(expr,b1,b2) ; :}
 			| IF LPAREN expr RPAREN block {: RESULT = new IfStmt(expr,block) ; :}
-			| FOR id EQ expr COMMA expr block
-			| WHILE expr block
+			| FOR id:i EQ expr:e COMMA expr:c block:b {: RESULT = new ForStmt(i,e,c,b) ; :}
+			| WHILE expr:e block:b {: RESULT = new WhileStmt(b,e) ; :}
 			| RETURN expr SEMI {: RESULT = new ReturnStmt(expr) ; :}
 			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
-			| BREAK SEMI 
-			| CONTINUE SEMI
+			| BREAK SEMI    {: RESULT = new BreakStmt() ; :}
+			| CONTINUE SEMI {: RESULT = new ContinueStmt() ; :}
 			| SEMI
-			| block {: RESULT = block ; :};
+			| block:b {: RESULT = b ; :};
 
 
-	assign_op ::= EQ | PLUSEQ | MINUSEQ;
+	assign_op ::= EQ {: RESULT = AssignOpType.ASSIGN;:}
+				 | PLUSEQ  {: RESULT = AssignOpType.INCREMENT;:}
+				 | MINUSEQ  {: RESULT = AssignOpType.DECREMENT;:};
 
-	method_call ::= id LPAREN RPAREN
-				| id LPAREN expr_sequence RPAREN;
+	method_call ::= id LPAREN RPAREN {: RESULT = new MethodCall(id,null)  ;:}
+				| id LPAREN expr_sequence:l RPAREN {: RESULT = new MethodCall(id,l)  ;:};
 
-	extern ::=  EXTERNINVK LPAREN string_literal COMMA type RPAREN
-				| EXTERNINVK LPAREN string_literal COMMA VOID RPAREN
-				| EXTERNINVK LPAREN string_literal COMMA type COMMA externinvk_arg_sequence RPAREN
-				| EXTERNINVK LPAREN string_literal COMMA VOID COMMA externinvk_arg_sequence RPAREN;
+	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type RPAREN {: RESULT = new Extern(s,type,null)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,null,null)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA type COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,type,l)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,null,l)  ;:};
 
-	location ::= id {: RESULT =id ; :} | id LBRACKET expr RBRACKET {: RESULT =  ; :};
+	location ::= id {: RESULT = id ; :} 
+				| id LBRACKET expr RBRACKET {: RESULT = id ; :};
 
-	expr_sequence ::= expr:e {: RESULT =e ; :} 
-					| expr_sequence COMMA expr ; // ojo aca eh!!!!
-
+	expr_sequence ::= expr:e {: LinkedList<Expression> l = new LinkedList<Expression>() ;
+								l.add(e);
+								RESULT = l :} 
+					| expr_sequence:es COMMA expr:e {: es.add(e); 
+													RESULT = es  ;:} ; 
+ 
 	expr ::= location:loc {: RESULT =loc ; :}
 		 | method_call:mc {: RESULT = mc ; :}
-		 | extern
+		 | extern:e {: RESULT = e  ;:}
 		 | literal:l {: RESULT =l ; :} 
 		 | expr:e bin_op:op expr:e2 {: RESULT = new BinOpExpr(e,op,e2) ; :}
-		 | unary_op expr {: RESULT = ; :} // ojo aca eh!!!!
+		 | unary_op:op expr:e {: RESULT = new UnaryOpExpr(op,e) ; :}
 		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
 
-	externinvk_arg_sequence ::= externinvk_arg
-								| externinvk_arg_sequence COMMA externinvk_arg;
+	externinvk_arg_sequence ::= externinvk_arg:e {: LinkedList<Object> l = new LinkedList<Object>() ;
+													l.add(e);
+													RESULT = l :}  
+								| externinvk_arg_sequence:es COMMA externinvk_arg:e {: es.add(e); 
+																					RESULT = es  ;:} ; 
 		 
-	externinvk_arg ::= expr | string_literal;
+	externinvk_arg ::= expr:e {: RESULT = e  ;:} 
+					| string_literal:s {: RESULT = s  ;:};
 	
-	unary_op ::= NOT | MINUS ;
-	bin_op ::= arith_op | rel_op | eq_op | cond_op;
-	arith_op ::= PLUS | MINUS | TIMES | MOD | DIVIDE;
-	rel_op ::= LT | GT | LTEQ | GTEQ;
-	eq_op ::= EQEQ {: RESULT = BinOpType.CEQ  ;:} 
-			  | NOTEQ {: RESULT = BinOpType.NEQ  ;:} ;
+	unary_op ::= NOT {: RESULT = UnaryOpType.NOT  ;:}
+				| MINUS {: RESULT = UnaryOpType.MINUS  ;:};
+	bin_op ::= arith_op:ao {: RESULT = ao  ;:}
+				| rel_op:ro {: RESULT = ro ;:}
+				| eq_op:eo {: RESULT = eo  ;:} 
+				 | cond_op:co {: RESULT = co  ;:};
+	arith_op ::= PLUS {: RESULT = BinOpType.PLUS  ;:}
+				| MINUS{: RESULT = BinOpType.MINUS  ;:}
+				 | TIMES {: RESULT = BinOpType.TIMES  ;:}
+				| MOD {: RESULT = BinOpType.MOD  ;:}
+				| DIVIDE {: RESULT = BinOpType.DIVIDE  ;:};
+	rel_op ::= LT {: RESULT = BinOpType.LT  ;:}
+			  | GT {: RESULT = BinOpType.GT  ;:} 
+			  | LTEQ {: RESULT = BinOpType.LTEQ  ;:}
+			  | GTEQ {: RESULT = BinOpType.GTEQ  ;:};
+	eq_op ::= EQEQ {: RESULT = BinOpType.EQEQ  ;:} 
+			  | NOTEQ {: RESULT = BinOpType.NOTEQ  ;:} ;
 	cond_op ::= AND {: RESULT = BinOpType.AND  ;:} 
 				| OR {: RESULT = BinOpType.OR  ;:};
 	literal ::= int_literal:il {: RESULT = il ; :} | float_literal:fl {: RESULT = fl ; :} | bool_literal:bl {: RESULT = bl ; :};
 	id ::= IDENTIFIER:i {: RESULT = i ;:};
-	int_literal ::= INT_LITERAL:n {: RESULT = n ;:};
+	int_literal ::= INT_LITERAL:n {: RESULT = new IntLiteral(n) ;:};
 	bool_literal ::= TRUE:t {: RESULT = new BooleanLiteral(t) ;:} 
 					| FALSE:f {: RESULT = new BooleanLiteral(f) ;:} ;
 	float_literal ::= FLOAT_LITERAL:f {: RESULT = new FloatLiteral(f);:} ;

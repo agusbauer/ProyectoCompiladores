@@ -13,13 +13,12 @@ import java.util.List;
  */
 public class Extern extends Expression {
     private String string;
-    private List<Expression> args;
-    private List<String> args2;
+    
+    private List<Object > args;
 
-    public Extern(String string,Type type, List<Expression> args, List<String> args2) {
+    public Extern(String string,Type type, List<Object> args) {
         this.string = string;
-        this.args = args;
-        this.args2 = args2;
+        this.args = args;      
         this.type = type;
     }
        
@@ -33,23 +32,13 @@ public class Extern extends Expression {
         this.string = string;
     }
 
-    public List<Expression> getArgs() {
+    public List<Object> getArgs() {
         return args;
     }
 
-    public void setArgs(List<Expression> args) {
+    public void setArgs(List<Object> args) {
         this.args = args;
     }
-
-    public List<String> getArgs2() {
-        return args2;
-    }
-
-    public void setArgs2(List<String> args2) {
-        this.args2 = args2;
-    }
-    
-    
     
     @Override
     public <T> T accept(ASTVisitor<T> v) {
