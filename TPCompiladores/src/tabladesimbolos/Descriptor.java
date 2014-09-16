@@ -29,5 +29,8 @@ public abstract class Descriptor {
         this.tipo = tipo;
     }
     
+    public String getClase(){
+        return "descriptor";
+    }
     
 }

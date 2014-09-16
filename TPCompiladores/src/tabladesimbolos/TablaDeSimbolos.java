@@ -12,7 +12,7 @@ import java.util.LinkedList;
  */
 public class TablaDeSimbolos {
    
-    private LinkedList<HashMap<String,Descriptor>> pila;
+    private LinkedList<Ambiente> pila;
     private int cantidad;
     
     public TablaDeSimbolos(){
@@ -20,9 +20,13 @@ public class TablaDeSimbolos {
         cantidad = 0;
     }
     
-    public void push(HashMap<String,Descriptor> ambiente){
+    public void push(Ambiente ambiente){
         pila.add(ambiente);
         cantidad++;
+    }
+    
+    public Ambiente top(){
+        return pila.getFirst();
     }
     
     public void pop(){      
@@ -34,14 +38,14 @@ public class TablaDeSimbolos {
         return cantidad==0;
     }
     
-    public boolean search(String id){
-        for(HashMap<String, Descriptor> nivel : pila){
-            if(nivel.containsKey(id)){
-                return true;
+    public Descriptor search(String id){
+        for(Ambiente nivel : pila){
+            Descriptor d = nivel.get(id);
+            if(d!=null){
+                return d;
             }
         }
-        
-        return false;
+        return null;
     }
     
 }

@@ -14,4 +14,9 @@ public class DescriptorSimple extends Descriptor {
         this.nombre = nombre;
         this.tipo = tipo;
     }
+    
+    @Override
+    public String getClase(){
+        return "descriptorSimple";
+    }
 }

@@ -27,6 +27,11 @@ public class DescriptorFuncion extends Descriptor {
     public void setParametros(LinkedList<DescriptorSimple> parametros) {
         this.parametros = parametros;
     }
+    
+    @Override
+    public String getClase(){
+        return "descriptorFuncion";
+    }
      
     
             

@@ -8,7 +8,9 @@ import java.lang.*;
 import ir.*;
 import tabladesimbolos.*;
 
-
+/*atributos globales*/
+TablaDeSimbolos t=new TablaDeSimbolos();
+Type tipoVar;
    
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
@@ -89,19 +91,25 @@ terminal	Boolean FALSE;
 terminal	String IDENTIFIER;
    
 /* Non terminals used in the grammar section.*/
-non terminal      parameters, program, decl, field_decl,  method_decl, type, method_type, method_call, location, expr , externinvk_parameters, externinvk_arg_sequence,externinvk_arg, id, id_sequence, expr_sequence, block_content, method, statement_decl, extern;
+non terminal      parameters, program, decl, field_decl,  method_decl, type, method_type, externinvk_parameters, 						    				  externinvk_arg_sequence,externinvk_arg, id_sequence, expr_sequence, block_content, method, statement_decl;
+non terminal MethodCall method_call;
+non terminal Location location, location_decl;
+non terminal Expression expr;
+non terminal Extern extern;
 non terminal Statement statement;
 non terminal Block block;
+non terminal String id;
  
 /*operadores*/
 non terminal 	UnaryOpExpr unary_op;
-non terminal 	BinOpExpr bin_op, arith_op, rel_op, eq_op, cond_op, assign_op;
+non terminal 	BinOpType bin_op, arith_op, rel_op, eq_op, cond_op 
+non terminal	AssignOpType assign_op;
 /*literales*/
 non terminal 	Literal literal;
 non terminal 	IntLiteral int_literal;
 non terminal 	BoolLiteral bool_literal;
 non terminal 	FloatLiteral float_literal;
-non terminal 	string_literal;
+non terminal 	String string_literal;
 
    
 
@@ -117,7 +125,7 @@ precedence left NOT, MINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {:TablaDeSimbolos t = new TablaDeSimbolos();:} decl:d  RKEY {:RESULT = d;:}
+   program ::= CLASS id LKEY {: t.push(new Ambiente());:} decl  RKEY {:t.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -125,11 +133,23 @@ precedence left NOT, MINUS;
 			| field_decl method_decl;
 
 
-   field_decl ::= type id_sequence	SEMI
+   field_decl ::= type:t {:tipoVar = t;:} id_sequence	SEMI
 				 | field_decl type id_sequence SEMI;
 
-   id_sequence ::= location
-				| id_sequence COMMA location;
+   id_sequence ::= location_decl:l {: t.top().put(l.getId(),l.getDesc()) ;:}
+				| id_sequence COMMA location_decl:l {: t.top().put(l.getId(),l.getDesc() ;:};
+
+
+   location_decl ::= id {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorSimple(id,tipoVar)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :} 
+				| id LBRACKET int_literal:il RBRACKET {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorArreglo(id,tipoVar,il)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :} ;
 	
 
    method_decl ::= method
@@ -144,7 +164,7 @@ precedence left NOT, MINUS;
 				| parameters COMMA type id;
 
 
-   block ::=  LKEY block_content:b RKEY  {: RESULT = b;:} ;
+   block ::=  LKEY {:t.push(new Ambiente()) ;:} block_content:b  RKEY {:t.pop();:} {: RESULT = b;:} ;
 
    block_content ::= statement_decl
 					| field_decl
@@ -164,15 +184,15 @@ precedence left NOT, MINUS;
    statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e) ; :}
 			| method_call:m SEMI {: RESULT = m ; :}
 			| extern:e SEMI {: RESULT = e ; :}
-			| IF LPAREN expr RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(expr,b1,b2) ; :}
-			| IF LPAREN expr RPAREN block {: RESULT = new IfStmt(expr,block) ; :}
+			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
+			| IF LPAREN expr:e RPAREN block:b {: RESULT = new IfStmt(e,b) ; :}
 			| FOR id:i EQ expr:e COMMA expr:c block:b {: RESULT = new ForStmt(i,e,c,b) ; :}
 			| WHILE expr:e block:b {: RESULT = new WhileStmt(b,e) ; :}
-			| RETURN expr SEMI {: RESULT = new ReturnStmt(expr) ; :}
+			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) ; :}
 			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
 			| BREAK SEMI    {: RESULT = new BreakStmt() ; :}
 			| CONTINUE SEMI {: RESULT = new ContinueStmt() ; :}
-			| SEMI
+			| SEMI  {: RESULT = new SkipStmt() ; :}
 			| block:b {: RESULT = b ; :};
 
 
@@ -180,16 +200,44 @@ precedence left NOT, MINUS;
 				 | PLUSEQ  {: RESULT = AssignOpType.INCREMENT;:}
 				 | MINUSEQ  {: RESULT = AssignOpType.DECREMENT;:};
 
-	method_call ::= id LPAREN RPAREN {: RESULT = new MethodCall(id,null)  ;:}
-				| id LPAREN expr_sequence:l RPAREN {: RESULT = new MethodCall(id,l)  ;:};
+	method_call ::= id LPAREN RPAREN {: Descriptor d = t.search(id);
+										if (d!=null)
+											if (d.getClase().equals("descriptorFuncion"))
+												RESULT = new MethodCall(id,null) ;
+											else
+												System.out.println("ERROR: funcion no declarada");				
+											else
+												System.out.println("ERROR: Los tipos no concuerdan");:}
+				| id LPAREN expr_sequence:l RPAREN {: Descriptor d = t.search(id);
+										if (d!=null)
+											if (d.getClase().equals("descriptorFuncion"))
+												RESULT = new MethodCall(id,l) ;
+											else
+												System.out.println("ERROR: funcion no declarada");				
+											else
+												System.out.println("ERROR: Los tipos no concuerdan");:};
 
 	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type RPAREN {: RESULT = new Extern(s,type,null)  ;:}
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,null,null)  ;:}
 				| EXTERNINVK LPAREN string_literal:s COMMA type COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,type,l)  ;:}
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,null,l)  ;:};
 
-	location ::= id {: RESULT = id ; :} 
-				| id LBRACKET expr RBRACKET {: RESULT = id ; :};
+	location ::= id {:  Descriptor d = t.search(id);
+						if (d!=null)
+							if (d.getClase().equals("descriptorSimple"))
+								RESULT = new VarLocation(id,d) ;
+							else
+								System.out.println("ERROR: Variable no declarada");				
+						else
+							System.out.println("ERROR: Los tipos no concuerdan"); :} 
+				| id LBRACKET expr RBRACKET {:  Descriptor d = t.search(id);
+						if (d!=null)
+							if (d.getClase().equals("descriptorArreglo"))
+								RESULT = new VarLocation(id,d) ;
+							else
+								System.out.println("ERROR: Variable no declarada");				
+						else
+							System.out.println("ERROR: Los tipos no concuerdan"); :}  ;
 
 	expr_sequence ::= expr:e {: LinkedList<Expression> l = new LinkedList<Expression>() ;
 								l.add(e);

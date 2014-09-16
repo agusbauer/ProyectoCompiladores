@@ -1,6 +1,5 @@
 package ir.semcheck;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ir.ASTVisitor;
@@ -104,6 +103,11 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(Extern expr) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Type visit(SkipStmt stmt) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

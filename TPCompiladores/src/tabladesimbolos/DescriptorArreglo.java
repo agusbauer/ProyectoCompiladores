@@ -10,9 +10,9 @@ package tabladesimbolos;
  */
 public class DescriptorArreglo extends Descriptor {
 
-    private int longitud;
+    private Integer longitud;
     
-     public DescriptorArreglo(String nombre, String tipo, int longitud){
+     public DescriptorArreglo(String nombre, String tipo, Integer longitud){
         this.nombre = nombre;
         this.tipo = tipo;
         this.longitud = longitud;
@@ -25,6 +25,10 @@ public class DescriptorArreglo extends Descriptor {
     public void setLongitud(int longitud) {
         this.longitud = longitud;
     }
-     
+    
+    @Override
+    public String getClase(){
+        return "descriptorArreglo";
+    }
     
 }
