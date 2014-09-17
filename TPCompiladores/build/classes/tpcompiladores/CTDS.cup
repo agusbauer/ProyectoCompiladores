@@ -152,21 +152,40 @@ precedence left NOT, MINUS;
 								System.out.println("ERROR: Variable redeclarada"); :} ;
 	
 
-   method_decl ::= method
-					| method_decl method;
+   method_decl ::= method:m {: t.top().put(m.getId(),m.getDesc()) ;:}
+					| method_decl:md method:m {: t.top().put(m.getId(),m.getDesc()) ;:};
 
-   method	 ::= type id LPAREN RPAREN block
-				    |VOID id LPAREN RPAREN block
-					| VOID id LPAREN parameters RPAREN block 
-					| type id LPAREN parameters RPAREN block ;
+   method	 ::= type:t id:i LPAREN RPAREN block {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorFuncion(i,t,null)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :} 
+				    |VOID id:i LPAREN RPAREN block {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorFuncion(i,VOID,null)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :} 
+					| VOID id:i LPAREN parameters:p RPAREN block {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorFuncion(i,VOID,p)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :}  
+					| type:t id:i LPAREN parameters:p RPAREN block {:  Descriptor d = t.search(id);
+						if (d==null)
+								RESULT = new VarLocation(id,new DescriptorFuncion(i,t,p)) ;
+							else
+								System.out.println("ERROR: Variable redeclarada"); :}  ;
 
-   parameters ::= type id
-				| parameters COMMA type id;
+   parameters ::= type:t id:i {: LinkedList<> l = new LinkedList<DescriptorSimple>() ;
+								l.add(new DescriptorSimple(i,t));
+								RESULT = l :}
+				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t));
+											RESULT = p ; :};
 
 
    block ::=  LKEY {:t.push(new Ambiente()) ;:} block_content:b  RKEY {:t.pop();:} {: RESULT = b;:} ;
 
-   block_content ::= statement_decl
+   block_content ::= statement_decl:sd {: RESULT = new Block( ,sd);:} //completaaaaar!!!!!!!!!!!!
 					| field_decl
 					| field_decl statement_decl
 					|;
