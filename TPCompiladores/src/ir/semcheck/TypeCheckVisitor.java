@@ -92,7 +92,7 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     }
 
     @Override
-    public Type visit(BooleanLiteral lit) {
+    public Type visit(BoolLiteral lit) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

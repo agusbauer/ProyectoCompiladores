@@ -1052,7 +1052,7 @@ class CTDSLexer implements java_cup.runtime.Scanner {
           }
         case 143: break;
         case 72: 
-          { return symbol(sym.INT_LITERAL, new Integer(Integer.MIN_VALUE));
+          { return symbol(INT_LITERAL, new Integer(Integer.MIN_VALUE));
           }
         case 144: break;
         default: 

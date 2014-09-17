@@ -4,6 +4,8 @@
  */
 package tabladesimbolos;
 
+import ir.ast.Type;
+
 /**
  *
  * @author luciano
@@ -11,7 +13,7 @@ package tabladesimbolos;
 public abstract class Descriptor {
     
     protected String nombre;
-    protected String tipo;
+    protected Type tipo;
 
     public String getNombre() {
         return nombre;
@@ -21,11 +23,11 @@ public abstract class Descriptor {
         this.nombre = nombre;
     }
 
-    public String getTipo() {
+    public Type getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(Type tipo) {
         this.tipo = tipo;
     }
     

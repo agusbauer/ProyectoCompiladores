@@ -4,7 +4,7 @@ import ir.ASTVisitor;
 import tabladesimbolos.Descriptor;
 
 public class VarLocation extends Location {
-	private int blockId;
+	private Block block;
         private Descriptor desc;
 
 	public VarLocation(String id, Descriptor d) {
@@ -12,9 +12,10 @@ public class VarLocation extends Location {
                 this.desc = d;
 	}
         
-        public VarLocation(String id, int bId) {
+        public VarLocation(String id, Block b, Descriptor d) {
 		this.id = id;
-		this.blockId = bId;
+		this.block = b;
+                this.desc = d;
 	}
 
         public Descriptor getDesc() {
@@ -24,16 +25,18 @@ public class VarLocation extends Location {
         public void setDesc(Descriptor desc) {
             this.desc = desc;
         }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
+    }
 	
         
         
-	public int getBlockId() {
-		return blockId;
-	}
 
-	public void setBlockId(int blockId) {
-		this.blockId = blockId;
-	}
 	
 	@Override
 	public String toString() {

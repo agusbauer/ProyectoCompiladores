@@ -74,7 +74,7 @@ OctDigit          = [0-7]
 {Comment}		{/*skip*/}
 
 //literales
-"-2147483648"           { return symbol(INT_LITERAL, new Integer(Integer.MIN_VALUE)); }
+"-2147483648"           { return symbol(sym.INT_LITERAL, new Integer(Integer.MIN_VALUE)); }
 {IntLit}		  		{return symbol(sym.INT_LITERAL, new Integer(yytext()));}
 {FloatLit}		  		{return symbol(sym.FLOAT_LITERAL, new Float(yytext().substring(0,yylength()-1)));}
 

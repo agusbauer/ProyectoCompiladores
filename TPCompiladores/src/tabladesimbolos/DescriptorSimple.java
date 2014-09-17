@@ -4,13 +4,15 @@
  */
 package tabladesimbolos;
 
+import ir.ast.Type;
+
 /**
  *
  * @author luciano
  */
 public class DescriptorSimple extends Descriptor {
 
-    public DescriptorSimple(String nombre, String tipo){
+    public DescriptorSimple(String nombre, Type tipo){
         this.nombre = nombre;
         this.tipo = tipo;
     }

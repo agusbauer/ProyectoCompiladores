@@ -4,6 +4,7 @@
  */
 package tabladesimbolos;
 
+import ir.ast.Type;
 import java.util.LinkedList;
 
 /**
@@ -14,7 +15,7 @@ public class DescriptorFuncion extends Descriptor {
 
     private LinkedList<DescriptorSimple> parametros;
     
-     public DescriptorFuncion(String nombre, String tipo, LinkedList<DescriptorSimple> parametros){
+     public DescriptorFuncion(String nombre, Type tipo, LinkedList<DescriptorSimple> parametros){
         this.nombre = nombre;
         this.tipo = tipo;
         this.parametros = parametros;

@@ -7,7 +7,7 @@ package ir;
 import ir.ast.AssignStmt;
 import ir.ast.BinOpExpr;
 import ir.ast.Block;
-import ir.ast.BooleanLiteral;
+import ir.ast.BoolLiteral;
 import ir.ast.BreakStmt;
 import ir.ast.ContinueStmt;
 import ir.ast.Extern;
@@ -94,7 +94,7 @@ public class ImplementsASTVisitor implements ASTVisitor<String>{
     }
 
     @Override
-    public String visit(BooleanLiteral lit) {
+    public String visit(BoolLiteral lit) {
         return lit.toString();
     }
 

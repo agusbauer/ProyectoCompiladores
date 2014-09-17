@@ -6,15 +6,8 @@ import ir.ASTVisitor;
 
 public class Block extends Statement {
 	private List<Statement> statements;
-	private int blockId;
 	
-	public Block(int bId) {
-		statements = new ArrayList<Statement>();
-		blockId = bId;
-	}
-	
-	public Block(int bId, List<Statement> s) {
-		blockId = bId;
+	public Block( List<Statement> s) {
 		statements = s;
 	}
 	
@@ -26,13 +19,6 @@ public class Block extends Statement {
 		return this.statements;
 	} 
 		
-	public int getBlockId() {
-		return blockId;
-	}
-
-	public void setBlockId(int blockId) {
-		this.blockId = blockId;
-	}
 
 	@Override
 	public String toString() {

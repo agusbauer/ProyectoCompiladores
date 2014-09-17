@@ -4,6 +4,8 @@
  */
 package tabladesimbolos;
 
+import ir.ast.Type;
+
 /**
  *
  * @author luciano
@@ -12,7 +14,7 @@ public class DescriptorArreglo extends Descriptor {
 
     private Integer longitud;
     
-     public DescriptorArreglo(String nombre, String tipo, Integer longitud){
+     public DescriptorArreglo(String nombre, Type tipo, Integer longitud){
         this.nombre = nombre;
         this.tipo = tipo;
         this.longitud = longitud;

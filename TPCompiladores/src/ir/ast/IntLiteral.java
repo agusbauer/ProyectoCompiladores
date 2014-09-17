@@ -13,6 +13,11 @@ public class IntLiteral extends Literal {
 		value = val; // Will convert to int value in semantic check
                 type = Type.INT;
 	}
+        
+        public IntLiteral(Number val){
+		value = val.intValue(); // Will convert to int value in semantic check
+                type = Type.INT;
+	}
 
 	@Override
 	public Type getType() {

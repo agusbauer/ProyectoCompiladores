@@ -19,6 +19,11 @@ public class FloatLiteral extends Literal {
         type = Type.FLOAT;
     }
     
+     public FloatLiteral(Number value) {
+        this.value = value.floatValue();
+        type = Type.FLOAT;
+    }
+    
     @Override
     public Type getType() {
         return type;
