@@ -48,4 +48,36 @@ public enum BinOpType {
 		
 		return null;
 	}
+        
+        public boolean isArithmetic() {
+		if (this == BinOpType.PLUS || this == BinOpType.MINUS || this == BinOpType.TIMES || this == BinOpType.DIVIDE || this == BinOpType.MOD) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isRelational() {
+		if (this == BinOpType.LT || this == BinOpType.LTEQ || this == BinOpType.GT || this == BinOpType.GTEQ) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isEquational() {
+		if (this == BinOpType.EQEQ || this == BinOpType.NOTEQ) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isConditional() {
+		if (this == BinOpType.AND || this == BinOpType.OR) {
+			return true;
+		}
+		
+		return false;
+	}
 }

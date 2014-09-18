@@ -157,7 +157,7 @@ precedence left NOT, MINUS;
 								System.out.println("ERROR: Variable redeclarada"); :} 
 				| id:i LBRACKET int_literal:il RBRACKET {:  Descriptor d = tds.search(i);
 						if (d==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()) ;
+								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
 							else
 								System.out.println("ERROR: Variable redeclarada"); :} ;
 	
@@ -186,7 +186,7 @@ precedence left NOT, MINUS;
 							else
 								System.out.println("ERROR: Variable redeclarada"); :}  ;
 
-   parameters ::= type:t id:i {: LinkedList<Descriptor> l = new LinkedList<DescriptorSimple>() ;
+   parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
 								l.add(new DescriptorSimple(i,t));
 								RESULT = l; :}
 				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t));
@@ -211,8 +211,8 @@ precedence left NOT, MINUS;
 															RESULT = sd ; :};
 
    statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e) ; :}
-			| method_call:m SEMI {: RESULT = m ; :}
-			| extern:e SEMI {: RESULT = e ; :}
+			| method_call:m SEMI {: RESULT = new MethodCallStmt(m) ; :}
+			| extern:e SEMI {: RESULT = new ExternStmt(e) ; :}
 			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
 			| IF LPAREN expr:e RPAREN block:b {: RESULT = new IfStmt(e,b) ; :}
 			| FOR id:i EQ expr:e COMMA expr:c block:b {: RESULT = new ForStmt(i,e,c,b) ; :}
@@ -254,7 +254,7 @@ precedence left NOT, MINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorSimple"))
-								RESULT = new VarLocation(i,d)
+								RESULT = new VarLocation(i,d);
 							else
 								System.out.println("ERROR: Variable no declarada");				
 						else
@@ -262,7 +262,7 @@ precedence left NOT, MINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorArreglo"))
-								RESULT = new VarLocation(i,d) 
+								RESULT = new VarLocation(i,d); 
 							else
 								System.out.println("ERROR: Variable no declarada");				
 						else

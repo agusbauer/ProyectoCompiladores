@@ -18,4 +18,28 @@ public enum AssignOpType {
 		
 		return null;		
 	}
+        
+        public boolean isAssign() {
+		if (this == AssignOpType.ASSIGN) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isIncrement() {
+		if (this == AssignOpType.INCREMENT) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isDecrement() {
+		if (this == AssignOpType.DECREMENT) {
+			return true;
+		}
+		
+		return false;
+	}
 }

@@ -157,7 +157,7 @@ precedence left NOT, MINUS;
 								System.out.println("ERROR: Variable redeclarada"); :} 
 				| id:i LBRACKET int_literal:il RBRACKET {:  Descriptor d = tds.search(i);
 						if (d==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()) ;
+								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
 							else
 								System.out.println("ERROR: Variable redeclarada"); :} ;
 	
@@ -186,7 +186,7 @@ precedence left NOT, MINUS;
 							else
 								System.out.println("ERROR: Variable redeclarada"); :}  ;
 
-   parameters ::= type:t id:i {: LinkedList<Descriptor> l = new LinkedList<DescriptorSimple>() ;
+   parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
 								l.add(new DescriptorSimple(i,t));
 								RESULT = l; :}
 				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t));
@@ -240,7 +240,7 @@ precedence left NOT, MINUS;
 				| id:i LPAREN expr_sequence:l RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,l) ;
+												RESULT = new MethodCall(i,d.getTipo(),l) ;
 											else
 												System.out.println("ERROR: funcion no declarada");				
 										else
@@ -254,7 +254,7 @@ precedence left NOT, MINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorSimple"))
-								RESULT = new VarLocation(i,d)
+								RESULT = new VarLocation(i,d);
 							else
 								System.out.println("ERROR: Variable no declarada");				
 						else
@@ -262,7 +262,7 @@ precedence left NOT, MINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorArreglo"))
-								RESULT = new VarLocation(i,d) 
+								RESULT = new VarLocation(i,d); 
 							else
 								System.out.println("ERROR: Variable no declarada");				
 						else

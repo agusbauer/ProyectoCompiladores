@@ -33,4 +33,45 @@ public enum Type {
 		
 		return false;
 	}
+        
+        public boolean isInt() {
+		if (this == Type.INT) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isFloat() {
+		if (this == Type.FLOAT) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isBool() {
+		if (this == Type.BOOL) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isVoid() {
+		if (this == Type.VOID) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isUndefined() {
+		if (this == Type.UNDEFINED) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }
