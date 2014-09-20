@@ -11,11 +11,13 @@ import ir.ast.BoolLiteral;
 import ir.ast.BreakStmt;
 import ir.ast.ContinueStmt;
 import ir.ast.Extern;
+import ir.ast.ExternStmt;
 import ir.ast.FloatLiteral;
 import ir.ast.ForStmt;
 import ir.ast.IfStmt;
 import ir.ast.IntLiteral;
 import ir.ast.MethodCall;
+import ir.ast.MethodCallStmt;
 import ir.ast.ReturnStmt;
 import ir.ast.SkipStmt;
 import ir.ast.UnaryOpExpr;
@@ -111,6 +113,16 @@ public class ImplementsASTVisitor implements ASTVisitor<String>{
     @Override
     public String visit(Block bl) {
         return bl.toString();
+    }
+
+    @Override
+    public String visit(ExternStmt stmt) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String visit(MethodCallStmt stmt) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
   

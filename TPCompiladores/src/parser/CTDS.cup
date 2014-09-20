@@ -215,9 +215,18 @@ precedence left NOT, MINUS;
 			| extern:e SEMI {: RESULT = new ExternStmt(e) ; :}
 			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
 			| IF LPAREN expr:e RPAREN block:b {: RESULT = new IfStmt(e,b) ; :}
-			| FOR id:i EQ expr:e COMMA expr:c block:b {: RESULT = new ForStmt(i,e,c,b) ; :}
+			| FOR id:i EQ expr:e COMMA expr:c block:b {:Descriptor d = tds.search(i);
+														if(d != null)
+															if(d.getClase().equals("descriptorSimple")) 
+																if(d.type == Type.INTEGER)
+																	RESULT = new ForStmt(i,e,c,b) ;
+															else
+																System.out.println("ERROR: los tipos no concuerdan ");
+														else
+															System.out.println("ERROR: Variable no declarada");			
+														 :}
 			| WHILE expr:e block:b {: RESULT = new WhileStmt(b,e) ; :}
-			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) ; :}
+			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) 	; :}
 			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
 			| BREAK SEMI    {: RESULT = new BreakStmt() ; :}
 			| CONTINUE SEMI {: RESULT = new ContinueStmt() ; :}
