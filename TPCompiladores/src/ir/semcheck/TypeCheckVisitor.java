@@ -5,6 +5,8 @@ import java.util.List;
 import ir.ASTVisitor;
 import ir.ast.*;
 import error.Error; // define class error
+import java.util.LinkedList;
+import tabladesimbolos.*;
 
 
 // type checker, concrete visitor 
@@ -77,27 +79,54 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(ReturnStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!stmt.getExpression().accept(this).isUndefined())
+            return Type.VOID;
+        else
+            addError(stmt,"Retorno invalido");
+            return Type.UNDEFINED;    
     }
 
     @Override
     public Type visit(IfStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Type expr = stmt.getCondition().accept(this);
+        Type ifBlock = stmt.getIfBlock().accept(this);
+        Type elseBlock = stmt.getElseBlock().accept(this);
+        if (expr.isBool()){
+            if (!ifBlock.isUndefined() && !elseBlock.isUndefined())
+                return Type.VOID;
+            else
+                addError(stmt,"Hay problemas en alguno de los bloques");
+                return Type.UNDEFINED;
+        }
+        else
+            addError(stmt,"La condicion no es logica");
+            return Type.UNDEFINED;
     }
 
     @Override
     public Type visit(IntLiteral lit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (lit.getType().isInt())
+            return Type.INT;
+        else
+            addError(lit,"Tipo invalido, se esperaba un entero");
+            return Type.UNDEFINED;
     }
 
     @Override
     public Type visit(VarLocation loc) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return loc.getType();
     }
 
     @Override
     public Type visit(Block bl) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Statement> ls = bl.getStatements();
+        for (Statement elem : ls) {
+           if (elem.accept(this).isUndefined()){
+               addError(bl,"El bloque contiene problemas en alguna sentencia");
+               return Type.UNDEFINED;
+           }              
+        }
+        return Type.VOID;
     }
 
     @Override
@@ -127,36 +156,58 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(MethodCall expr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Expression> ls = expr.getExpressions();
+        for (Expression elem : ls) {
+           if (elem.accept(this).isUndefined()){
+               addError(expr,"hay parametros con tipos inapropiados");
+               return Type.UNDEFINED;
+           }              
+        }
+        return expr.getType();
     }
 
     @Override
     public Type visit(BoolLiteral lit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (lit.getType().isBool())
+            return Type.BOOL;
+        else
+            addError(lit,"Tipo invalido, se esperaba un valor logico");
+            return Type.UNDEFINED;
     }
 
     @Override
     public Type visit(FloatLiteral lit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (lit.getType().isFloat())
+            return Type.FLOAT;
+        else
+            addError(lit,"Tipo invalido, se esperaba un real");
+            return Type.UNDEFINED;
     }
 
     @Override
     public Type visit(Extern expr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return expr.accept(this);
     }
 
     @Override
     public Type visit(SkipStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Type.VOID;
     }
 
     @Override
     public Type visit(ExternStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       if(!stmt.getE().accept(this).isUndefined())
+           return Type.VOID;
+       else
+           return Type.UNDEFINED; 
+           
     }
 
     @Override
     public Type visit(MethodCallStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(!stmt.getM().accept(this).isUndefined())
+           return Type.VOID;
+       else
+           return Type.UNDEFINED; 
     }
 }
