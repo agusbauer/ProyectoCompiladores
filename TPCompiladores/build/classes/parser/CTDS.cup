@@ -7,6 +7,9 @@ import java_cup.runtime.*;
 import java.lang.*;
 import java.util.*;
 import ir.ast.*;
+import error.*;
+import ir.*;
+import ir.semcheck.*;
 import tabladesimbolos.*;
 
    
@@ -15,6 +18,7 @@ import tabladesimbolos.*;
 action code{:
 	/*atributos globales*/
 	TablaDeSimbolos tds = new TablaDeSimbolos();
+    TypeCheckVisitor visitor = new TypeCheckVisitor();
 	Type tipoVar;
 :};
 parser code {:
@@ -135,7 +139,7 @@ precedence left NOT, MINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:tds.pop(); visitor.showErrors();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -154,12 +158,12 @@ precedence left NOT, MINUS;
 						if (d==null)
 								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar)) ;
 							else
-								System.out.println("ERROR: Variable redeclarada"); :} 
+								parser.report_fatal_error("Variable redeclarada",i);:}
 				| id:i LBRACKET int_literal:il RBRACKET {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
 							else
-								System.out.println("ERROR: Variable redeclarada"); :} ;
+								parser.report_fatal_error("Variable redeclarada",i);:} ;
 	
 
    method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;:}
@@ -169,22 +173,22 @@ precedence left NOT, MINUS;
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
 							else
-								System.out.println("ERROR: Variable redeclarada"); :} 
+								parser.report_fatal_error("Variable redeclarada",i); :}
 				    |VOID id:i LPAREN RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,null)) ;
-							else
-								System.out.println("ERROR: Variable redeclarada"); :} 
+							else 
+								parser.report_fatal_error("Variable redeclarada",i); :} 
 					| VOID id:i LPAREN parameters:p RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,p)) ;
 							else
-								System.out.println("ERROR: Variable redeclarada"); :}  
+								parser.report_fatal_error("Variable redeclarada",i); :}  
 					| type:t id:i LPAREN parameters:p RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
 							else
-								System.out.println("ERROR: Variable redeclarada"); :}  ;
+								parser.report_fatal_error("Variable redeclarada",i); :}  ;
 
    parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
 								l.add(new DescriptorSimple(i,t));
@@ -193,7 +197,8 @@ precedence left NOT, MINUS;
 											RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente()) ;:} block_content:b  RKEY {:tds.pop();:} {: RESULT = b;:} ;
+   block ::=  LKEY {:tds.push(new Ambiente()) ;:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
+																		  :} ;
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
 					| field_decl  {: RESULT = new Block(null);:}
@@ -215,9 +220,17 @@ precedence left NOT, MINUS;
 			| extern:e SEMI {: RESULT = new ExternStmt(e) ; :}
 			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
 			| IF LPAREN expr:e RPAREN block:b {: RESULT = new IfStmt(e,b) ; :}
-			| FOR id:i EQ expr:e COMMA expr:c block:b {: RESULT = new ForStmt(i,e,c,b) ; :}
+			| FOR id:i EQ expr:e COMMA expr:c block:b {:Descriptor d = tds.search(i);
+														if(d != null)
+															if(d.getClase().equals("descriptorSimple")){ 
+																if(d.getTipo() == Type.INT)
+																	RESULT = new ForStmt(i,e,c,b); }
+															else
+																parser.report_fatal_error("Los tipos no concuerdan",i);
+														else
+															parser.report_fatal_error("Variable no declarada",i); :}
 			| WHILE expr:e block:b {: RESULT = new WhileStmt(b,e) ; :}
-			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) ; :}
+			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) 	; :}
 			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
 			| BREAK SEMI    {: RESULT = new BreakStmt() ; :}
 			| CONTINUE SEMI {: RESULT = new ContinueStmt() ; :}
@@ -234,17 +247,17 @@ precedence left NOT, MINUS;
 											if (d.getClase().equals("descriptorFuncion"))
 												RESULT = new MethodCall(i,d.getTipo(),null) ;
 											else
-												System.out.println("ERROR: funcion no declarada");				
+												parser.report_fatal_error("Funcion no declarada",i);		
 										else
-											System.out.println("ERROR: Los tipos no concuerdan");:}
+											parser.report_fatal_error("Los tipos no concuerdan",i); :}
 				| id:i LPAREN expr_sequence:l RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
 												RESULT = new MethodCall(i,d.getTipo(),l) ;
 											else
-												System.out.println("ERROR: funcion no declarada");				
+												parser.report_fatal_error("Funcion no declarada",i);			
 										else
-											System.out.println("ERROR: Los tipos no concuerdan");:};
+											parser.report_fatal_error("Los tipos no concuerdan",i); :};
 
 	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type:t RPAREN {: RESULT = new Extern(s,t,null)  ;:}
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,null,null)  ;:}
@@ -256,17 +269,17 @@ precedence left NOT, MINUS;
 							if (d.getClase().equals("descriptorSimple"))
 								RESULT = new VarLocation(i,d);
 							else
-								System.out.println("ERROR: Variable no declarada");				
+								parser.report_fatal_error("Los tipos no concuerdan",i);				
 						else
-							System.out.println("ERROR: Los tipos no concuerdan"); :} 
+							parser.report_fatal_error("Variable no declarada",i); :} 
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorArreglo"))
 								RESULT = new VarLocation(i,d); 
 							else
-								System.out.println("ERROR: Variable no declarada");				
+								parser.report_fatal_error("Los tipos no concuerdan",i);				
 						else
-							System.out.println("ERROR: Los tipos no concuerdan"); :}  ;
+							parser.report_fatal_error("Variable no declarada",i);:}  ;
 
 	expr_sequence ::= expr:e {: LinkedList<Expression> l = new LinkedList<Expression>() ;
 								l.add(e);

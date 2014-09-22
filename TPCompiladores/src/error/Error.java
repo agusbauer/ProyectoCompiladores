@@ -9,9 +9,19 @@ package error;
  * @author luciano
  */
 public class Error {
+    
+    private int ln;
+    private int cn;
+    private String d;
 
     public Error(int lineNumber, int columnNumber, String desc) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ln=lineNumber;
+        cn=columnNumber;
+        d=desc;
+    }
+    
+    public void show(){
+        System.out.println("Line: "+ln+" Col:"+cn+" "+d);
     }
     
 }

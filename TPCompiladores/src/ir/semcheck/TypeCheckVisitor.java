@@ -12,7 +12,11 @@ import tabladesimbolos.*;
 // type checker, concrete visitor 
 public class TypeCheckVisitor implements ASTVisitor<Type> {
 	
-	private List<Error> errors;
+	private LinkedList<Error> errors;
+
+        public TypeCheckVisitor() {
+            this.errors = new LinkedList<Error>();
+        }
 
 	@Override
 	public Type visit(AssignStmt stmt) {
@@ -72,8 +76,14 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 	public List<Error> getErrors() {
 		return errors;
 	}
+        
+        public void showErrors(){
+            for (Error e : errors){
+                e.show();
+            }
+        }
 
-	public void setErrors(List<Error> errors) {
+	public void setErrors(LinkedList<Error> errors) {
 		this.errors = errors;
 	}
 
@@ -114,18 +124,19 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(VarLocation loc) {
-        return loc.getType();
+        return loc.getDesc().getTipo();
     }
 
     @Override
     public Type visit(Block bl) {
         List<Statement> ls = bl.getStatements();
-        for (Statement elem : ls) {
-           if (elem.accept(this).isUndefined()){
-               addError(bl,"El bloque contiene problemas en alguna sentencia");
-               return Type.UNDEFINED;
-           }              
-        }
+        if (ls!=null)
+            for (Statement elem : ls) {
+                if (elem.accept(this).isUndefined()){
+                    addError(bl,"El bloque contiene problemas en alguna sentencia");
+                    return Type.UNDEFINED;
+                }              
+            }
         return Type.VOID;
     }
 
@@ -190,7 +201,6 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(MethodCall expr) {
-<<<<<<< HEAD
         List<Expression> ls = expr.getExpressions();
         for (Expression elem : ls) {
            if (elem.accept(this).isUndefined()){
@@ -199,10 +209,6 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
            }              
         }
         return expr.getType();
-=======
-        
-        return Type.UNDEFINED;
->>>>>>> 524df252f76f1cae2988e94f13db0b6f859870bf
     }
 
     @Override
