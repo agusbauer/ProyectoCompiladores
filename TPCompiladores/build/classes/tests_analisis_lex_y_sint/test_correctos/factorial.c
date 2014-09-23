@@ -12,7 +12,7 @@ int factorial(int n){
 		i = i - 1;
 	}
 
-	return 2;
+	return total;
 }
 
 int main(){

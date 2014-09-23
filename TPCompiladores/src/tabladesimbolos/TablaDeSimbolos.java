@@ -21,7 +21,7 @@ public class TablaDeSimbolos {
     }
     
     public void push(Ambiente ambiente){
-        pila.add(ambiente);
+        pila.addFirst(ambiente);
         cantidad++;
     }
     

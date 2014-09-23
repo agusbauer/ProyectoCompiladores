@@ -89,11 +89,17 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(ReturnStmt stmt) {
-        if (!stmt.getExpression().accept(this).isUndefined())
-            return Type.VOID;
+        Expression e = stmt.getExpression();
+        if (e!=null){
+            if (!e.accept(this).isUndefined())
+                return Type.VOID;
+            else{
+                addError(stmt,"Retorno invalido");
+                return Type.UNDEFINED; 
+            }
+        }
         else
-            addError(stmt,"Retorno invalido");
-            return Type.UNDEFINED;    
+            return Type.VOID;    
     }
 
     @Override
@@ -202,11 +208,13 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     @Override
     public Type visit(MethodCall expr) {
         List<Expression> ls = expr.getExpressions();
-        for (Expression elem : ls) {
-           if (elem.accept(this).isUndefined()){
-               addError(expr,"hay parametros con tipos inapropiados");
-               return Type.UNDEFINED;
-           }              
+        if (ls!=null){
+            for (Expression elem : ls) {
+            if (elem.accept(this).isUndefined()){
+                   addError(expr,"hay parametros con tipos inapropiados");
+                return Type.UNDEFINED;
+            }              
+            }
         }
         return expr.getType();
     }
@@ -241,18 +249,12 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(ExternStmt stmt) {
-       if(!stmt.getE().accept(this).isUndefined())
            return Type.VOID;
-       else
-           return Type.UNDEFINED; 
            
     }
 
     @Override
     public Type visit(MethodCallStmt stmt) {
-        if(!stmt.getM().accept(this).isUndefined())
            return Type.VOID;
-       else
-           return Type.UNDEFINED; 
     }
 }

@@ -135,13 +135,13 @@ precedence left NOT, MINUS;
 				| id_sequence COMMA location_decl:l {: tds.top().put(l.getId(),l.getDesc()) ;:};
 
 
-   location_decl ::= id:i {:  Descriptor d = tds.search(i);
-						if (d==null)
+   location_decl ::= id:i {: 
+						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar)) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
-				| id:i LBRACKET int_literal:il RBRACKET {:  Descriptor d = tds.search(i);
-						if (d==null)
+				| id:i LBRACKET int_literal:il RBRACKET {: 
+						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
@@ -150,27 +150,27 @@ precedence left NOT, MINUS;
    method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;:}
 					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;:};
 
-   method	 ::= type:t id:i LPAREN RPAREN block:b {:  Descriptor d = tds.search(i);
-						if (d==null)
+   method	 ::= type:t id:i LPAREN RPAREN block:b {:  
+						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
 							else
-								parser.report_fatal_error("Variable redeclarada",ileft,iright); :}
-				    |VOID id:i LPAREN RPAREN block:b {:  Descriptor d = tds.search(i);
-						if (d==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,null)) ;
+								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
+				    |VOID id:i LPAREN RPAREN block:b {:  
+						if (tds.top().get(i)==null)
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null)) ;
 							else 
-								parser.report_fatal_error("Variable redeclarada",ileft,iright); :} 
-					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  Descriptor d = tds.search(i);
-						if (d==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,p)) ;
+								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
+					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  
+						if (tds.top().get(i)==null)
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p)) ;
 							else
-								parser.report_fatal_error("Variable redeclarada",ileft,iright);
+								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
-					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  Descriptor d = tds.search(i);
-						if (d==null)
+					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  
+						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
 							else
-								parser.report_fatal_error("Variable redeclarada",ileft,iright);
+								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  ;
 
    parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
@@ -180,7 +180,7 @@ precedence left NOT, MINUS;
 											RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente()) ; parser.putParameters();:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
+   block ::=  LKEY {:tds.push(new Ambiente()) ; putParameters();:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
 																		  :} ;
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
