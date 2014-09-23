@@ -106,17 +106,31 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     public Type visit(IfStmt stmt) {
         Type expr = stmt.getCondition().accept(this);
         Type ifBlock = stmt.getIfBlock().accept(this);
-        Type elseBlock = stmt.getElseBlock().accept(this);
-        if (expr.isBool()){
-            if (!ifBlock.isUndefined() && !elseBlock.isUndefined())
-                return Type.VOID;
-            else
-                addError(stmt,"Hay problemas en alguno de los bloques");
+        if (stmt.getElseBlock()!=null){
+           Type elseBlock = stmt.getElseBlock().accept(this);
+            if (expr.isBool()){
+                if (!ifBlock.isUndefined() && !elseBlock.isUndefined())
+                    return Type.VOID;
+                else
+                    addError(stmt,"Hay problemas en alguno de los bloques");
                 return Type.UNDEFINED;
+            }
+            else
+                addError(stmt,"La condicion no es logica");
+            return Type.UNDEFINED; 
         }
-        else
-            addError(stmt,"La condicion no es logica");
-            return Type.UNDEFINED;
+        else{
+            if (expr.isBool()){
+                if (!ifBlock.isUndefined())
+                    return Type.VOID;
+                else
+                    addError(stmt,"Hay problemas en alguno de los bloques");
+                return Type.UNDEFINED;
+            }
+            else
+                addError(stmt,"La condicion no es logica");
+            return Type.UNDEFINED; 
+        }
     }
 
     @Override
