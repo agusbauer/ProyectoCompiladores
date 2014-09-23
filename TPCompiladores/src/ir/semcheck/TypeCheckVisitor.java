@@ -231,7 +231,7 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(Extern expr) {
-        return expr.accept(this);
+        return expr.getType();
     }
 
     @Override

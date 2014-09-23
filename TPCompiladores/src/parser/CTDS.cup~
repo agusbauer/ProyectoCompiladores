@@ -20,6 +20,15 @@ action code{:
 	TablaDeSimbolos tds = new TablaDeSimbolos();
     TypeCheckVisitor visitor = new TypeCheckVisitor();
 	Type tipoVar;
+	LinkedList<DescriptorSimple> params;
+
+		private void putParameters(){
+		if (params!=null){
+			for (DescriptorSimple d : params){
+				tds.top().put(d.getNombre(),d);
+			}
+		}
+	}
 :};
 parser code {:
     
@@ -28,52 +37,24 @@ parser code {:
        column of where the error occurred in the input as well as the
        reason for the error which is passed into the method in the
        String 'message'. */
-    public void report_error(String message, Object info) {
+    public void report_error(String message, int line, int col) {
    
-        /* Create a StringBuilder called 'm' with the string 'Error' in it. */
         StringBuilder m = new StringBuilder("Error");
-   
-        /* Check if the information passed to the method is the same
-           type as the type java_cup.runtime.Symbol. */
-        if (info instanceof java_cup.runtime.Symbol) {
-            /* Declare a java_cup.runtime.Symbol object 's' with the
-               information in the object info that is being typecasted
-               as a java_cup.runtime.Symbol object. */
-            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
-   
-            /* Check if the line number in the input is greater or
-               equal to zero. */
-            if (s.left >= 0) {                
-                /* Add to the end of the StringBuilder error message
-                   the line number of the error in the input. */
-                m.append(" in line "+(s.left+1));   
-                /* Check if the column number in the input is greater
-                   or equal to zero. */
-                if (s.right >= 0)                    
-                    /* Add to the end of the StringBuilder error message
-                       the column number of the error in the input. */
-                    m.append(", column "+(s.right+1));
+        if (line >= 0) {                
+        	m.append(" in line "+(line+1));   
+            if (col >= 0)
+            	m.append(", column "+(col+1));
             }
-        }
-   
-        /* Add to the end of the StringBuilder error message created in
-           this method the message that was passed into this method. */
         m.append(" : "+message);
-   
-        /* Print the contents of the StringBuilder 'm', which contains
-           an error message, out on a line. */
         System.err.println(m);
     }
    
-    /* Change the method report_fatal_error so when it reports a fatal
-       error it will display the line and column number of where the
-       fatal error occurred in the input as well as the reason for the
-       fatal error which is passed into the method in the object
-       'message' and then exit.*/
-    public void report_fatal_error(String message, Object info) {
-        report_error(message, info);
+    public void report_fatal_error(String message, int line, int col) {
+        report_error(message, line, col);
         System.exit(1);
     }
+
+
 :};
    
 
@@ -158,12 +139,12 @@ precedence left NOT, MINUS;
 						if (d==null)
 								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar)) ;
 							else
-								report_fatal_error("Variable redeclarada",i);:}
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
 				| id:i LBRACKET int_literal:il RBRACKET {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
 							else
-								report_fatal_error("Variable redeclarada",i);:} ;
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
 
    method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;:}
@@ -173,22 +154,24 @@ precedence left NOT, MINUS;
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
 							else
-								report_fatal_error("Variable redeclarada",i); :}
+								parser.report_fatal_error("Variable redeclarada",ileft,iright); :}
 				    |VOID id:i LPAREN RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,null)) ;
 							else 
-								report_fatal_error("Variable redeclarada",i); :} 
-					| VOID id:i LPAREN parameters:p RPAREN block:b {:  Descriptor d = tds.search(i);
+								parser.report_fatal_error("Variable redeclarada",ileft,iright); :} 
+					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,null,p)) ;
 							else
-								report_fatal_error("Variable redeclarada",i); :}  
-					| type:t id:i LPAREN parameters:p RPAREN block:b {:  Descriptor d = tds.search(i);
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);
+						params = null; :}  
+					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  Descriptor d = tds.search(i);
 						if (d==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
 							else
-								report_fatal_error("Variable redeclarada",i); :}  ;
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);
+						params = null; :}  ;
 
    parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
 								l.add(new DescriptorSimple(i,t));
@@ -197,7 +180,7 @@ precedence left NOT, MINUS;
 											RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente()) ;:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
+   block ::=  LKEY {:tds.push(new Ambiente()) ; parser.putParameters();:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
 																		  :} ;
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
@@ -226,9 +209,9 @@ precedence left NOT, MINUS;
 																if(d.getTipo() == Type.INT)
 																	RESULT = new ForStmt(i,e,c,b); }
 															else
-																report_fatal_error("Los tipos no concuerdan",i);
+																parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);
 														else
-															report_fatal_error("Variable no declarada",i); :}
+															parser.report_fatal_error("Variable no declarada",ileft,iright); :}
 			| WHILE expr:e block:b {: RESULT = new WhileStmt(b,e) ; :}
 			| RETURN expr:e SEMI {: RESULT = new ReturnStmt(e) 	; :}
 			| RETURN SEMI	{: RESULT = new ReturnStmt(); :}
@@ -247,17 +230,17 @@ precedence left NOT, MINUS;
 											if (d.getClase().equals("descriptorFuncion"))
 												RESULT = new MethodCall(i,d.getTipo(),null) ;
 											else
-												report_fatal_error("Funcion no declarada",i);		
+												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
 										else
-											report_fatal_error("Los tipos no concuerdan",i); :}
+											parser.report_fatal_error("Los tipos no concuerdan",ileft,iright); :}
 				| id:i LPAREN expr_sequence:l RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
 												RESULT = new MethodCall(i,d.getTipo(),l) ;
 											else
-												report_fatal_error("Funcion no declarada",i);			
+												parser.report_fatal_error("Funcion no declarada",ileft,iright);			
 										else
-											report_fatal_error("Los tipos no concuerdan",i); :};
+											parser.report_fatal_error("Los tipos no concuerdan",ileft,iright); :};
 
 	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type:t RPAREN {: RESULT = new Extern(s,t,null)  ;:}
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,null,null)  ;:}
@@ -269,17 +252,17 @@ precedence left NOT, MINUS;
 							if (d.getClase().equals("descriptorSimple"))
 								RESULT = new VarLocation(i,d);
 							else
-								report_fatal_error("Los tipos no concuerdan",i);				
+								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
 						else
-							report_fatal_error("Variable no declarada",i); :} 
+							parser.report_fatal_error("Variable no declarada",ileft,iright); :} 
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorArreglo"))
 								RESULT = new VarLocation(i,d); 
 							else
-								report_fatal_error("Los tipos no concuerdan",i);				
+								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
 						else
-							report_fatal_error("Variable no declarada",i);:}  ;
+							parser.report_fatal_error("Variable no declarada",ileft,iright);:}  ;
 
 	expr_sequence ::= expr:e {: LinkedList<Expression> l = new LinkedList<Expression>() ;
 								l.add(e);
