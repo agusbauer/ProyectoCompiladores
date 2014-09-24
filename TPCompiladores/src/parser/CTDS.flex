@@ -47,7 +47,11 @@ Id = [A-Za-z_][A-Za-z_0-9]*
 
 /*literales*/
 IntLit = 0 | [1-9][0-9]*
-FloatLit = {IntLit} ("."{IntLit}*)?
+FloatLit = ({FLit1}|{FLit2}|{FLit3})
+
+FLit1    = [0-9]+ \. [0-9]* 
+FLit2    = \. [0-9]+ 
+FLit3    = [0-9]+ 
 
 /* comentarios */
 Comment = {TraditionalComment} | {EndOfLineComment}
@@ -84,8 +88,8 @@ OctDigit          = [0-7]
 "*"             {return symbol(sym.TIMES);}
 "/"             {return symbol(sym.DIVIDE);}
 "%"				{return symbol(sym.MOD);}
-"|"				{return symbol(sym.OR);}
-"&"				{return symbol(sym.AND);}
+"||"				{return symbol(sym.OR);}
+"&&"				{return symbol(sym.AND);}
 "!"				{return symbol(sym.NOT);}
 "="				{return symbol(sym.EQ);}
 "!="			{return symbol(sym.NOTEQ);}

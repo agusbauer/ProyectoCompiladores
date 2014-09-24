@@ -6,7 +6,7 @@ import java_cup.runtime.*;
 %%
 
 /* -----------------Options and Declarations Section----------------- */
-%class CTDSLexer
+public class CTDSLexer
 
 %line
 %column
@@ -47,7 +47,11 @@ Id = [A-Za-z_][A-Za-z_0-9]*
 
 /*literales*/
 IntLit = 0 | [1-9][0-9]*
-FloatLit = {IntLit} ("."{IntLit}*)?
+FloatLit = ({FLit1}|{FLit2}|{FLit3})
+
+FLit1    = [0-9]+ \. [0-9]* 
+FLit2    = \. [0-9]+ 
+FLit3    = [0-9]+ 
 
 /* comentarios */
 Comment = {TraditionalComment} | {EndOfLineComment}
@@ -74,7 +78,7 @@ OctDigit          = [0-7]
 {Comment}		{/*skip*/}
 
 //literales
-"-2147483648"           { return symbol(INT_LITERAL, new Integer(Integer.MIN_VALUE)); }
+"-2147483648"           { return symbol(sym.INT_LITERAL, new Integer(Integer.MIN_VALUE)); }
 {IntLit}		  		{return symbol(sym.INT_LITERAL, new Integer(yytext()));}
 {FloatLit}		  		{return symbol(sym.FLOAT_LITERAL, new Float(yytext().substring(0,yylength()-1)));}
 
@@ -84,8 +88,8 @@ OctDigit          = [0-7]
 "*"             {return symbol(sym.TIMES);}
 "/"             {return symbol(sym.DIVIDE);}
 "%"				{return symbol(sym.MOD);}
-"|"				{return symbol(sym.OR);}
-"&"				{return symbol(sym.AND);}
+"||"				{return symbol(sym.OR);}
+"&&"				{return symbol(sym.AND);}
 "!"				{return symbol(sym.NOT);}
 "="				{return symbol(sym.EQ);}
 "!="			{return symbol(sym.NOTEQ);}

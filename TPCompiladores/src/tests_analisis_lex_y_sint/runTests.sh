@@ -33,17 +33,6 @@ for file in $files ; do
         echo "  "
 done
 
-echo "///////////////////////// TESTS CON FALLAS ////////////////////////////////////////" 
-
-files=`ls test_errores/*.ctds`
-
-for file in $files ; do 
-	echo "---------------- Test $file ... -------------------" 
-        java -jar $comp $file  
-	echo "---------------------------------------------------" 
-        echo "  "
-        echo "  "
-done
 
 exit 0
 

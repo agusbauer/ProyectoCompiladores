@@ -70,6 +70,7 @@ terminal	String  STRING_LITERAL;
 terminal	Character CHAR_LITERAL;
 /*OPERADORES*/
 terminal    PLUS, MINUS, TIMES, DIVIDE, MOD, AND, OR, NOT, EQ, NOTEQ, GT, LT, EQEQ, LTEQ, GTEQ, PLUSEQ, MINUSEQ;
+terminal UMINUS;
 /*SEPARADORES*/
 terminal	SEMI,COMMA, LPAREN, RPAREN, LKEY, RKEY, LBRACKET, RBRACKET;	
 /*PALABRAS RESERVADAS*/
@@ -112,10 +113,10 @@ non terminal 	String string_literal;
 
 precedence left OR;
 precedence left AND;
-precedence left LT, GT, LTEQ, GTEQ, NOTEQ, EQEQ;
+precedence nonassoc LT, GT, LTEQ, GTEQ, NOTEQ, EQEQ;
 precedence left PLUS, MINUS;   
 precedence left TIMES, DIVIDE, MOD;
-precedence left NOT, MINUS;
+precedence right UMINUS;
 
 /* ----------------------------Grammar Section-------------------- */
    
@@ -150,23 +151,24 @@ precedence left NOT, MINUS;
    method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;:}
 					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;:};
 
-   method	 ::= type:t id:i LPAREN RPAREN block:b {:  
+   method	 ::= type:t id:i LPAREN RPAREN block:b {:
+					    visitor.visit(b);  
 						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
-				    |VOID id:i LPAREN RPAREN block:b {:  
+				    |VOID id:i LPAREN RPAREN block:b {: visitor.visit(b);   
 						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null)) ;
 							else 
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
-					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  
+					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  visitor.visit(b); 
 						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p)) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
-					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  
+					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  visitor.visit(b); 
 						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
 							else
@@ -180,8 +182,9 @@ precedence left NOT, MINUS;
 											RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente()) ; putParameters();:} block_content:b  {:if (!visitor.visit(b).isUndefined()) RESULT = b;:}RKEY {:tds.pop();
-																		  :} ;
+   block ::=  LKEY {:tds.push(new Ambiente()) ; putParameters();:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
+	tds.pop();:};
+																		 
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
 					| field_decl  {: RESULT = new Block(null);:}
@@ -274,8 +277,21 @@ precedence left NOT, MINUS;
 		 | method_call:mc {: RESULT = mc ; :}
 		 | extern:e {: RESULT = e  ;:}
 		 | literal:l {: RESULT =l ; :} 
-		 | expr:e bin_op:op expr:e2 {: RESULT = new BinOpExpr(e,op,e2) ; :}
-		 | unary_op:op expr:e {: RESULT = new UnaryOpExpr(op,e) ; :}
+		 | expr:e PLUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.PLUS,e2) ; :}
+		 | expr:e MINUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MINUS,e2) ; :}
+		 | expr:e TIMES expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.TIMES,e2) ; :}
+		 | expr:e MOD expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MOD,e2) ; :}
+		 | expr:e DIVIDE expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.DIVIDE,e2) ; :}
+		 | expr:e LT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LT,e2) ; :}
+		 | expr:e GT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GT,e2) ; :}
+		 | expr:e LTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LTEQ,e2) ; :}
+		 | expr:e GTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GTEQ,e2) ; :}
+		 | expr:e EQEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.EQEQ,e2) ; :}
+		 | expr:e NOTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.NOTEQ,e2) ; :}
+		 | expr:e AND expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.AND,e2) ; :}
+		 | expr:e OR expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.OR,e2) ; :}
+		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e) ; :}
+		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e) ; :}
 		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
 
 	externinvk_arg_sequence ::= externinvk_arg:e {: LinkedList<Object> l = new LinkedList<Object>() ;
@@ -287,8 +303,8 @@ precedence left NOT, MINUS;
 	externinvk_arg ::= expr:e {: RESULT = e  ;:} 
 					| string_literal:s {: RESULT = s  ;:};
 	
-	unary_op ::= NOT {: RESULT = UnaryOpType.NOT  ;:}
-				| MINUS {: RESULT = UnaryOpType.MINUS  ;:};
+	unary_op ::= NOT {: RESULT = UnaryOpType.NOT  ;:} %prec UMINUS
+				| MINUS {: RESULT = UnaryOpType.MINUS  ;:} %prec UMINUS ;
 	bin_op ::= arith_op:ao {: RESULT = ao  ;:}
 				| rel_op:ro {: RESULT = ro ;:}
 				| eq_op:eo {: RESULT = eo  ;:} 

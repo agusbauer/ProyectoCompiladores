@@ -104,6 +104,12 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(IfStmt stmt) {
+        if (stmt==null){
+            System.out.println("stmt es null");
+        }
+         if (stmt.getIfBlock()==null){
+            System.out.println("block es null");
+        }
         Type expr = stmt.getCondition().accept(this);
         Type ifBlock = stmt.getIfBlock().accept(this);
         if (stmt.getElseBlock()!=null){
