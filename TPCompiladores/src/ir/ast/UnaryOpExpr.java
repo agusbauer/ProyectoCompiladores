@@ -14,7 +14,9 @@ public class UnaryOpExpr extends Expression {
     private UnaryOpType operator; //operator in the expr = operator expr
     private Expression operand; // expression
 
-    public UnaryOpExpr(UnaryOpType operator, Expression operand) {
+    public UnaryOpExpr(UnaryOpType operator, Expression operand,int line, int col) {
+        this.setLineNumber(line);
+        this.setColumnNumber(col);
         this.operator = operator;
         this.operand = operand;
     }

@@ -9,12 +9,16 @@ public class IntLiteral extends Literal {
 	 * Constructor for int literal that takes a string as an input
 	 * @param: String integer
 	 */
-	public IntLiteral(Integer val){
+	public IntLiteral(Integer val,int line, int col){
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		value = val; // Will convert to int value in semantic check
                 type = Type.INT;
 	}
         
-        public IntLiteral(Number val){
+        public IntLiteral(Number val,int line, int col){
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		value = val.intValue(); // Will convert to int value in semantic check
                 type = Type.INT;
 	}

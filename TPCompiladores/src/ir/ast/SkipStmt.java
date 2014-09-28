@@ -11,6 +11,7 @@ import ir.ASTVisitor;
  * @author luciano
  */
 public class SkipStmt extends Statement {
+    
 
     @Override
     public <T> T accept(ASTVisitor<T> v) {

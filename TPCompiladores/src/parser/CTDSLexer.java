@@ -768,7 +768,7 @@ public class CTDSLexer implements java_cup.runtime.Scanner {
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 1: 
           { throw new RuntimeException("Illegal character \""+yytext()+
-                                                              "\" at line "+yyline+", column "+yycolumn);
+                                                              "\" at line "+yyline+1+", column "+yycolumn+1);
           }
         case 73: break;
         case 2: 

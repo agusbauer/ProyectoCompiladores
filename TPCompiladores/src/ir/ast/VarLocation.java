@@ -7,13 +7,17 @@ public class VarLocation extends Location {
 	private Block block;
         private Descriptor desc;
 
-	public VarLocation(String id, Descriptor d) {
+	public VarLocation(String id, Descriptor d,int line, int col) {
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		this.id = id;
                 this.desc = d;
 	}
         
-        public VarLocation(String id, Block b, Descriptor d) {
-		this.id = id;
+        public VarLocation(String id, Block b, Descriptor d,int line, int col) {
+		this.setLineNumber(line);
+                this.setColumnNumber(col);
+                this.id = id;
 		this.block = b;
                 this.desc = d;
 	}

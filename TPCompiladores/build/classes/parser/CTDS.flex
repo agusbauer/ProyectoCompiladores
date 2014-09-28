@@ -6,6 +6,7 @@ import java_cup.runtime.*;
 %%
 
 /* -----------------Options and Declarations Section----------------- */
+%public
 %class CTDSLexer
 
 %line
@@ -184,6 +185,6 @@ OctDigit          = [0-7]
 
 /* error fallback */
 [^]                              { throw new RuntimeException("Illegal character \""+yytext()+
-                                                              "\" at line "+yyline+", column "+yycolumn); }
+                                                              "\" at line "+yyline+1+", column "+yycolumn+1); }
 
 <<EOF>>                          { return symbol(sym.EOF); }

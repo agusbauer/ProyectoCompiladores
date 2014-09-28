@@ -13,7 +13,9 @@ import ir.ASTVisitor;
 public class BoolLiteral extends Literal {
     boolean value;
     
-    public BoolLiteral(Boolean val){
+    public BoolLiteral(Boolean val,int line, int col){
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		value = val; 
                 type = Type.BOOL;
 	}

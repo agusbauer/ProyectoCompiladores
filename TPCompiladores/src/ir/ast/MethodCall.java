@@ -15,7 +15,9 @@ public class MethodCall extends Expression {
     private String id;
     private List<Expression> expressions; 
 
-    public MethodCall(String id,Type type, List<Expression> expressions) {
+    public MethodCall(String id,Type type, List<Expression> expressions,int line, int col) {
+        this.setLineNumber(line);
+        this.setColumnNumber(col);
         this.id = id;
         this.expressions = expressions;
         this.type = type;

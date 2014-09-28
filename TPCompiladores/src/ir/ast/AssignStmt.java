@@ -7,7 +7,9 @@ public class AssignStmt extends Statement {
 	private Expression expr;
 	private AssignOpType operator;
 
-	public AssignStmt(Location loc, AssignOpType op, Expression e) {
+	public AssignStmt(Location loc, AssignOpType op, Expression e,int line, int col) {
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		this.location = loc;
 		this.expr = e;
 		this.operator = op;

@@ -94,7 +94,7 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
             if (!e.accept(this).isUndefined())
                 return Type.VOID;
             else{
-                addError(stmt,"Retorno invalido");
+                addError(e,"Retorno invalido");
                 return Type.UNDEFINED; 
             }
         }
@@ -117,24 +117,21 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
             if (expr.isBool()){
                 if (!ifBlock.isUndefined() && !elseBlock.isUndefined())
                     return Type.VOID;
-                else
-                    addError(stmt,"Hay problemas en alguno de los bloques");
                 return Type.UNDEFINED;
             }
             else
-                addError(stmt,"La condicion no es logica");
+                addError(stmt.getCondition(),"La condicion no es logica");
             return Type.UNDEFINED; 
         }
         else{
             if (expr.isBool()){
                 if (!ifBlock.isUndefined())
                     return Type.VOID;
-                else
-                    addError(stmt,"Hay problemas en alguno de los bloques");
+
                 return Type.UNDEFINED;
             }
             else
-                addError(stmt,"La condicion no es logica");
+                addError(stmt.getCondition(),"La condicion no es logica");
             return Type.UNDEFINED; 
         }
     }
@@ -159,7 +156,6 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
         if (ls!=null)
             for (Statement elem : ls) {
                 if (elem.accept(this).isUndefined()){
-                    addError(bl,"El bloque contiene problemas en alguna sentencia");
                     return Type.UNDEFINED;
                 }              
             }
@@ -176,10 +172,9 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
                 if (!block.isUndefined())
                     return Type.VOID;
                 else{
-                    addError(stmt, "Problemas en el bloque");
                     return Type.UNDEFINED;}
             else{
-                 addError(stmt, "La condicion no es de tipo logico");
+                 addError(stmt.getCondition(), "La condicion no es de tipo logico");
                  return Type.UNDEFINED;}
         else{
              addError(stmt, "A la variable de control le asignas un valor que no es entero");
@@ -194,10 +189,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
              if(expr.isBool())
                  return Type.VOID;
              else{
-                 addError(stmt, "La condicion no es de tipo logico");
+                 addError(stmt.getExpr(), "La condicion no es de tipo logico");
                  return Type.UNDEFINED;}
          else
-            {addError(stmt, "Problemas en el bloque");
+            {
              return Type.UNDEFINED;}
        
     }

@@ -18,9 +18,9 @@ import tabladesimbolos.*;
 action code{:
 	/*atributos globales*/
 	TablaDeSimbolos tds = new TablaDeSimbolos();
-    TypeCheckVisitor visitor = new TypeCheckVisitor();
 	Type tipoVar;
 	LinkedList<DescriptorSimple> params;
+	
 
 		private void putParameters(){
 		if (params!=null){
@@ -28,11 +28,13 @@ action code{:
 				tds.top().put(d.getNombre(),d);
 			}
 		}
-	}
+		}
+
+		
 :};
 parser code {:
     
-	
+	LinkedList<Block> asts = new LinkedList<Block>();
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
        reason for the error which is passed into the method in the
@@ -54,6 +56,10 @@ parser code {:
         System.exit(1);
     }
 
+	
+	public LinkedList<Block> getASTs(){
+		return asts;
+	}
 
 :};
    
@@ -121,7 +127,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:tds.pop(); visitor.showErrors();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -138,12 +144,12 @@ precedence right UMINUS;
 
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar)) ;
+								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
+								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
@@ -152,25 +158,25 @@ precedence right UMINUS;
 					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;:};
 
    method	 ::= type:t id:i LPAREN RPAREN block:b {:
-					    visitor.visit(b);  
+					    parser.asts.add(b);  
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
-				    |VOID id:i LPAREN RPAREN block:b {: visitor.visit(b);   
+				    |VOID id:i LPAREN RPAREN block:b {: parser.asts.add(b);   
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null),ileft,iright) ;
 							else 
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
-					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  visitor.visit(b); 
+					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
-					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  visitor.visit(b); 
+					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  ;
@@ -201,7 +207,7 @@ precedence right UMINUS;
 						| statement_decl:sd statement:s {:  sd.add(s);
 															RESULT = sd ; :};
 
-   statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e) ; :}
+   statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e,locleft,locright) ; :}
 			| method_call:m SEMI {: RESULT = new MethodCallStmt(m) ; :}
 			| extern:e SEMI {: RESULT = new ExternStmt(e) ; :}
 			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
@@ -231,7 +237,7 @@ precedence right UMINUS;
 	method_call ::= id:i LPAREN RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),null) ;
+												RESULT = new MethodCall(i,d.getTipo(),null,ileft,iright) ;
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
 										else
@@ -239,21 +245,21 @@ precedence right UMINUS;
 				| id:i LPAREN expr_sequence:l RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),l) ;
+												RESULT = new MethodCall(i,d.getTipo(),l,ileft,iright) ;
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);			
 										else
 											parser.report_fatal_error("Los tipos no concuerdan",ileft,iright); :};
 
-	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type:t RPAREN {: RESULT = new Extern(s,t,null)  ;:}
-				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,Type.VOID,null)  ;:}
-				| EXTERNINVK LPAREN string_literal:s COMMA type:t COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,t,l)  ;:}
-				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,Type.VOID,l)  ;:};
+	extern ::=  EXTERNINVK LPAREN string_literal:s COMMA type:t RPAREN {: RESULT = new Extern(s,t,null,sleft,sright)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA VOID RPAREN {: RESULT = new Extern(s,Type.VOID,null,sleft,sright)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA type:t COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,t,l,sleft,sright)  ;:}
+				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,Type.VOID,l,sleft,sright)  ;:};
 
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorSimple"))
-								RESULT = new VarLocation(i,d);
+								RESULT = new VarLocation(i,d,ileft,iright);
 							else
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
 						else
@@ -261,7 +267,7 @@ precedence right UMINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null)
 							if (d.getClase().equals("descriptorArreglo"))
-								RESULT = new VarLocation(i,d); 
+								RESULT = new VarLocation(i,d,ileft,iright); 
 							else
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
 						else
@@ -277,21 +283,21 @@ precedence right UMINUS;
 		 | method_call:mc {: RESULT = mc ; :}
 		 | extern:e {: RESULT = e  ;:}
 		 | literal:l {: RESULT =l ; :} 
-		 | expr:e PLUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.PLUS,e2) ; :}
-		 | expr:e MINUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MINUS,e2) ; :}
-		 | expr:e TIMES expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.TIMES,e2) ; :}
-		 | expr:e MOD expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MOD,e2) ; :}
-		 | expr:e DIVIDE expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.DIVIDE,e2) ; :}
-		 | expr:e LT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LT,e2) ; :}
-		 | expr:e GT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GT,e2) ; :}
-		 | expr:e LTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LTEQ,e2) ; :}
-		 | expr:e GTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GTEQ,e2) ; :}
-		 | expr:e EQEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.EQEQ,e2) ; :}
-		 | expr:e NOTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.NOTEQ,e2) ; :}
-		 | expr:e AND expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.AND,e2) ; :}
-		 | expr:e OR expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.OR,e2) ; :}
-		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e) ; :}
-		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e) ; :}
+		 | expr:e PLUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.PLUS,e2,eleft,eright) ; :}
+		 | expr:e MINUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MINUS,e2,eleft,eright) ; :}
+		 | expr:e TIMES expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.TIMES,e2,eleft,eright) ; :}
+		 | expr:e MOD expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MOD,e2,eleft,eright) ; :}
+		 | expr:e DIVIDE expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.DIVIDE,e2,eleft,eright) ; :}
+		 | expr:e LT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LT,e2,eleft,eright) ; :}
+		 | expr:e GT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GT,e2,eleft,eright) ; :}
+		 | expr:e LTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LTEQ,e2,eleft,eright) ; :}
+		 | expr:e GTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GTEQ,e2,eleft,eright) ; :}
+		 | expr:e EQEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.EQEQ,e2,eleft,eright) ; :}
+		 | expr:e NOTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.NOTEQ,e2,eleft,eright) ; :}
+		 | expr:e AND expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.AND,e2,eleft,eright) ; :}
+		 | expr:e OR expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.OR,e2,eleft,eright) ; :}
+		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e,eleft,eright) ; :}
+		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e,eleft,eright) ; :}
 		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
 
 	externinvk_arg_sequence ::= externinvk_arg:e {: LinkedList<Object> l = new LinkedList<Object>() ;
@@ -324,8 +330,8 @@ precedence right UMINUS;
 				| OR {: RESULT = BinOpType.OR  ;:};
 	literal ::= int_literal:il {: RESULT = il ; :} | float_literal:fl {: RESULT = fl ; :} | bool_literal:bl {: RESULT = bl ; :};
 	id ::= IDENTIFIER:i {: RESULT = i ;:};
-	int_literal ::= INT_LITERAL:n {: RESULT = new IntLiteral(n) ;:};
-	bool_literal ::= TRUE:t {: RESULT = new BoolLiteral(t) ;:} 
-					| FALSE:f {: RESULT = new BoolLiteral(f) ;:} ;
-	float_literal ::= FLOAT_LITERAL:f {: RESULT = new FloatLiteral(f);:} ;
+	int_literal ::= INT_LITERAL:n {: RESULT = new IntLiteral(n,nleft,nright) ;:};
+	bool_literal ::= TRUE:t {: RESULT = new BoolLiteral(t,tleft,tright) ;:} 
+					| FALSE:f {: RESULT = new BoolLiteral(f,fleft,fright) ;:} ;
+	float_literal ::= FLOAT_LITERAL:f {: RESULT = new FloatLiteral(f,fleft,fright);:} ;
 	string_literal ::= STRING_LITERAL:s {: RESULT = s ;:};

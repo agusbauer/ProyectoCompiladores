@@ -14,12 +14,16 @@ public class FloatLiteral extends Literal {
 
     private Float value;
 
-    public FloatLiteral(Float value) {
+    public FloatLiteral(Float value,int line, int col) {
+        this.setLineNumber(line);
+        this.setColumnNumber(col);
         this.value = value;
         type = Type.FLOAT;
     }
     
-     public FloatLiteral(Number value) {
+     public FloatLiteral(Number value,int line, int col) {
+        this.setLineNumber(line);
+        this.setColumnNumber(col);
         this.value = value.floatValue();
         type = Type.FLOAT;
     }
