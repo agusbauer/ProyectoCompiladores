@@ -6,10 +6,12 @@ package tpcompiladores;
 
 import ir.*;
 import ir.ast.*;
+import ir.gencodint.TACGenerator;
 import ir.semcheck.TypeCheckVisitor;
 import java.io.FileReader;
 
 import java.io.*;
+import java.util.LinkedList;
 import parser.*;
 
 
@@ -29,6 +31,20 @@ public class TPCompiladores {
        }
        visitor.showErrors();
     }
+    
+    private static void genCodInt(parser p, String nombre) throws IOException{
+       TACGenerator visitor = new TACGenerator(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+       LinkedList<String> code = visitor.getCode();
+       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".tac")));
+       for (String comm : code){
+           out.write(comm);
+           out.write("\n");
+       }
+       out.close();
+    }
     /**
      * @param args the command line arguments
      */
@@ -42,6 +58,7 @@ public class TPCompiladores {
         parser p = new parser(lex);
         p.parse();
         semCheck(p);
+        genCodInt(p,args[0]);
         
         }
         catch (RuntimeException e) {

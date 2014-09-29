@@ -18,7 +18,7 @@ echo "**************************************************************************
 echo "     " 
 echo "     " 
 
-comp="TPCompiladores.jar"
+comp="/home/luciano/Escritorio/Compiladores/ProyectoCompiladores/TPCompiladores/dist/TPCompiladores.jar"
 
 
 echo "///////////////////////// TESTS CORRECTOS ////////////////////////////////////////" 

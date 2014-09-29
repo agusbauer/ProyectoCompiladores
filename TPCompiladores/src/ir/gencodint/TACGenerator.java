@@ -48,7 +48,7 @@ public class TACGenerator implements ASTVisitor<String> {
     
     @Override
     public String visit(AssignStmt stmt) {
-        code.add("STR"+" "+stmt.getLocation().accept(this) +" "+stmt.getExpression().accept(this) + commId++);
+        code.add("STR"+" "+stmt.getLocation().accept(this) +" "+stmt.getExpression().accept(this) +" "+ "r"+(++commId));
         return "r"+commId;
     }
 
@@ -62,17 +62,17 @@ public class TACGenerator implements ASTVisitor<String> {
     public String visit(IfStmt stmt) {
         BinOpExpr e = (BinOpExpr) stmt.getCondition();
         stmt.getCondition().accept(this); // cmp
-        String resto ="L"+labelId++;
+        String resto ="L"+(++labelId);
         int labelElse = labelId;
         switch (e.getOperator()){ // salto condicional
-            case NOTEQ : code.add("JNE"+resto);
-            case EQEQ : code.add("JE"+resto);
-            case GTEQ : code.add("JGE"+resto);
-            case LTEQ : code.add("JLE"+resto);
-            case GT : code.add("JG"+resto);
-            case LT : code.add("JL"+resto);
-            case AND : code.add("JAND"+resto);
-            case OR : code.add("JOR"+resto);
+            case NOTEQ : code.add("JNE"+resto); break;
+            case EQEQ : code.add("JE"+resto); break;
+            case GTEQ : code.add("JGE"+resto); break;
+            case LTEQ : code.add("JLE"+resto); break;
+            case GT : code.add("JG"+resto);break;
+            case LT : code.add("JL"+resto);break;
+            case AND : code.add("JAND"+resto);break;
+            case OR : code.add("JOR"+resto);break;
         }
         stmt.getIfBlock().accept(this); //bloque if
         code.add("L"+labelElse); // label del else
@@ -84,22 +84,22 @@ public class TACGenerator implements ASTVisitor<String> {
     public String visit(ForStmt stmt) {
         int oldBegin = beginIter; // guardo los valores anteriores de begin y end
         int oldEnd = endIter;
-        beginIter = labelId++;
+        beginIter = (++labelId);
         code.add("L"+beginIter); // label del for
-        code.add("STR"+" "+stmt.getId()+" "+stmt.getExpr().accept(this)+" "+"r"+commId++);  //asignacion
+        code.add("STR"+" "+stmt.getId()+" "+stmt.getExpr().accept(this)+" "+"r"+(++commId));  //asignacion
         BinOpExpr e = (BinOpExpr) stmt.getCondition();
         e.accept(this); //cmp
-        endIter = labelId++; //label end del for
+        endIter = (++labelId); //label end del for
         String resto ="L"+endIter;
         switch (e.getOperator()){ // salto condicional
-            case NOTEQ : code.add("JNE"+resto);
-            case EQEQ : code.add("JE"+resto);
-            case GTEQ : code.add("JGE"+resto);
-            case LTEQ : code.add("JLE"+resto);
-            case GT : code.add("JG"+resto);
-            case LT : code.add("JL"+resto);
-            case AND : code.add("JAND"+resto);
-            case OR : code.add("JOR"+resto);
+            case NOTEQ : code.add("JNE"+resto);break;
+            case EQEQ : code.add("JE"+resto);break;
+            case GTEQ : code.add("JGE"+resto);break;
+            case LTEQ : code.add("JLE"+resto);break;
+            case GT : code.add("JG"+resto);break;
+            case LT : code.add("JL"+resto);break;
+            case AND : code.add("JAND"+resto);break;
+            case OR : code.add("JOR"+resto);break;
         }
         stmt.getBlock().accept(this);
         code.add("JMP"+" "+beginIter); //salto al comienzo del for
@@ -113,21 +113,21 @@ public class TACGenerator implements ASTVisitor<String> {
     public String visit(WhileStmt stmt) {
         int oldBegin = beginIter; // guardo los valores anteriores de begin y end
         int oldEnd = endIter;
-        beginIter = labelId++;
+        beginIter = (++labelId);
         code.add("L"+beginIter); // label del while
         BinOpExpr e = (BinOpExpr) stmt.getExpr();
         e.accept(this); //cmp
-        endIter = labelId++; //label end del while
+        endIter = (++labelId); //label end del while
         String resto ="L"+endIter;
         switch (e.getOperator()){ // salto condicional
-            case NOTEQ : code.add("JNE"+resto);
-            case EQEQ : code.add("JE"+resto);
-            case GTEQ : code.add("JGE"+resto);
-            case LTEQ : code.add("JLE"+resto);
-            case GT : code.add("JG"+resto);
-            case LT : code.add("JL"+resto);
-            case AND : code.add("JAND"+resto);
-            case OR : code.add("JOR"+resto);
+            case NOTEQ : code.add("JNE"+resto);break;
+            case EQEQ : code.add("JE"+resto);break;
+            case GTEQ : code.add("JGE"+resto);break;
+            case LTEQ : code.add("JLE"+resto);break;
+            case GT : code.add("JG"+resto);break;
+            case LT : code.add("JL"+resto);break;
+            case AND : code.add("JAND"+resto);break;
+            case OR : code.add("JOR"+resto);break;
         }
         stmt.getBlock().accept(this);
         code.add("JMP"+" "+beginIter); //salto al comienzo del while
@@ -162,7 +162,7 @@ public class TACGenerator implements ASTVisitor<String> {
     @Override
     public String visit(MethodCallStmt stmt) {
         code.add("JMP"+" "+stmt.getM().getId());
-        dirRet = labelId++;
+        dirRet = (++labelId);
         stmt.getM().accept(this);
         code.add("L"+dirRet); //label de retorno
         return "";
@@ -173,25 +173,25 @@ public class TACGenerator implements ASTVisitor<String> {
         BinOpType op = expr.getOperator();
         String left = expr.getLeftOperand().accept(this); // codigo de primer operando
         String right = expr.getRightOperand().accept(this); // codigo de primer operando
-        String resto = " " + left +" "+ right + "r"+commId++; 
+        String resto = " " + left +" "+ right +" " + "r"+(++commId); 
         if (op.isRelational() || op.isEquational())
             code.add("CMP"+ resto);
         else
             switch (op) {
-                case PLUS :  code.add("ADD"+ resto );
-                case MINUS :  code.add("SUB"+ resto );
-                case TIMES :  code.add("MUL"+ resto );
-                case DIVIDE :  code.add("DIV"+ resto );
-                case MOD :  code.add("MOD"+ resto );
-                case AND :  code.add("AND"+ resto );    
-                case OR :  code.add("OR"+ resto );    
+                case MINUS :  code.add("SUB"+ resto ); break;
+                case PLUS :  code.add("ADD"+ resto ); break;
+                case TIMES :  code.add("MUL"+ resto ); break;
+                case DIVIDE :  code.add("DIV"+ resto ); break;
+                case MOD :  code.add("MOD"+ resto ); break;
+                case AND :  code.add("AND"+ resto );  break;   
+                case OR :  code.add("OR"+ resto );  break;  
             }
         return "r"+commId;
     }
 
     @Override
     public String visit(UnaryOpExpr expr) {
-        code.add("OPP"+" "+expr.getOperand().accept(this) + " "+ "r"+commId++);
+        code.add("OPP"+" "+expr.getOperand().accept(this) + " "+ "r"+(++commId));
         return "r"+commId;
     }
 
@@ -207,25 +207,25 @@ public class TACGenerator implements ASTVisitor<String> {
 
     @Override
     public String visit(IntLiteral lit) {
-        code.add("LCON"+" "+ lit.getValue() + " " + "r"+commId++);
+        code.add("LCON"+" "+ lit.getValue() + " " + "r"+(++commId));
         return "r"+commId;
     }
 
     @Override
     public String visit(BoolLiteral lit) {
-        code.add("LCON"+" "+ lit.isValue() + " " + "r"+commId++);
+        code.add("LCON"+" "+ lit.isValue() + " " + "r"+(++commId));
         return "r"+commId;
     }
 
     @Override
     public String visit(FloatLiteral lit) {
-        code.add("LCON"+" "+ lit.getValue() + " " + "r"+commId++);
+        code.add("LCON"+" "+ lit.getValue() + " " + "r"+(++commId));
         return "r"+commId;
     }
 
     @Override
     public String visit(VarLocation loc) {
-        code.add("LMEM"+" "+ loc.getId() + " " + "r"+commId++);
+        code.add("LMEM"+" "+ loc.getId() + " " + "r"+(++commId));
         return "r"+commId;
     }
 
@@ -235,6 +235,10 @@ public class TACGenerator implements ASTVisitor<String> {
             s.accept(this);
         }
         return "";
+    }
+
+    public LinkedList<String> getCode() {
+        return code;
     }
     
 }

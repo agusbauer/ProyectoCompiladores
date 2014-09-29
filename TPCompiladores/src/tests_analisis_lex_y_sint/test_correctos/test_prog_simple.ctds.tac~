@@ -1,0 +1,11 @@
+LMEM x r0
+LMEM x r1
+LCON 1 r2
+ADD r2 r3 r3
+SUB r2 r3 r3
+MUL r2 r3 r3
+DIV r2 r3 r3
+MOD r2 r3 r3
+AND r2 r3 r3
+OR r2 r3 r3
+STR r1 r4 r4

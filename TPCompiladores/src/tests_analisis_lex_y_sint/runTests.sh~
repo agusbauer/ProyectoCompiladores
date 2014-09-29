@@ -18,7 +18,7 @@ echo "**************************************************************************
 echo "     " 
 echo "     " 
 
-comp="TPCompiladores.jar"
+comp="/home/luciano/Escritorio/Compiladores/ProyectoCompiladores/TPCompiladores/dist/TPCompiladores.jar"
 
 
 echo "///////////////////////// TESTS CORRECTOS ////////////////////////////////////////" 
@@ -33,17 +33,18 @@ for file in $files ; do
         echo "  "
 done
 
-echo "///////////////////////// TESTS CON FALLAS ////////////////////////////////////////" 
-
+echo "///////////////////////// TESTS ERRORES ////////////////////////////////////////" 
 files=`ls test_errores/*.ctds`
+
 
 for file in $files ; do 
 	echo "---------------- Test $file ... -------------------" 
-        java -jar $comp $file  
+        java -jar $comp $file 
 	echo "---------------------------------------------------" 
         echo "  "
         echo "  "
 done
+
 
 exit 0
 
