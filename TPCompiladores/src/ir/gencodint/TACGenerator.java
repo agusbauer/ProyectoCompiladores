@@ -5,6 +5,7 @@
 package ir.gencodint;
 
 import ir.ASTVisitor;
+import ir.ast.AssignOpType;
 import ir.ast.AssignStmt;
 import ir.ast.BinOpExpr;
 import ir.ast.BinOpType;
@@ -33,9 +34,9 @@ import java.util.LinkedList;
  *
  * @author luciano
  */
-public class TACGenerator implements ASTVisitor<String> {
+public class TACGenerator implements ASTVisitor<Expression> {
 
-    private LinkedList<String> code;
+    private LinkedList<TACCommand> code;
     private int commId;
     private int labelId;
     private int dirRet;
@@ -47,37 +48,48 @@ public class TACGenerator implements ASTVisitor<String> {
     }
     
     @Override
-    public String visit(AssignStmt stmt) {
-        code.add("STR"+" "+stmt.getLocation().accept(this) +" "+stmt.getExpression().accept(this) +" "+ "r"+(++commId));
-        return "r"+commId;
+    public Expression visit(AssignStmt stmt) {
+        Expression loc = stmt.getLocation().accept(this);
+        loc.setTACid(++commId);
+        AssignOpType op = stmt.getOperator();
+        Expression expr = stmt.getExpression().accept(this);
+        expr.setTACid(++commId);
+        if (op.isAssign())
+            code.add(new TACCommand(TACOpType.STR,loc,expr,null));
+        else
+            if (op.isDecrement())
+               code.add(new TACCommand(TACOpType.SUB,loc,expr,loc));
+            else
+               code.add(new TACCommand(TACOpType.ADD,loc,expr,loc)); 
+            
+        return null;
     }
 
     @Override
-    public String visit(ReturnStmt stmt) {
-        code.add("JMP"+" "+"L"+dirRet);
-        return ""; 
+    public Expression visit(ReturnStmt stmt) {;
+        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(dirRet,"LFM"),null,null));
+        return null; 
     }
 
     @Override
-    public String visit(IfStmt stmt) {
+    public Expression visit(IfStmt stmt) {
         BinOpExpr e = (BinOpExpr) stmt.getCondition();
         stmt.getCondition().accept(this); // cmp
-        String resto ="L"+(++labelId);
-        int labelElse = labelId;
+        labelId++;
         switch (e.getOperator()){ // salto condicional
-            case NOTEQ : code.add("JNE"+resto); break;
-            case EQEQ : code.add("JE"+resto); break;
-            case GTEQ : code.add("JGE"+resto); break;
-            case LTEQ : code.add("JLE"+resto); break;
-            case GT : code.add("JG"+resto);break;
-            case LT : code.add("JL"+resto);break;
-            case AND : code.add("JAND"+resto);break;
-            case OR : code.add("JOR"+resto);break;
+            case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(labelId, "LIF"), null, null)); break;
+            case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(labelId, "LIF"), null, null)); break;
+            case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(labelId, "LIF"), null, null)); break;
+            case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelId, "LIF"), null, null)); break;
+            case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelId, "LIF"), null, null));break;
+            case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelId, "LIF"), null, null));break;
+            case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, "LIF"), null, null));break;
+            case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, "LIF"), null, null));break;
         }
         stmt.getIfBlock().accept(this); //bloque if
-        code.add("L"+labelElse); // label del else
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(labelId, "LIF"), null, null)); // label del else
         stmt.getElseBlock().accept(this); //bloque else
-        return "";
+        return null;
     }
 
     @Override

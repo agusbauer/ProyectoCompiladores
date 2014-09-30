@@ -28,6 +28,11 @@ public class IntLiteral extends Literal {
 		value = val.intValue(); // Will convert to int value in semantic check
                 type = Type.INT;
 	}
+        
+        public IntLiteral(int value, String lbl){
+            this.value = value;
+            this.label = lbl;
+        }
 
 	@Override
 	public Type getType() {
