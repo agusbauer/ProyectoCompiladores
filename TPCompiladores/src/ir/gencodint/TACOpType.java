@@ -27,6 +27,9 @@ public enum TACOpType {
     JOR,
     LCON,
     LMEM,
-    LBL;
+    LBL,
+    OPP,
+    AND,
+    OR;
     
 }
