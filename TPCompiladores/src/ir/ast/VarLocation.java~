@@ -1,22 +1,46 @@
 package ir.ast;
 
 import ir.ASTVisitor;
+import tabladesimbolos.Descriptor;
 
 public class VarLocation extends Location {
-	private int blockId;
+	private Block block;
+        private Descriptor desc;
 
-	public VarLocation(String id) {
+	public VarLocation(String id, Descriptor d,int line, int col) {
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		this.id = id;
-		this.blockId = -1;
+                this.desc = d;
 	}
-	
-	public int getBlockId() {
-		return blockId;
+        
+        public VarLocation(String id, Block b, Descriptor d,int line, int col) {
+		this.setLineNumber(line);
+                this.setColumnNumber(col);
+                this.id = id;
+		this.block = b;
+                this.desc = d;
 	}
 
-	public void setBlockId(int blockId) {
-		this.blockId = blockId;
-	}
+        public Descriptor getDesc() {
+            return desc;
+        }
+
+        public void setDesc(Descriptor desc) {
+            this.desc = desc;
+        }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
+    }
+	
+        
+        
+
 	
 	@Override
 	public String toString() {

@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Representa una variable simple.
  */
 package tabladesimbolos;
 
 import ir.ast.Type;
 
-/**
- *
- * @author luciano
- */
+
 public class DescriptorSimple extends Descriptor {
 
     public DescriptorSimple(String nombre, Type tipo){

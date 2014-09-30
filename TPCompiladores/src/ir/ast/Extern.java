@@ -1,16 +1,14 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa una expresion de invocacion externa .
  */
 package ir.ast;
 
 import ir.ASTVisitor;
 import java.util.List;
 
-/**
- *
- * @author luciano
- */
+
 public class Extern extends Expression {
     private String string;
     

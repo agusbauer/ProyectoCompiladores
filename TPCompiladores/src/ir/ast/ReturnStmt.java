@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa la sentencia "return".
+ */
+
 package ir.ast;
 
 import ir.ASTVisitor;

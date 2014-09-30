@@ -1,15 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa la sentencia continue.
  */
 package ir.ast;
 
 import ir.ASTVisitor;
 
-/**
- *
- * @author luciano
- */
 public class ContinueStmt extends Statement {
     
 

@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Implementa los visitors para cada clase en ir.ast (nodo del arbol)
+ * Recorre el ast buscando errorres semanticos
+ */
 package ir.semcheck;
 
 import java.util.List;

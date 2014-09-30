@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Descriptor: Representa un descriptor, esta clase va a ser implementada por un arreglo, funcion o un descriptor simple.
  */
 package tabladesimbolos;
 
 import ir.ast.Type;
 
-/**
- *
- * @author luciano
- */
+
 public abstract class Descriptor {
     
     protected String nombre;

@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Representa un arreglo.
  */
 package tabladesimbolos;
 
 import ir.ast.Type;
 
-/**
- *
- * @author luciano
- */
+
 public class DescriptorArreglo extends Descriptor {
 
     private Integer longitud;

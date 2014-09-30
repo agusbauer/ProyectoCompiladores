@@ -1,6 +1,6 @@
-package decaf.ir.ast;
+package ir.ast;
 
-import decaf.ir.ASTVisitor;
+import ir.ASTVisitor;
 
 public abstract class AST {
 	private int lineNumber;

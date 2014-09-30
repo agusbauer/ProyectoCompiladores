@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa una sentencia "for"
  */
 package ir.ast;
 
 import ir.ASTVisitor;
 
-/**
- *
- * @author luciano
- */
+
 public class ForStmt extends Statement {
     private String id;
     private Expression expr;

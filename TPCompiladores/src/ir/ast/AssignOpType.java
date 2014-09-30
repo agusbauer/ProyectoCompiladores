@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Enumerado que representa cada tipo de asignacion
+ */
+
 package ir.ast;
 
 public enum AssignOpType {

@@ -4,35 +4,74 @@ public enum Type {
 	INT,
 	INTARRAY,
 	VOID,
-	UNDEFINED;
+	UNDEFINED, FLOAT, BOOL;
 	
 	@Override
 	public String toString() {
 		switch(this) {
 			case INT:
 				return "int";
-			case CHAR:
-				return "char";
-			case BOOLEAN:
-				return "bool";
 			case VOID:
 				return "void";
 			case UNDEFINED:
 				return "undefined";
 			case INTARRAY:
 				return "int[]";
-			case BOOLEANARRAY:
-				return "boolean[]";
+                        case BOOL:
+                                return "boolean";
+                        case FLOAT:
+                                return "float";
 		}
 		
 		return null;
 	}
 	
 	public boolean isArray() {
-		if (this == Type.BOOLEANARRAY || this == Type.INTARRAY) {
+		if (this == Type.INTARRAY) {
 			return true;
 		}
 		
 		return false;
 	}
+        
+        public boolean isInt() {
+		if (this == Type.INT) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isFloat() {
+		if (this == Type.FLOAT) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isBool() {
+		if (this == Type.BOOL) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isVoid() {
+		if (this == Type.VOID) {
+			return true;
+		}
+		
+		return false;
+	}
+        
+        public boolean isUndefined() {
+		if (this == Type.UNDEFINED) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }

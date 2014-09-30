@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Ambiente: Representa un bloque del programa con sus variables, metodos, etc.
  */
 package tabladesimbolos;
 
 import java.util.HashMap;
 
-/**
- *
- * @author luciano
- */
+
 public class Ambiente extends HashMap<String,Descriptor>{
     
 }

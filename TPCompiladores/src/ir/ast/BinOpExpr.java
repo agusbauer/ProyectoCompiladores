@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa una expresion con operadores binarios
+ */
+
 package ir.ast;
 
 import ir.ASTVisitor;

@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Interface para todos los visit
+ */
+
 package ir;
 
 import ir.ast.*;

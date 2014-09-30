@@ -1,15 +1,13 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa un numero real.
  */
 package ir.ast;
 
 import ir.ASTVisitor;
 
-/**
- *
- * @author luciano
- */
+
 public class FloatLiteral extends Literal {
 
     private Float value;

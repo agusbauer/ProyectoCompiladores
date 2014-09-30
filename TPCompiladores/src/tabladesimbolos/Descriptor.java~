@@ -1,0 +1,32 @@
+
+package tabladesimbolos;
+
+import ir.ast.Type;
+
+
+public abstract class Descriptor {
+    
+    protected String nombre;
+    protected Type tipo;
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Type getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Type tipo) {
+        this.tipo = tipo;
+    }
+    
+    public String getClase(){
+        return "descriptor";
+    }
+    
+}

@@ -1,3 +1,8 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa una sentencia "if".
+ */
 package ir.ast;
 
 import ir.ASTVisitor;

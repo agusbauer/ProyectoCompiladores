@@ -1,16 +1,14 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Representa una funcion o metodo.
  */
 package tabladesimbolos;
 
 import ir.ast.Type;
 import java.util.LinkedList;
 
-/**
- *
- * @author luciano
- */
+
 public class DescriptorFuncion extends Descriptor {
 
     private LinkedList<DescriptorSimple> parametros;

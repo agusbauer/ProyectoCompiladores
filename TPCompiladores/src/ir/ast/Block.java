@@ -1,4 +1,10 @@
-    package ir.ast;
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa un bloque del programa.
+ */
+
+package ir.ast;
 
 import java.util.ArrayList;
 import java.util.List;

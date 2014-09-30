@@ -1,3 +1,8 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Enumerado que representa los operadores todos binarios que hay
+ */
 package ir.ast;
 
 public enum BinOpType {

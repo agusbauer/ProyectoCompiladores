@@ -1,15 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Tabla de simbolos: Funciona como una pila para guardar los ambientes de cada bloque del programa.
  */
 package tabladesimbolos;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-/**
- *
- * @author luciano
- */
 public class TablaDeSimbolos {
    
     private LinkedList<Ambiente> pila;

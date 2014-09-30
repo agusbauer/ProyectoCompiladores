@@ -1,3 +1,8 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Enumerado que representa los tipos que puede haber en el programa
+ */
 package ir.ast;
 
 public enum Type {

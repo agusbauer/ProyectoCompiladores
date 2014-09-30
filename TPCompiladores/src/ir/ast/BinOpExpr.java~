@@ -7,17 +7,20 @@ public class BinOpExpr extends Expression {
 	private Expression lOperand; //left expression
 	private Expression rOperand; //right expression
 	
-	public BinOpExpr(Expression l, BinOpType op, Expression r){
+	public BinOpExpr(Expression l, BinOpType op, Expression r,int line, int col){
+                this.setLineNumber(line);
+                this.setColumnNumber(col);
 		operator = op;
 		lOperand = l;
 		rOperand = r;
+                
 	}
 	
-	public BinOpExpr(Expression e, TempExpression t) {
+        /*public BinOpExpr(Expression e, TempExpression t) {
 		lOperand = e;
 		operator = t.getOperator();
 		rOperand = t.getRightOperand();
-	}
+	}*/
 	
 	public BinOpType getOperator() {
 		return operator;

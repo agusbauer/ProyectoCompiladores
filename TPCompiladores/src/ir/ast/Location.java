@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que es implementado por una variable simple, arrreglo o metodo.
+ */
+
 package ir.ast;
 
 public abstract class Location extends Expression {

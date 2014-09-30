@@ -1,13 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Enumerado que representa los tipos de operadores unarios que puede haber en un programa
  */
+
 package ir.ast;
 
-/**
- *
- * @author luciano
- */
+
 public enum UnaryOpType {
     MINUS,
     NOT;

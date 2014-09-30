@@ -1,6 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Clase main del proyecto.
  */
 package tpcompiladores;
 
@@ -15,10 +16,7 @@ import java.util.LinkedList;
 import parser.*;
 
 
-/**
- *
- * @author luciano
- */
+
 public class TPCompiladores {
     
     private CTDSLexer lex;

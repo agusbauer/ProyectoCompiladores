@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * arbol ast, esta clase es implementada por los distintos nodos del arbol
+ */
+
 package ir.ast;
 
 import ir.ASTVisitor;

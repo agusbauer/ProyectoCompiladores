@@ -1,6 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * 
  */
 package ir;
 
@@ -24,10 +25,6 @@ import ir.ast.UnaryOpExpr;
 import ir.ast.VarLocation;
 import ir.ast.WhileStmt;
 
-/**
- *
- * @author alan
- */
 public class ImplementsASTVisitor implements ASTVisitor<String>{
 
     @Override

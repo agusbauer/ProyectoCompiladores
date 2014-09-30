@@ -1,3 +1,8 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * Nodo del ast que representa una variable simple, arreglo o metodo
+ */
 package ir.ast;
 
 import ir.ASTVisitor;
