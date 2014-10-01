@@ -184,7 +184,9 @@ public class TACGenerator implements ASTVisitor<Expression> {
         BinOpType op = expr.getOperator();
         Expression left = expr.getLeftOperand().accept(this); // codigo de primer operando
         Expression right = expr.getRightOperand().accept(this); // codigo de primer operando
-        VarLocation var = new VarLocation("temp" + (++commId),new DescriptorSimple("r",Type.INT,DescriptorSimple.getOffset()+4));
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
         if (op.isRelational() || op.isEquational())
             code.add(new TACCommand(TACOpType.CMP,left,right,var)); 
             
@@ -204,8 +206,11 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(UnaryOpExpr expr) {
-        code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),new IntLiteral(++commId, "r"),null));
-        return new IntLiteral(commId, "r");
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),var,null));
+        return var;
     }
 
     @Override
@@ -219,27 +224,39 @@ public class TACGenerator implements ASTVisitor<Expression> {
     }
 
     @Override
-    public Expression visit(IntLiteral lit) {      
-        code.add(new TACCommand(TACOpType.LCON,lit,new IntLiteral(++commId, "r"),null));
-        return new IntLiteral(commId, "r");
+    public Expression visit(IntLiteral lit) {
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.LCON,lit,var,null));
+        return var;
     }
 
     @Override
     public Expression visit(BoolLiteral lit) {
-         code.add(new TACCommand(TACOpType.LCON,lit,new IntLiteral(++commId, "r"),null));
-         return new IntLiteral(commId, "r");
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.LCON,lit,var,null));
+        return var;
     }
 
     @Override
     public Expression visit(FloatLiteral lit) {
-        code.add(new TACCommand(TACOpType.LCON,lit,new IntLiteral(++commId, "r"),null));
-        return new IntLiteral(commId, "r");
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.LCON,lit,var,null));
+        return var;
     }
 
     @Override
     public Expression visit(VarLocation loc) {
-        code.add(new TACCommand(TACOpType.LMEM,loc,new IntLiteral(++commId, "r"),null));
-        return new IntLiteral(commId, "r");
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.LMEM,loc,var,null));
+        return var;
     }
 
     @Override
