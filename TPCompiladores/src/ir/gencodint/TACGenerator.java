@@ -26,11 +26,14 @@ import ir.ast.MethodCallStmt;
 import ir.ast.ReturnStmt;
 import ir.ast.SkipStmt;
 import ir.ast.Statement;
+import ir.ast.Type;
 import ir.ast.UnaryOpExpr;
 import ir.ast.VarLocation;
 import ir.ast.WhileStmt;
 import java.util.LinkedList;
 import java.util.Stack;
+import tabladesimbolos.Descriptor;
+import tabladesimbolos.DescriptorSimple;
 
 
 public class TACGenerator implements ASTVisitor<Expression> {
@@ -51,10 +54,10 @@ public class TACGenerator implements ASTVisitor<Expression> {
     @Override
     public Expression visit(AssignStmt stmt) {
         Expression loc = stmt.getLocation().accept(this);
-        loc.setTACid(++commId);
+        
         AssignOpType op = stmt.getOperator();
         Expression expr = stmt.getExpression().accept(this);
-        expr.setTACid(++commId);
+        
         if (op.isAssign())
             code.add(new TACCommand(TACOpType.STR,loc,expr,null));
         else
@@ -99,7 +102,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         endIter = (++labelId); //label end del for
         pila.push(new Pair<>(beginIter,endIter)); //guardo los valores del begin y end
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(beginIter, "LBI"), null, null)); // label del for
-        code.add(new TACCommand(TACOpType.STR,new IntLiteral(0,stmt.getId()),stmt.getExpr(),new IntLiteral(++commId,"r"))); //asignacion ojo aca!!!
+        code.add(new TACCommand(TACOpType.STR,new IntLiteral(0,stmt.getId()),stmt.getExpr().accept(this),new IntLiteral(++commId,"r"))); //asignacion ojo aca!!!
         BinOpExpr e = (BinOpExpr) stmt.getCondition();
         e.accept(this); //cmp  
         switch (e.getOperator()){ // salto condicional
@@ -169,7 +172,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(MethodCallStmt stmt) {
-        code.add(new TACCommand(TACOpType.JMP,stmt.getM(), null, null));
+        code.add(new TACCommand(TACOpType.JMP,stmt.getM().accept(this), null, null));
         dirRet = (++labelId);
         stmt.getM().accept(this);
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(dirRet, "DR"), null, null)); //label de retorno
@@ -181,26 +184,27 @@ public class TACGenerator implements ASTVisitor<Expression> {
         BinOpType op = expr.getOperator();
         Expression left = expr.getLeftOperand().accept(this); // codigo de primer operando
         Expression right = expr.getRightOperand().accept(this); // codigo de primer operando
-        String resto = " " + left +" "+ right +" " + "r"+(++commId); 
+        VarLocation var = new VarLocation("temp" + (++commId),new DescriptorSimple("r",Type.INT,DescriptorSimple.getOffset()+4));
         if (op.isRelational() || op.isEquational())
-            code.add(new TACCommand(TACOpType.CMP,left,right,new IntLiteral(++commId, "r")));
+            code.add(new TACCommand(TACOpType.CMP,left,right,var)); 
             
-        else
+        else 
+            
             switch (op) {
-                case MINUS :  code.add(new TACCommand(TACOpType.SUB,left,right,new IntLiteral(++commId, "r"))); break;
-                case PLUS :  code.add(new TACCommand(TACOpType.ADD,left,right,new IntLiteral(++commId, "r"))); break; 
-                case TIMES :  code.add(new TACCommand(TACOpType.MUL,left,right,new IntLiteral(++commId, "r"))); break;
-                case DIVIDE :  code.add(new TACCommand(TACOpType.DIV,left,right,new IntLiteral(++commId, "r"))); break; 
-                case MOD :  code.add(new TACCommand(TACOpType.MOD,left,right,new IntLiteral(++commId, "r"))); break; 
-                case AND :  code.add(new TACCommand(TACOpType.AND,left,right,new IntLiteral(++commId, "r"))); break;    
-                case OR :  code.add(new TACCommand(TACOpType.OR,left,right,new IntLiteral(++commId, "r"))); break;   
+                case MINUS :  code.add(new TACCommand(TACOpType.SUB,left,right,var)); break;
+                case PLUS :  code.add(new TACCommand(TACOpType.ADD,left,right,var)); break; 
+                case TIMES : code.add(new TACCommand(TACOpType.MUL,left,right,var)); break;
+                case DIVIDE : code.add(new TACCommand(TACOpType.DIV,left,right,var)); break;  
+                case MOD :  code.add(new TACCommand(TACOpType.MOD,left,right,var)); break;
+                case AND :  code.add(new TACCommand(TACOpType.AND,left,right,var)); break;   
+                case OR :  code.add(new TACCommand(TACOpType.OR,left,right,var)); break;  
             }
-        return new IntLiteral(commId, "r");
+        return var;
     }
 
     @Override
     public Expression visit(UnaryOpExpr expr) {
-        code.add(new TACCommand(TACOpType.OPP,expr.getOperand(),new IntLiteral(++commId, "r"),null));
+        code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),new IntLiteral(++commId, "r"),null));
         return new IntLiteral(commId, "r");
     }
 

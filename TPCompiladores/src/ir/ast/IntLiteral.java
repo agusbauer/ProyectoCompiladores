@@ -51,7 +51,10 @@ public class IntLiteral extends Literal {
 
 	@Override
 	public String toString() {
-		return value.toString();
+                if(label==null)
+                    return value.toString();
+                else
+                    return label + value.toString();
 	}
 
 	@Override

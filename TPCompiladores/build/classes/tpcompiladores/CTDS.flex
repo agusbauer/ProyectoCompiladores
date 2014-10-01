@@ -1,3 +1,9 @@
+/*
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * El archivo .flex se encarga de corroborar la sintaxis del codigo
+ */
+
 /* --------------------------Usercode Section------------------------ */
 package tpcompiladores;
 import java_cup.runtime.*;

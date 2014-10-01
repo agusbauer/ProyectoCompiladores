@@ -11,7 +11,12 @@ import tabladesimbolos.Descriptor;
 public class VarLocation extends Location {
 	private Block block;
         private Descriptor desc;
-
+        
+        public VarLocation(String id, Descriptor d) {
+		this.id = id;
+                this.desc = d;
+	}
+        
 	public VarLocation(String id, Descriptor d,int line, int col) {
                 this.setLineNumber(line);
                 this.setColumnNumber(col);
