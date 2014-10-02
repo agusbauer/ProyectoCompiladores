@@ -40,6 +40,11 @@ public class Extern extends Expression {
         this.args = args;
     }
     
+     @Override
+    public String toString() {
+        return string;
+    }
+    
     @Override
     public <T> T accept(ASTVisitor<T> v) {
         return v.visit(this);

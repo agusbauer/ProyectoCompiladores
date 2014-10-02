@@ -1,15 +1,12 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * 
  */
 package ir.gencodint;
 
 import ir.ast.Expression;
 
-/**
- *
- * @author luciano
- */
 public class TACCommand {
     private TACOpType op;
     private Expression p1;
@@ -38,4 +35,20 @@ public class TACCommand {
     public Expression getP3() {
         return p3;
     }
+
+    @Override
+    public String toString() {
+        if(p2!=null && p3!=null)
+            return op +" "+ p1.toString() +" "+ p2.toString() +" "+ p3.toString();
+        else
+            if(p2!=null)
+                return op +" "+ p1.toString() +" " + p2.toString();
+            else
+                if(p1!=null)
+                    return op +" "+ p1.toString();
+                else
+                    return op.toString();
+    }
+    
+    
 }

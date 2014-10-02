@@ -21,6 +21,17 @@ public class ExternStmt extends Statement {
     public void setE(Extern e) {
         this.e = e;
     }
+
+    @Override
+    public String toString() {
+        if(e!=null)
+            return e.getString();
+        else
+            return "null";
+    }
+    
+    
+    
     @Override
     public <T> T accept(ASTVisitor<T> v) {
         return v.visit(this);

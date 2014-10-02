@@ -33,6 +33,16 @@ public class BoolLiteral extends Literal {
     }
 
     @Override
+    public String toString() {
+        if(value)
+            return "True";
+        else
+            return "False";
+    }
+
+    
+    
+    @Override
     public <T> T accept(ASTVisitor<T> v) {
 	return v.visit(this);
     }

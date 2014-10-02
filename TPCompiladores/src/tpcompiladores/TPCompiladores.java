@@ -7,6 +7,7 @@ package tpcompiladores;
 
 import ir.*;
 import ir.ast.*;
+import ir.gencodint.TACCommand;
 import ir.gencodint.TACGenerator;
 import ir.semcheck.TypeCheckVisitor;
 import java.io.FileReader;
@@ -35,10 +36,12 @@ public class TPCompiladores {
        for (Block b : p.getASTs()){
            visitor.visit(b);
        }
-       LinkedList<String> code = visitor.getCode();
+       
+       LinkedList<TACCommand> code = visitor.getCode();
        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".tac")));
-       for (String comm : code){
-           out.write(comm);
+       for (TACCommand comm : code){
+           System.out.println(comm.toString());
+           out.write(comm.toString());
            out.write("\n");
        }
        out.close();

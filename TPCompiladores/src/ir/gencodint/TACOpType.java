@@ -1,13 +1,10 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
+ * Proyecto: TPCompiladores
+ * 
  */
 package ir.gencodint;
 
-/**
- *
- * @author luciano
- */
 public enum TACOpType {
     STR,
     ADD,
@@ -30,6 +27,8 @@ public enum TACOpType {
     LBL,
     OPP,
     AND,
-    OR;
-    
+    OR,
+    EXCALL,
+    CALL, 
+    RET;
 }
