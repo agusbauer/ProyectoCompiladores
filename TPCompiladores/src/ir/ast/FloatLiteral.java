@@ -48,6 +48,11 @@ public class FloatLiteral extends Literal {
     public String toString() {
         return value.toString();
     }
+
+    @Override
+    public String getClase() {
+        return "float";
+    }
     
     
     

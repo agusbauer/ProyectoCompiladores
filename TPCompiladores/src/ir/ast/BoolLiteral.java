@@ -46,4 +46,9 @@ public class BoolLiteral extends Literal {
     public <T> T accept(ASTVisitor<T> v) {
 	return v.visit(this);
     }
+
+    @Override
+    public String getClase() {
+        return "bool";
+    }
 }

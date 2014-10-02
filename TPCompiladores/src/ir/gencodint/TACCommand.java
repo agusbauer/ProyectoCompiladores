@@ -38,16 +38,17 @@ public class TACCommand {
 
     @Override
     public String toString() {
-        if(p2!=null && p3!=null)
-            return op +" "+ p1.toString() +" "+ p2.toString() +" "+ p3.toString();
-        else
-            if(p2!=null)
-                return op +" "+ p1.toString() +" " + p2.toString();
-            else
-                if(p1!=null)
-                    return op +" "+ p1.toString();
-                else
-                    return op.toString();
+        String res = op.toString();
+        if (p1!=null){
+            res = res.concat(" "+p1.toString());
+            if (p2!=null){
+                res = res.concat(" "+p2.toString());
+                if (p3!=null){
+                    res = res.concat(" "+p3.toString());
+                }
+            }
+        }
+        return res;
     }
     
     

@@ -1,5 +1,5 @@
-LMEM x r1
-LMEM x r2
-LCON 1 r3
-ADD r2 r3 r4
-STR r1 r5
+LMEM x temp1
+LMEM x temp2
+LCON 1 temp3
+ADD temp2 temp3 temp4
+STR temp1 temp4

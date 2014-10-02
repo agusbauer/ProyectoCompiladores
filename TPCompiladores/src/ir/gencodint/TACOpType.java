@@ -22,6 +22,7 @@ public enum TACOpType {
     JNE,
     JAND,
     JOR,
+    JNOT,
     LCON,
     LMEM,
     LBL,

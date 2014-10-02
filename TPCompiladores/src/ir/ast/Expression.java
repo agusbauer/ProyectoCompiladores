@@ -32,5 +32,6 @@ public abstract class Expression extends AST {
     public void setLabel(String label) {
         this.label = label;
     }
-        
+    
+    public abstract String getClase();
 }

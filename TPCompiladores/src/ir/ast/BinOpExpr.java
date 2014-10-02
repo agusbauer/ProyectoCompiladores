@@ -61,4 +61,9 @@ public class BinOpExpr extends Expression {
 	public <T> T accept(ASTVisitor<T> v) {
 		return v.visit(this);
 	}
+
+    @Override
+    public String getClase() {
+        return ("bin");
+    }
 }
