@@ -41,7 +41,6 @@ public class TACGenerator implements ASTVisitor<Expression> {
     private LinkedList<TACCommand> code;
     private int commId;
     private int labelId;
-    private int dirRet;
     private int beginIter; // sirve para el label del comienzo de un bucle 
     private int endIter; // sirve para el label del fin de un bucle
     private Stack pila;
@@ -71,7 +70,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ReturnStmt stmt) {;
-        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(dirRet,"LFM"),null,null));
+        code.add(new TACCommand(TACOpType.RET,null,null,null));
         return null; 
     }
 
@@ -167,15 +166,13 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ExternStmt stmt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        code.add(new TACCommand(TACOpType.EXCALL,stmt.getE(), null, null));
+        return null;
     }
 
     @Override
     public Expression visit(MethodCallStmt stmt) {
-        code.add(new TACCommand(TACOpType.JMP,stmt.getM().accept(this), null, null));
-        dirRet = (++labelId);
-        stmt.getM().accept(this);
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(dirRet, "DR"), null, null)); //label de retorno
+        code.add(new TACCommand(TACOpType.CALL,stmt.getM(), null, null));
         return null;
     }
 
@@ -215,12 +212,20 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(MethodCall expr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.CALL,expr, var, null));
+        return var;
     }
 
     @Override
     public Expression visit(Extern expr) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ++commId;
+        int id = commId;
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),DescriptorSimple.getOffset()+4));
+        code.add(new TACCommand(TACOpType.EXCALL,expr, var, null));
+        return var;
     }
 
     @Override

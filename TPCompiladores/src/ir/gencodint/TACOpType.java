@@ -27,6 +27,8 @@ public enum TACOpType {
     LBL,
     OPP,
     AND,
-    OR;
-    
+    OR,
+    EXCALL,
+    CALL, 
+    RET;
 }
