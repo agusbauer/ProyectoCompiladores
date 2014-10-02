@@ -44,7 +44,10 @@ public class TACCommand {
             if(p2!=null)
                 return op +" "+ p1.toString() +" " + p2.toString();
             else
-                return op +" "+ p1.toString();
+                if(p1!=null)
+                    return op +" "+ p1.toString();
+                else
+                    return op.toString();
     }
     
     

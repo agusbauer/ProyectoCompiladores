@@ -70,7 +70,8 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ReturnStmt stmt) {;
-        code.add(new TACCommand(TACOpType.RET,null,null,null));
+        Expression expr = stmt.getExpression().accept(this);
+        code.add(new TACCommand(TACOpType.RET,expr,null,null));
         return null; 
     }
 
