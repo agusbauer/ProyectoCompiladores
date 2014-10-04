@@ -1,5 +1,3 @@
-LMEM a temp1
-LCON True temp2
-STR temp1 temp2
-RET
+STR a True
+RET False || a && ! True && ! i
 EXCALL null

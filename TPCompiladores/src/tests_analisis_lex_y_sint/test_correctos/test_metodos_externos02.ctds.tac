@@ -16,4 +16,5 @@ STR divisor resto
 JMP BI2
 LBL EI3
 RET dividendo
+STR a 3
 EXCALL null

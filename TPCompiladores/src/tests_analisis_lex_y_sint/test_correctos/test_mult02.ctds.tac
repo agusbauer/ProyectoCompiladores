@@ -1,5 +1,3 @@
-LMEM a temp1
-LCON 5 temp2
-STR temp1 temp2
-RET
+STR a 5
+RET a * 7
 EXCALL null

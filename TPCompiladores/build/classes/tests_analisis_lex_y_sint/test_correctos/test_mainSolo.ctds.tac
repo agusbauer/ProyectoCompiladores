@@ -1,16 +1,8 @@
-LMEM a temp1
-LCON True temp2
-STR temp1 temp2
-LMEM b temp3
-LMEM a temp5
-OPP temp5 temp4
-STR temp3 temp4
-LMEM c temp6
-LMEM a temp7
-LMEM b temp8
-AND temp7 temp8 temp9
-LMEM b temp11
-OPP temp11 temp10
-OR temp9 temp10 temp12
-STR temp6 temp12
+STR a True
+OPP a temp1
+STR b temp1
+AND a b temp2
+OPP b temp3
+OR temp2 temp3 temp4
+STR c temp4
 EXCALL null

@@ -20,8 +20,6 @@ import parser.*;
 
 public class TPCompiladores {
     
-    private CTDSLexer lex;
-    private  parser p;
 
     private static void semCheck(parser p){
        TypeCheckVisitor visitor = new TypeCheckVisitor(); 

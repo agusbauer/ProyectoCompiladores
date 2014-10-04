@@ -171,16 +171,16 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     @Override
     public Type visit(ForStmt stmt) {
         Type block = stmt.getBlock().accept(this);
-        Type cond = stmt.getCondition().accept(this);
         Type expr = stmt.getExpr().accept(this);
+        Type exprfin = stmt.getExprfin().accept(this);
         if(expr.isInt())
-            if (cond == Type.BOOL)
+            if (exprfin.isInt())
                 if (!block.isUndefined())
                     return Type.VOID;
                 else{
                     return Type.UNDEFINED;}
             else{
-                 addError(stmt.getCondition(), "La condicion no es de tipo logico");
+                 addError(stmt.getExprfin(), "La segunda expresion del for no es de tipo logico");
                  return Type.UNDEFINED;}
         else{
              addError(stmt, "A la variable de control le asignas un valor que no es entero");

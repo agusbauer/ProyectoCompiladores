@@ -24,10 +24,7 @@ public class ExternStmt extends Statement {
 
     @Override
     public String toString() {
-        if(e!=null)
-            return e.getString();
-        else
-            return "null";
+       return e.toString();
     }
     
     

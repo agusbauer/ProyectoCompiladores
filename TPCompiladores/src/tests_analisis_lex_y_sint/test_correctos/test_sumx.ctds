@@ -6,7 +6,7 @@ class test_sumx{
 
 		  float aux;
 		  int i;
-			aux=0;
+			aux=0.0;
 			i=0;
 
 		  while (i<n){

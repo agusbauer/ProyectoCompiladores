@@ -11,13 +11,13 @@ import ir.ASTVisitor;
 public class ForStmt extends Statement {
     private String id;
     private Expression expr;
-    private Expression condition;
+    private Expression exprfin;
     private Block block;
 
-    public ForStmt(String id, Expression expr, Expression condition, Block block) {
+    public ForStmt(String id, Expression expr, Expression exprfin, Block block) {
         this.id = id;
         this.expr = expr;
-        this.condition = condition;
+        this.exprfin = exprfin;
         this.block = block;
     }
 
@@ -37,13 +37,15 @@ public class ForStmt extends Statement {
         this.expr = expr;
     }
 
-    public Expression getCondition() {
-        return condition;
+    public Expression getExprfin() {
+        return exprfin;
     }
 
-    public void setCondition(Expression condition) {
-        this.condition = condition;
+    public void setExprfin(Expression exprfin) {
+        this.exprfin = exprfin;
     }
+
+    
 
     public Block getBlock() {
         return block;
@@ -55,7 +57,7 @@ public class ForStmt extends Statement {
 
     @Override
     public String toString() {
-        return "for " + id + "=" + expr + "," + condition + block.toString() ;
+        return "for " + id + "=" + expr + "," + exprfin + block.toString() ;
     }
 
     @Override

@@ -12,10 +12,11 @@ public class DescriptorArreglo extends Descriptor {
 
     private Integer longitud;
     
-     public DescriptorArreglo(String nombre, Type tipo, Integer longitud){
+     public DescriptorArreglo(String nombre, Type tipo, Integer longitud, int offset){
         this.nombre = nombre;
         this.tipo = tipo;
         this.longitud = longitud;
+        this.offset = offset;
     }
 
     public int getLongitud() {

@@ -1,14 +1,10 @@
-LMEM num1 temp1
-LCON 0 temp2
-CMP temp1 temp2 temp3
+CMP num1 0 temp1
 JE LIF1
-RET
+RET num2
 LBL LIF1
-LMEM num2 temp4
-LCON 0 temp5
-CMP temp4 temp5 temp6
+CMP num2 0 temp2
 JE LIF2
-RET
+RET num1
 LBL LIF2
-RET
+RET num1 + num2
 EXCALL null

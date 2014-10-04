@@ -6,7 +6,6 @@ class test_class{
 
    void alo2(int x){
       alo();
-      x=  alo() + 1;
    }
 
 }

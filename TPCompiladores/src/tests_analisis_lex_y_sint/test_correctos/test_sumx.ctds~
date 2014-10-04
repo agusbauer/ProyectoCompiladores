@@ -9,7 +9,10 @@ class test_sumx{
 			aux=0;
 			i=0;
 
-		
+		  while (i<n){
+		     aux = aux + x;
+		     i = i+1;
+		  } 
 
 		  return  aux;
 	}
