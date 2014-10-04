@@ -144,12 +144,12 @@ precedence right UMINUS;
 
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar)) ;
+								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,DescriptorSimple.getOffset()+4),ileft,iright) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue())) ;
+								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue(),DescriptorArreglo.getOffset()+4*il.getValue()),ileft,iright) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
@@ -160,23 +160,23 @@ precedence right UMINUS;
    method	 ::= type:t id:i LPAREN RPAREN block:b {:
 					    parser.asts.add(b);  
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null,DescriptorFuncion.getOffset()+4),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
 				    |VOID id:i LPAREN RPAREN block:b {: parser.asts.add(b);   
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null,DescriptorFuncion.getOffset()+4),ileft,iright) ;
 							else 
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
 					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
 					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p)) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  ;
