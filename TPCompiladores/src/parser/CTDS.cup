@@ -237,7 +237,7 @@ precedence right UMINUS;
 	method_call ::= id:i LPAREN RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),null,ileft,iright) ;
+												RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Expression>(),ileft,iright) ;
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
 										else

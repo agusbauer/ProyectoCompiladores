@@ -14,7 +14,7 @@ class test_prueba1{
 		{
 			float pi;
 			pi=3.14;
-			f= 2*pi;
+			f= 2.0*pi;
 		}
 		if ((a/f)>5){
 			return 1;

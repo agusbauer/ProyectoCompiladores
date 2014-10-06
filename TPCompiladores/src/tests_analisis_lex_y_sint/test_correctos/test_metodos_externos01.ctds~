@@ -7,7 +7,6 @@ class test_externinvk{
    }
 
    void alo_2(int x){
-      alo();
       x=  alo() + 1;
       return; //probando return solo
    }

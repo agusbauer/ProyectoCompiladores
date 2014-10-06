@@ -141,7 +141,7 @@ OctDigit          = [0-7]
 } 
 
 <STRING> {
-  \"                             { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL); }
+  \"                             { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL, yytext()); }
   
   {StringCharacter}+             { string.append( yytext() ); }
   

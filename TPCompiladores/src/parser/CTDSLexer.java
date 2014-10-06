@@ -868,7 +868,7 @@ public class CTDSLexer implements java_cup.runtime.Scanner {
           }
         case 97: break;
         case 26: 
-          { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL);
+          { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL, new String(string));
           }
         case 98: break;
         case 27: 

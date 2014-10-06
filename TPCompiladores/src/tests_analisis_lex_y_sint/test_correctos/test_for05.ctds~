@@ -15,7 +15,7 @@ int pruArreglos(int b, int c ){
         
         return A[1];
  
-        for i = par() , par() <5 {  
+        for i = par(b) , par(b) +5 {  
                A[i] = i + 2;
         }
         

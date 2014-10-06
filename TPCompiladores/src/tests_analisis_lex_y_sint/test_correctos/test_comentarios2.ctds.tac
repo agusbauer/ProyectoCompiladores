@@ -4,4 +4,4 @@ STR res b
 LBL LIF1
 STR res c
 RET res
-EXCALL null
+EXCALL printf

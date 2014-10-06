@@ -13,4 +13,4 @@ JG LIF1
 RET 1
 LBL LIF1
 RET 0
-EXCALL null
+EXCALL printf

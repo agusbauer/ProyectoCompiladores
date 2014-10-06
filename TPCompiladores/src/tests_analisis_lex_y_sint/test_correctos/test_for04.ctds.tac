@@ -11,5 +11,5 @@ ADD i 2 temp6
 STR A temp6
 JMP BI1
 LBL EI2
-EXCALL null
+EXCALL printf
 RET 1

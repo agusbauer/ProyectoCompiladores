@@ -1,12 +1,13 @@
 STR A 2
-RET
+RET A
 LBL BI1
 STR i0 5 r1
 OPP 10 temp2
-JNOT EI2
-ADD i 2 temp3
-STR A temp3
+CMP 5 temp2 temp3
+JLE EI2
+ADD i 2 temp4
+STR A temp4
 JMP BI1
 LBL EI2
-EXCALL null
-RET
+EXCALL printf
+RET 1

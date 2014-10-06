@@ -91,22 +91,29 @@ public class TACGenerator implements ASTVisitor<Expression> {
                code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelId, "LIF"), null, null));
             }
             else{
-                BinOpExpr e =  (BinOpExpr)stmt.getCondition();
-                switch (e.getOperator()){ // salto condicional
-                    case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(labelId, "LIF"), null, null)); break;
-                    case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(labelId, "LIF"), null, null)); break;
-                    case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(labelId, "LIF"), null, null)); break;
-                    case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelId, "LIF"), null, null)); break;
-                    case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelId, "LIF"), null, null));break;
-                    case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelId, "LIF"), null, null));break;
-                    case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, "LIF"), null, null));break;
-                    case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, "LIF"), null, null));break;
+                if(claseDeCondicion.equals("loc")){
+                    VarLocation e =  (VarLocation)stmt.getCondition();
+                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelId, "LIF"), null, null));
+                }
+                else{
+                    BinOpExpr e =  (BinOpExpr)stmt.getCondition();
+                    switch (e.getOperator()){ // salto condicional
+                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(labelId, "LIF"), null, null)); break;
+                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(labelId, "LIF"), null, null)); break;
+                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(labelId, "LIF"), null, null)); break;
+                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelId, "LIF"), null, null)); break;
+                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelId, "LIF"), null, null));break;
+                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelId, "LIF"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, "LIF"), null, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, "LIF"), null, null));break;
+                    }
                 }
             }
         }
         stmt.getIfBlock().accept(this); //bloque if
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(labelId, "LIF"), null, null)); // label del else
-        stmt.getElseBlock().accept(this); //bloque else
+        if(stmt.getElseBlock()!=null)
+            stmt.getElseBlock().accept(this); //bloque else
         return null;
     }
 
@@ -150,17 +157,23 @@ public class TACGenerator implements ASTVisitor<Expression> {
                UnaryOpExpr e =  (UnaryOpExpr)stmt.getExpr();
                code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(endIter, "EI"), null, null));
             }
-            else{   
-                BinOpExpr e = (BinOpExpr) stmt.getExpr();
-                switch (e.getOperator()){ // salto condicional
-                    case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(endIter, "EI"), null, null)); break;
-                    case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(endIter, "EI"), null, null)); break;
-                    case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(endIter, "EI"), null, null)); break;
-                    case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(endIter, "EI"), null, null)); break;
-                    case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(endIter, "EI"), null, null));break;
-                    case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(endIter, "EI"), null, null));break;
-                    case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(endIter, "EI"), null, null));break;
-                    case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(endIter, "EI"), null, null));break;
+            else{ 
+                if(claseDeCondicion.equals("loc")){
+                    VarLocation e =  (VarLocation)stmt.getExpr();
+                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelId, "LIF"), null, null));
+                }
+                else{
+                    BinOpExpr e = (BinOpExpr) stmt.getExpr();
+                    switch (e.getOperator()){ // salto condicional
+                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(endIter, "EI"), null, null)); break;
+                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(endIter, "EI"), null, null)); break;
+                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(endIter, "EI"), null, null)); break;
+                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(endIter, "EI"), null, null)); break;
+                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(endIter, "EI"), null, null));break;
+                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(endIter, "EI"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(endIter, "EI"), null, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(endIter, "EI"), null, null));break;
+                    }        
                 }
             }
         }
@@ -204,7 +217,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(BinOpExpr expr) {
         BinOpType op = expr.getOperator();
         Expression left = expr.getLeftOperand().accept(this); // codigo de primer operando
-        Expression right = expr.getRightOperand().accept(this); // codigo de primer operando
+        Expression right = expr.getRightOperand().accept(this); // codigo de segundo operando
         ++commId;
         int id = commId;
         VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
@@ -274,9 +287,10 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(Block bl) {
-        for (Statement s : bl.getStatements()){
-            s.accept(this);
-        }
+        if(bl.getStatements()!=null)
+            for (Statement s : bl.getStatements()){
+                 s.accept(this);
+            }
         return null;
     }
 

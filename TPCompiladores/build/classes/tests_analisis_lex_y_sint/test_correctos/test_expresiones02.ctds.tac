@@ -10,7 +10,7 @@ STR f temp3
 DIV a f temp4
 CMP temp4 5 temp5
 JG LIF1
-RET
+RET 1
 LBL LIF1
-RET
-EXCALL null
+RET 0
+EXCALL printf

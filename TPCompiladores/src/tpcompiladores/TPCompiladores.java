@@ -62,8 +62,6 @@ public class TPCompiladores {
         }
         catch (RuntimeException e) {
             System.err.print(e.toString());
-        }
-        
-        
+        }        
     }
 }

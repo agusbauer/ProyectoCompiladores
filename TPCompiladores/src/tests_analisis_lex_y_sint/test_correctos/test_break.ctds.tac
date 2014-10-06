@@ -12,5 +12,5 @@ JMP BI1
 JMP BI1
 LBL EI2
 RET i
-EXCALL null
+EXCALL printf
 RET 1

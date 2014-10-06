@@ -170,21 +170,21 @@ precedence right UMINUS;
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
 					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p),ileft,iright) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p,DescriptorFuncion.getOffset()+4),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
 					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {:  parser.asts.add(b); 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p),ileft,iright) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p,DescriptorFuncion.getOffset()+4),ileft,iright) ;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  ;
 
    parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
-								l.add(new DescriptorSimple(i,t));
+								l.add(new DescriptorSimple(i,t,DescriptorSimple.getOffset()+4));
 								RESULT = l; :}
-				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t));
+				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t,DescriptorSimple.getOffset()+4));
 											RESULT = p ; :};
 
 
@@ -237,7 +237,7 @@ precedence right UMINUS;
 	method_call ::= id:i LPAREN RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),null,ileft,iright) ;
+												RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Object>(),ileft,iright) ;
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
 										else
