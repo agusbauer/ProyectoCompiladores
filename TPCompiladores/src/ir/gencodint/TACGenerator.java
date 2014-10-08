@@ -30,6 +30,7 @@ import ir.ast.Type;
 import ir.ast.UnaryOpExpr;
 import ir.ast.VarLocation;
 import ir.ast.WhileStmt;
+import static ir.gencodint.TACOpType.*;
 import java.util.LinkedList;
 import java.util.Stack;
 import tabladesimbolos.Descriptor;
@@ -128,7 +129,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         Expression to = stmt.getExprfin().accept(this);
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
         code.add(new TACCommand(TACOpType.CMP,from,to,var));
         code.add(new TACCommand(TACOpType.JLE,new IntLiteral(endIter, "EI"), null, null));
         stmt.getBlock().accept(this);
@@ -220,7 +221,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         Expression right = expr.getRightOperand().accept(this); // codigo de segundo operando
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
         if (op.isRelational() || op.isEquational())
             code.add(new TACCommand(TACOpType.CMP,left,right,var)); 
             
@@ -242,7 +243,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(UnaryOpExpr expr) {
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,DescriptorSimple.getOffset()+4));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
         code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),var,null));
         return var;
     }
@@ -251,7 +252,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(MethodCall expr) {
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),DescriptorSimple.getOffset()+4));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType()));
         code.add(new TACCommand(TACOpType.CALL,expr, var, null));
         return var;
     }
@@ -260,7 +261,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(Extern expr) {
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),DescriptorSimple.getOffset()+4));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType()));
         code.add(new TACCommand(TACOpType.EXCALL,expr, var, null));
         return var;
     }
@@ -297,5 +298,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public LinkedList<TACCommand> getCode() {
         return code;
     }
+    
+    
     
 }

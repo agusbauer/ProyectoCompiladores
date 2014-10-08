@@ -1,4 +1,0 @@
-STR a 5
-STR d 2000
-RET
-EXCALL null

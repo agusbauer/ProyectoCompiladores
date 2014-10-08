@@ -1,3 +1,0 @@
-STR a 5
-RET
-EXCALL null

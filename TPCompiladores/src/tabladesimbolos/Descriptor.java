@@ -12,15 +12,26 @@ public abstract class Descriptor {
     
     protected String nombre;
     protected Type tipo;
-    protected static int offset;
+    protected static int offsetCorriente;
+    protected int offset;
 
-    public static int getOffset() {
+    public static int getOffsetCorriente() {
+        return offsetCorriente;
+    }
+
+    public static void setOffsetCorriente(int offsetCorriente) {
+        Descriptor.offsetCorriente = offsetCorriente;
+    }
+
+    public int getOffset() {
         return offset;
     }
 
-    public static void setOffset(int offset) {
-        Descriptor.offset = offset;
-    }   
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    
         
     public String getNombre() {
         return nombre;

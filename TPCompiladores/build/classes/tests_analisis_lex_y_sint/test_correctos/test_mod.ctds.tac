@@ -1,3 +1,0 @@
-STR a 90
-RET
-EXCALL null
