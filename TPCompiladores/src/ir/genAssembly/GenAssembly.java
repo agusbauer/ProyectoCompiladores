@@ -56,14 +56,14 @@ public class GenAssembly {
                 case AND : and(c);break; //terminar de hacer bien and y or
                 case OR :  or(c);break;
                 case MOD : mod(c);break;
-                case JMP :
-                case JG :
-                case JL :
-                case JGE :
-                case JLE :
-                case JE :
-                case JNE :
-                case JAND :
+                case JMP : assembly.add("JMP, "+c.getP1().toString()); break;
+                case JG : assembly.add("JG, "+c.getP1().toString()); break; 
+                case JL : assembly.add("JL, "+c.getP1().toString()); break;
+                case JGE : assembly.add("JGE, "+c.getP1().toString()); break;
+                case JLE : assembly.add("JLE, "+c.getP1().toString()); break;
+                case JE : assembly.add("JE, "+c.getP1().toString()); break;
+                case JNE : assembly.add("JNE, "+c.getP1().toString()); break;
+                case JAND: jand(c); break; //VER SI ESTO ES CORRECTO
                 case JOR :
                 case JNOT :
                 case LBL :
@@ -78,6 +78,10 @@ public class GenAssembly {
         return null;
     }
     
+    public void jand (TACCommand c){
+        assembly.add("CMP %reax, $1");
+        assembly.add("JE "+ c.getP1().toString());
+    }
     public void str(TACCommand c){
         assembly.add("MOV $"+c.getP2().toString()+", %rax");
         VarLocation loc = (VarLocation) c.getP1();
