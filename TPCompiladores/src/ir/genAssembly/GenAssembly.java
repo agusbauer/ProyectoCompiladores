@@ -89,7 +89,7 @@ public class GenAssembly {
             }
             
         }
-        return null;
+        return assembly;
     }
     
     public void excall(TACCommand c){
@@ -147,7 +147,6 @@ public class GenAssembly {
             case GT : assembly.add("JG SHORT ok"); break;
             case LT : assembly.add("JL SHORT ok"); break;            
         }
-        assembly.add("JNE SHORT ok:");
         assembly.add("MOV $0, %eax");
         assembly.add("ok:");
         assembly.add("MOV $1, %eax");
@@ -213,8 +212,10 @@ public class GenAssembly {
     
     public void str(TACCommand c){
         assembly.add("MOV $"+c.getP2().toString()+", %rax");
+        
         VarLocation loc = (VarLocation) c.getP1();
-        assembly.add("MOV %rax, " + "-"+loc.getDesc().getOffset()+"(%rbp)");         
+        
+        assembly.add("MOV %rax, " + "-"+loc.getDesc().getOffset()+"(%rbp)");        
     }
     
     public void add(TACCommand c){

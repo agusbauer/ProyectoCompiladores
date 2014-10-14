@@ -1,11 +1,11 @@
 STR total 0.0
 STR i b
 LBL BI1
-CMP i 0 temp1
-CMP i 0 temp2
+CMP i 0.0 temp1
+CMP i 0.0 temp2
 OR temp1 temp2 temp3
-JOR EI2
-CMP i 0 temp4
+JOR EI2 temp3
+CMP i 0.0 temp4
 JG LIF3
 ADD total i temp5
 STR total temp5

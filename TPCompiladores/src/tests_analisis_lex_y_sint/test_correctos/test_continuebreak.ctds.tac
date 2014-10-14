@@ -1,15 +1,15 @@
-OPP 1 temp1
+OPP 1.0 temp1
 STR total temp1
 STR n 23
-STR i 23
+STR i 23.0
 LBL BI1
-CMP i 0 temp2
+CMP i 0.0 temp2
 JGE EI2
 SUB i 1 temp3
 STR i temp3
 CMP x b temp4
 JL LIF3
-CMP i 0 temp5
+CMP i 0.0 temp5
 JNE LIF4
 MUL total x temp6
 MUL temp6 b temp7

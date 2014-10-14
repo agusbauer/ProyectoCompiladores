@@ -7,6 +7,7 @@ package tpcompiladores;
 
 import ir.*;
 import ir.ast.*;
+import ir.genAssembly.GenAssembly;
 import ir.gencodint.TACCommand;
 import ir.gencodint.TACGenerator;
 import ir.semcheck.TypeCheckVisitor;
@@ -30,16 +31,33 @@ public class TPCompiladores {
     }
     
     private static void genCodInt(parser p, String nombre) throws IOException{
-       TACGenerator visitor = new TACGenerator(); 
+    /*   TACGenerator visitor = new TACGenerator(); 
        for (Block b : p.getASTs()){
            visitor.visit(b);
        }
        
-       LinkedList<TACCommand> code = visitor.getCode();
+      LinkedList<TACCommand> code = visitor.getCode();
        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".tac")));
        for (TACCommand comm : code){
            System.out.println(comm.toString());
            out.write(comm.toString());
+           out.write("\n");
+       }
+       out.close();*/
+    }
+    
+    private static void genAssembly(parser p, String nombre) throws IOException{
+       TACGenerator visitor = new TACGenerator(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+       GenAssembly gen = new GenAssembly(visitor.getCode());
+       LinkedList<String> assembly = gen.genAssembly();
+             
+       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".asm")));
+       for (String comm : assembly){
+           System.out.println(comm);
+           out.write(comm);
            out.write("\n");
        }
        out.close();
@@ -57,7 +75,8 @@ public class TPCompiladores {
         parser p = new parser(lex);
         p.parse();
         semCheck(p);
-        genCodInt(p,args[0]);
+       // genCodInt(p,args[0]);
+        genAssembly(p, args[0]);
         
         }
         catch (RuntimeException e) {
