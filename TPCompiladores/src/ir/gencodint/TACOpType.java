@@ -31,5 +31,6 @@ public enum TACOpType {
     OR,
     EXCALL,
     CALL, 
-    RET;
+    RET, 
+    NOT;
 }

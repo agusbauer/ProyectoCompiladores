@@ -6,9 +6,22 @@
 
 package ir.genAssembly;
 
+import ir.ast.BinOpExpr;
+import static ir.ast.BinOpType.EQEQ;
+import static ir.ast.BinOpType.GT;
+import static ir.ast.BinOpType.GTEQ;
+import static ir.ast.BinOpType.LT;
+import static ir.ast.BinOpType.LTEQ;
+import static ir.ast.BinOpType.NOTEQ;
+import ir.ast.Expression;
+import ir.ast.Extern;
+import ir.ast.IntLiteral;
 import ir.ast.Literal;
+import ir.ast.MethodCall;
+import ir.ast.UnaryOpExpr;
 import ir.ast.VarLocation;
 import ir.gencodint.TACCommand;
+import ir.gencodint.TACOpType;
 import static ir.gencodint.TACOpType.ADD;
 import static ir.gencodint.TACOpType.AND;
 import static ir.gencodint.TACOpType.CALL;
@@ -63,25 +76,141 @@ public class GenAssembly {
                 case JLE : assembly.add("JLE, "+c.getP1().toString()); break;
                 case JE : assembly.add("JE, "+c.getP1().toString()); break;
                 case JNE : assembly.add("JNE, "+c.getP1().toString()); break;
-                case JAND: jand(c); break; //VER SI ESTO ES CORRECTO
-                case JOR :
-                case JNOT :
-                case LBL :
-                case OPP :
-                case CMP :
-                case EXCALL :
-                case CALL :
-                case RET :
+                case JAND: jmp(c); break; //VER SI ESTO ES CORRECTO
+                case JOR : jmp(c); break;
+                case JNOT : jmp(c); break;
+                case LBL : label(c); break;
+                case OPP : opp(c); break;
+                case NOT : not(c); break; // no me cierra mucho este
+                case CMP : cmp(c); break;
+                case EXCALL : excall(c); break;
+                case CALL : call(c); break;
+                case RET : ret(c); break;
             }
             
         }
         return null;
     }
     
-    public void jand (TACCommand c){
-        assembly.add("CMP %reax, $1");
+    public void excall(TACCommand c){
+        Extern e =(Extern)c.getP1();
+        assembly.add("CALL "+e.getString());
+        if (c.getP2()!=null){
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }
+    }
+    
+    public void call(TACCommand c){
+        MethodCall e =(MethodCall)c.getP1();
+        assembly.add("CALL "+e.getId());
+        if (c.getP2()!=null){
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }
+    }
+    
+    public void ret(TACCommand c){
+        //en algun momento hay que asignarle a eax el resultado
+        assembly.add("leave");
+        assembly.add("ret");
+    }
+    
+    public void cmp(TACCommand c){
+        if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
+            VarLocation loc = (VarLocation) c.getP1();
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("CMP $"+c.getP2().toString()+", %eax");
+        }
+        if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
+            VarLocation loc = (VarLocation) c.getP2();
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("CMP $"+c.getP1().toString()+", %eax");       
+        }
+        if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
+            assembly.add("MOV $"+ c.getP2().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("CMP $"+c.getP1().toString()+", %eax");          
+        }
+        if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
+            VarLocation loc1 = (VarLocation) c.getP1();
+            VarLocation loc2 = (VarLocation) c.getP2();
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro rax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %ebx"); //muevo el segundo operando al registro rdx
+            assembly.add("CMP  %ebx, %eax"); //sumo los dos registros         
+        } 
+        VarLocation res = (VarLocation) c.getP3();
+        switch (res.getDesc().getOp()) {
+            case NOTEQ : assembly.add("JNE SHORT ok"); break;
+            case EQEQ : assembly.add("JE SHORT ok"); break;
+            case GTEQ : assembly.add("JGE SHORT ok"); break;
+            case LTEQ : assembly.add("JLE SHORT ok"); break;
+            case GT : assembly.add("JG SHORT ok"); break;
+            case LT : assembly.add("JL SHORT ok"); break;            
+        }
+        assembly.add("JNE SHORT ok:");
+        assembly.add("MOV $0, %eax");
+        assembly.add("ok:");
+        assembly.add("MOV $1, %eax");
+        assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+    }
+    
+    public void opp (TACCommand c){
+        if (c.getP1() instanceof VarLocation){
+            VarLocation loc = (VarLocation) c.getP1();
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("NOT  %eax");
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }
+        else{
+            assembly.add("MOV "+c.getP1().toString() +", %eax");
+            assembly.add("NOT  %eax");
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }          
+    }
+    
+    public void not (TACCommand c){
+        if (c.getP1() instanceof VarLocation){
+            VarLocation loc = (VarLocation) c.getP1();
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("CMP %eax, $1");
+            assembly.add("JE SHORT isTrue");
+            assembly.add("MOV $1, %eax");
+            assembly.add("isTrue:");
+            assembly.add("MOV $0, %eax");
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }
+        else{
+            assembly.add("MOV "+ c.getP1().toString() +", %eax");
+            assembly.add("CMP %eax, $1");
+            assembly.add("JE SHORT isTrue");
+            assembly.add("MOV $1, %eax");
+            assembly.add("isTrue:");
+            assembly.add("MOV $0, %eax");
+            VarLocation res = (VarLocation) c.getP2();
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
+        }          
+    }
+    
+    public void label (TACCommand c){
+        assembly.add(c.getP1().toString()+":");
+    }
+        
+    public void jmp (TACCommand c){
+        Expression e = c.getP2();
+        if (e instanceof VarLocation){
+            VarLocation loc = (VarLocation) e;
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+        }
+        else{
+           assembly.add("MOV $"+ e.toString()+", %eax"); 
+        }
+        assembly.add("CMP %eax, $1");
         assembly.add("JE "+ c.getP1().toString());
     }
+    
     public void str(TACCommand c){
         assembly.add("MOV $"+c.getP2().toString()+", %rax");
         VarLocation loc = (VarLocation) c.getP1();

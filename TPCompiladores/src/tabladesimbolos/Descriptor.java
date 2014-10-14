@@ -5,6 +5,7 @@
  */
 package tabladesimbolos;
 
+import ir.ast.BinOpType;
 import ir.ast.Type;
 
 
@@ -14,6 +15,7 @@ public abstract class Descriptor {
     protected Type tipo;
     protected static int offsetCorriente;
     protected int offset;
+    protected BinOpType op; // solo sirve para assembler
 
     public static int getOffsetCorriente() {
         return offsetCorriente;
@@ -21,6 +23,14 @@ public abstract class Descriptor {
 
     public static void setOffsetCorriente(int offsetCorriente) {
         Descriptor.offsetCorriente = offsetCorriente;
+    }
+
+    public BinOpType getOp() {
+        return op;
+    }
+
+    public void setOp(BinOpType op) {
+        this.op = op;
     }
 
     public int getOffset() {

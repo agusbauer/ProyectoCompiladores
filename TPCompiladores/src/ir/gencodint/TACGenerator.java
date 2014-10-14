@@ -77,7 +77,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(IfStmt stmt) {
-        stmt.getCondition().accept(this); // cmp o lcon o opp
+        Expression cond = stmt.getCondition().accept(this); // cmp o lcon o opp
         String claseDeCondicion = stmt.getCondition().getClase();
         labelId++;
         if (claseDeCondicion.equals("bool")){
@@ -105,8 +105,8 @@ public class TACGenerator implements ASTVisitor<Expression> {
                         case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelId, "LIF"), null, null)); break;
                         case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelId, "LIF"), null, null));break;
                         case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelId, "LIF"), null, null));break;
-                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, "LIF"), null, null));break;
-                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, "LIF"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, "LIF"), cond, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, "LIF"), cond, null));break;
                     }
                 }
             }
@@ -145,7 +145,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         endIter = (++labelId); //label end del while
         pila.push(new Pair<>(beginIter,endIter)); //guardo valores de begin y end
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(beginIter, "BI"), null, null)); // label del while
-        stmt.getExpr().accept(this); // cmp o lcon o opp
+        Expression cond = stmt.getExpr().accept(this); // cmp o lcon o opp
         String claseDeCondicion = stmt.getExpr().getClase();
         if (claseDeCondicion.equals("bool")){
             BoolLiteral e =  (BoolLiteral)stmt.getExpr();
@@ -172,8 +172,8 @@ public class TACGenerator implements ASTVisitor<Expression> {
                         case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(endIter, "EI"), null, null)); break;
                         case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(endIter, "EI"), null, null));break;
                         case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(endIter, "EI"), null, null));break;
-                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(endIter, "EI"), null, null));break;
-                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(endIter, "EI"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(endIter, "EI"), cond, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(endIter, "EI"), cond, null));break;
                     }        
                 }
             }
@@ -222,9 +222,10 @@ public class TACGenerator implements ASTVisitor<Expression> {
         ++commId;
         int id = commId;
         VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
-        if (op.isRelational() || op.isEquational())
+        if (op.isRelational() || op.isEquational()){
+            var.getDesc().setOp(op);
             code.add(new TACCommand(TACOpType.CMP,left,right,var)); 
-            
+        }    
         else 
             
             switch (op) {
@@ -244,7 +245,10 @@ public class TACGenerator implements ASTVisitor<Expression> {
         ++commId;
         int id = commId;
         VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
-        code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),var,null));
+        if (expr.getOperator().isMinus())
+            code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),var,null));
+        else
+            code.add(new TACCommand(TACOpType.NOT,expr.getOperand().accept(this),var,null));
         return var;
     }
 
