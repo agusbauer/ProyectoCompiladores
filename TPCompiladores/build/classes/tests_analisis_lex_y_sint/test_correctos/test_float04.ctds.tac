@@ -11,7 +11,7 @@ LBL BI2
 CMP i n temp3
 CMP i n temp4
 OR temp3 temp4 temp5
-JOR EI3
+JOR EI3 temp5
 MUL prod x temp6
 MUL temp6 2.0 temp7
 STR prod temp7
@@ -19,8 +19,8 @@ ADD i 1 temp8
 STR i temp8
 JMP BI2
 LBL EI3
-OPP neg temp10
-OPP temp10 temp9
+NOT neg temp10
+NOT temp10 temp9
 JNOT LIF4
 RET 1.0 / prod
 LBL LIF4

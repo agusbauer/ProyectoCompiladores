@@ -1,70 +1,71 @@
+
+pruContinue:
 MOV 1.0, %eax
 NOT  %eax
-MOV  %eax, -4(%ebp)
-MOV $temp1, %rax
-MOV %rax, -0(%rbp)
-MOV $23, %rax
-MOV %rax, -0(%rbp)
-MOV $23.0, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -16(%ebp)
+MOV -16(%ebp), %eax
+MOV %eax, -12(%ebp)
+MOV $23, %eax
+MOV %eax, -8(%ebp)
+MOV $23.0, %eax
+MOV %eax, -4(%ebp)
 BI1:
-MOV -0(%ebp), %eax
+MOV -4(%ebp), %eax
 CMP $0.0, %eax
 JGE SHORT ok
-JNE SHORT ok:
-MOV $0, %eax
-ok:
-MOV $1, %eax
-MOV  %eax, -8(%ebp)
-JGE, EI2
-MOV -0(%rbp), %rax
-SUB $1, %rax
-MOV  %rax, -12(%rbp)
-MOV $temp3, %rax
-MOV %rax, -0(%rbp)
-MOV -0(%ebp), %eax
-MOV -0(%ebp), %ebx
-CMP  %ebx, %eax
-JL SHORT ok
-JNE SHORT ok:
-MOV $0, %eax
-ok:
-MOV $1, %eax
-MOV  %eax, -16(%ebp)
-JL, LIF3
-MOV -0(%ebp), %eax
-CMP $0.0, %eax
-JNE SHORT ok
-JNE SHORT ok:
 MOV $0, %eax
 ok:
 MOV $1, %eax
 MOV  %eax, -20(%ebp)
-JNE, LIF4
-MOV -0(%rbp), %rax
-MOV -0(%rbp), %rdx
-IMUL %rdx, %rax
-MOV  %rax, -24(%rbp)
-MOV -24(%rbp), %rax
-MOV -0(%rbp), %rdx
-IMUL %rdx, %rax
-MOV  %rax, -28(%rbp)
-MOV $temp7, %rax
-MOV %rax, -0(%rbp)
+JGE EI2
+MOV -4(%ebp), %eax
+SUB $1, %eax
+MOV  %eax, -24(%ebp)
+MOV -24(%ebp), %eax
+MOV %eax, -4(%ebp)
+MOV -0(%ebp), %eax
+MOV -0(%ebp), %ebx
+CMP  %ebx, %eax
+JL SHORT ok
+MOV $0, %eax
+ok:
+MOV $1, %eax
+MOV  %eax, -28(%ebp)
+JL LIF3
+MOV -4(%ebp), %eax
+CMP $0.0, %eax
+JNE SHORT ok
+MOV $0, %eax
+ok:
+MOV $1, %eax
+MOV  %eax, -32(%ebp)
+JNE LIF4
+MOV -12(%ebp), %eax
+MOV -0(%ebp), %edx
+IMUL %edx, %eax
+MOV  %eax, -36(%ebp)
+MOV -36(%ebp), %eax
+MOV -0(%ebp), %edx
+IMUL %edx, %eax
+MOV  %eax, -40(%ebp)
+MOV -40(%ebp), %eax
+MOV %eax, -12(%ebp)
 LIF4:
-JMP, BI1
+JMP BI1
 LIF4:
 MOV 1000.234, %eax
 NOT  %eax
-MOV  %eax, -32(%ebp)
-MOV -32(%rbp), %rax
-ADD $6752, %rax
-MOV  %rax, -36(%rbp)
-MOV $temp9, %rax
-MOV %rax, -0(%rbp)
-JMP, BI2
-JMP, BI1
+MOV  %eax, -44(%ebp)
+MOV -44(%ebp), %eax
+ADD $6752, %eax
+MOV  %eax, -48(%ebp)
+MOV -48(%ebp), %eax
+MOV %eax, -12(%ebp)
+JMP BI2
+JMP BI1
 EI2:
 leave
 ret
+main:
 CALL printf
+

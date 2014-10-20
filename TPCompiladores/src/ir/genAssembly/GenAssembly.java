@@ -58,7 +58,10 @@ public class GenAssembly {
         TACCode = l;
         assembly = new LinkedList();
     }
-    public LinkedList<String> genAssembly(){      
+    public LinkedList<String> genAssembly(){ 
+        assembly.add("PUSH ebp"); //agregar preambulo de los metodos, quizas tengamos que diferenciar el main de los demas metodos.
+        assembly.add("MOV esp,ebp");
+        assembly.add("SUB 4,esp");
         for (TACCommand c : TACCode){
             switch (c.getOp()) {
                 case STR : str(c);break;
@@ -69,13 +72,13 @@ public class GenAssembly {
                 case AND : and(c);break; //terminar de hacer bien and y or
                 case OR :  or(c);break;
                 case MOD : mod(c);break;
-                case JMP : assembly.add("JMP, "+c.getP1().toString()); break;
-                case JG : assembly.add("JG, "+c.getP1().toString()); break; 
-                case JL : assembly.add("JL, "+c.getP1().toString()); break;
-                case JGE : assembly.add("JGE, "+c.getP1().toString()); break;
-                case JLE : assembly.add("JLE, "+c.getP1().toString()); break;
-                case JE : assembly.add("JE, "+c.getP1().toString()); break;
-                case JNE : assembly.add("JNE, "+c.getP1().toString()); break;
+                case JMP : assembly.add("JMP "+c.getP1().toString()); break;
+                case JG : assembly.add("JG "+c.getP1().toString()); break; 
+                case JL : assembly.add("JL "+c.getP1().toString()); break;
+                case JGE : assembly.add("JGE "+c.getP1().toString()); break;
+                case JLE : assembly.add("JLE "+c.getP1().toString()); break;
+                case JE : assembly.add("JE "+c.getP1().toString()); break;
+                case JNE : assembly.add("JNE "+c.getP1().toString()); break;
                 case JAND: jmp(c); break; //VER SI ESTO ES CORRECTO
                 case JOR : jmp(c); break;
                 case JNOT : jmp(c); break;
@@ -89,6 +92,8 @@ public class GenAssembly {
             }
             
         }
+        assembly.add("LEAVE");//HAY QYE VER COSITAS
+        assembly.add("RET");
         return assembly;
     }
     
@@ -134,8 +139,8 @@ public class GenAssembly {
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %ebx"); //muevo el segundo operando al registro rdx
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %ebx"); //muevo el segundo operando al registro edx
             assembly.add("CMP  %ebx, %eax"); //sumo los dos registros         
         } 
         VarLocation res = (VarLocation) c.getP3();
@@ -211,237 +216,243 @@ public class GenAssembly {
     }
     
     public void str(TACCommand c){
-        assembly.add("MOV $"+c.getP2().toString()+", %rax");
-        
-        VarLocation loc = (VarLocation) c.getP1();
-        
-        assembly.add("MOV %rax, " + "-"+loc.getDesc().getOffset()+"(%rbp)");        
+        if((c.getP2() instanceof VarLocation)){
+            VarLocation loc = (VarLocation) c.getP2();
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            VarLocation loc2 = (VarLocation) c.getP1();
+            assembly.add("MOV %eax, " + "-"+loc2.getDesc().getOffset()+"(%ebp)"); 
+        }
+        else{
+            assembly.add("MOV $"+c.getP2().toString()+", %eax");
+            VarLocation loc3 = (VarLocation) c.getP1();
+            assembly.add("MOV %eax, " + "-"+loc3.getDesc().getOffset()+"(%ebp)");
+        }
     }
     
     public void add(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("ADD $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("ADD $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("ADD $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("ADD $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //guardo el resultado en el tercer parametro        
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //guardo el resultado en el tercer parametro        
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP2().toString()+", %rax"); //muevo un literal a un registro
-            assembly.add("ADD $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV $"+ c.getP2().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("ADD $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el segundo operando al registro rdx
-            assembly.add("ADD %rdx, %rax"); //sumo los dos registros
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el segundo operando al registro edx
+            assembly.add("ADD %edx, %eax"); //sumo los dos registros
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
     }
     
     public void sub(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("SUB $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("SUB $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rdx");
-            assembly.add("MOV $"+ c.getP1().toString()+", %rax");
-            assembly.add("SUB %rdx, %rax");   //al primero le resto el segundo
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %edx");
+            assembly.add("MOV $"+ c.getP1().toString()+", %eax");
+            assembly.add("SUB %edx, %eax");   //al primero le resto el segundo
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //guardo el resultado en el tercer parametro        
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //guardo el resultado en el tercer parametro        
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP1().toString()+", %rax"); //muevo un literal a un registro
-            assembly.add("SUB $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV $"+ c.getP1().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("SUB $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el segundo operando al registro rdx
-            assembly.add("SUB %rdx, %rax"); //resto los dos registros
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el segundo operando al registro edx
+            assembly.add("SUB %edx, %eax"); //resto los dos registros
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
     }
     
     public void mul(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("IMUL $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("IMUL $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("IMUL $"+c.getP1().toString()+", %rax");   
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("IMUL $"+c.getP1().toString()+", %eax");   
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //guardo el resultado en el tercer parametro        
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //guardo el resultado en el tercer parametro        
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP2().toString()+", %rax"); //muevo un literal a un registro
-            assembly.add("IMUL $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV $"+ c.getP2().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("IMUL $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el segundo operando al registro rdx
-            assembly.add("IMUL %rdx, %rax"); //multiplico los dos registros
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el segundo operando al registro edx
+            assembly.add("IMUL %edx, %eax"); //multiplico los dos registros
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }        
     }
     
     public void div(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rdx");
-            assembly.add("IDIV $"+c.getP2().toString()); //rdx div divisor
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %edx");
+            assembly.add("IDIV $"+c.getP2().toString()); //edx div divisor
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //el cociente de la division queda en rax
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //el cociente de la division queda en eax
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rcx");
-            assembly.add("MOV $"+ c.getP1().toString()+", %rdx");
-            assembly.add("IDIV %rcx");   //rdx div rcx
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %ecx");
+            assembly.add("MOV $"+ c.getP1().toString()+", %edx");
+            assembly.add("IDIV %ecx");   //edx div ecx
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");     
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");     
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP1().toString()+", %rdx"); 
+            assembly.add("MOV $"+ c.getP1().toString()+", %edx"); 
             assembly.add("IDIV $"+c.getP2().toString()); 
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el dividendo operando al registro rdx
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rcx"); //muevo el divisor operando al registro rcx
-            assembly.add("IDIV %rcx"); 
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el dividendo operando al registro edx
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %ecx"); //muevo el divisor operando al registro ecx
+            assembly.add("IDIV %ecx"); 
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }        
     }
     
     public void and(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("AND $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("AND $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("AND $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("AND $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //guardo el resultado en el tercer parametro        
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //guardo el resultado en el tercer parametro        
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP2().toString()+", %rax"); //muevo un literal a un registro
-            assembly.add("AND $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV $"+ c.getP2().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("AND $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el segundo operando al registro rdx
-            assembly.add("AND %rdx, %rax"); //sumo los dos registros
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el segundo operando al registro edx
+            assembly.add("AND %edx, %eax"); //sumo los dos registros
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }        
     }
     
     public void or(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("OR $"+c.getP2().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("OR $"+c.getP2().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rax");
-            assembly.add("OR $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
+            assembly.add("OR $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //guardo el resultado en el tercer parametro        
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //guardo el resultado en el tercer parametro        
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP2().toString()+", %rax"); //muevo un literal a un registro
-            assembly.add("OR $"+c.getP1().toString()+", %rax");
+            assembly.add("MOV $"+ c.getP2().toString()+", %eax"); //muevo un literal a un registro
+            assembly.add("OR $"+c.getP1().toString()+", %eax");
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rax"); //muevo el primer operando al registro rax
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el segundo operando al registro rdx
-            assembly.add("OR %rdx, %rax"); //sumo los dos registros
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %eax"); //muevo el primer operando al registro eax
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el segundo operando al registro edx
+            assembly.add("OR %edx, %eax"); //sumo los dos registros
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rax, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %eax, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }               
     }
     
     public void mod(TACCommand c){
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rdx");
-            assembly.add("IDIV $"+c.getP2().toString()); //rdx div divisor
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %edx");
+            assembly.add("IDIV $"+c.getP2().toString()); //edx div divisor
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rdx, "+"-"+res.getDesc().getOffset()+"(%rbp)"); //el resto de la division queda en rdx
+            assembly.add("MOV "+" %edx, "+"-"+res.getDesc().getOffset()+"(%ebp)"); //el resto de la division queda en edx
         }
         if((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%rbp)"+", %rcx");
-            assembly.add("MOV $"+ c.getP1().toString()+", %rdx");
-            assembly.add("IDIV %rcx");   //rdx div rcx
+            assembly.add("MOV "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %ecx");
+            assembly.add("MOV $"+ c.getP1().toString()+", %edx");
+            assembly.add("IDIV %ecx");   //edx div ecx
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rdx, "+"-"+res.getDesc().getOffset()+"(%rbp)");     
+            assembly.add("MOV "+" %edx, "+"-"+res.getDesc().getOffset()+"(%ebp)");     
         }
         if((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("MOV $"+ c.getP1().toString()+", %rdx"); 
+            assembly.add("MOV $"+ c.getP1().toString()+", %edx"); 
             assembly.add("IDIV $"+c.getP2().toString()); 
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rdx, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %edx, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }
         if((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%rbp)"+", %rdx"); //muevo el dividendo operando al registro rdx
-            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%rbp)"+", %rcx"); //muevo el divisor operando al registro rcx
-            assembly.add("IDIV %rcx"); 
+            assembly.add("MOV "+ "-"+loc1.getDesc().getOffset()+"(%ebp)"+", %edx"); //muevo el dividendo operando al registro edx
+            assembly.add("MOV "+ "-"+loc2.getDesc().getOffset()+"(%ebp)"+", %ecx"); //muevo el divisor operando al registro ecx
+            assembly.add("IDIV %ecx"); 
             VarLocation res = (VarLocation) c.getP3();
-            assembly.add("MOV "+" %rdx, "+"-"+res.getDesc().getOffset()+"(%rbp)");          
+            assembly.add("MOV "+" %edx, "+"-"+res.getDesc().getOffset()+"(%ebp)");          
         }                
     }
 }

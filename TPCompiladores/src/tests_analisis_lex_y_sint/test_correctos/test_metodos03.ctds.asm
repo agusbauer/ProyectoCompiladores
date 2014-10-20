@@ -1,34 +1,38 @@
+
+inc:
 leave
 ret
-MOV $2, %rax
-IMUL $3, %rax
-MOV  %rax, -4(%rbp)
+resto:
+MOV $2, %eax
+IMUL $3, %eax
+MOV  %eax, -16(%ebp)
 MOV -0(%ebp), %eax
-MOV -4(%ebp), %ebx
+MOV -16(%ebp), %ebx
 CMP  %ebx, %eax
 JG SHORT ok
-JNE SHORT ok:
 MOV $0, %eax
 ok:
 MOV $1, %eax
-MOV  %eax, -8(%ebp)
-JG, LIF1
-MOV -0(%rbp), %rdx
+MOV  %eax, -20(%ebp)
+JG LIF1
+MOV -0(%ebp), %edx
 IDIV $3
-MOV  %rax, -12(%rbp)
-MOV $temp3, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -24(%ebp)
+MOV -24(%ebp), %eax
+MOV %eax, -8(%ebp)
 LIF1:
-MOV -0(%rbp), %rdx
+MOV -0(%ebp), %edx
 IDIV $2
-MOV  %rdx, -16(%rbp)
-MOV $temp4, %rax
-MOV %rax, -0(%rbp)
+MOV  %edx, -28(%ebp)
+MOV -28(%ebp), %eax
+MOV %eax, -8(%ebp)
 leave
 ret
-MOV $False, %rax
-MOV %rax, -0(%rbp)
+main:
+MOV $False, %eax
+MOV %eax, -4(%ebp)
 CALL resto
-MOV  %eax, -20(%ebp)
-MOV $temp5, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -32(%ebp)
+MOV -32(%ebp), %eax
+MOV %eax, -12(%ebp)
+

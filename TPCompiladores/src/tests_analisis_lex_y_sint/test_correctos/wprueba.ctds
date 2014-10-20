@@ -1,0 +1,9 @@
+class prueba{
+
+int main(){
+	int a;
+	a=1;
+}
+
+}
+

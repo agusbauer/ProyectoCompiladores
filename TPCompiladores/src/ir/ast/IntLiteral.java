@@ -29,7 +29,7 @@ public class IntLiteral extends Literal {
                 type = Type.INT;
 	}
         
-        public IntLiteral(int value, String lbl){
+        public IntLiteral(Integer value, String lbl){
             this.value = value;
             this.label = lbl;
         }
@@ -53,8 +53,12 @@ public class IntLiteral extends Literal {
 	public String toString() {
                 if(label==null)
                     return value.toString();
-                else
-                    return label + value.toString();
+                else{
+                    if (value!=null)
+                        return label + value.toString();
+                    else
+                        return label;
+                }    
 	}
 
 	@Override

@@ -1,19 +1,25 @@
+
+neg:
 leave
 ret
+and:
 leave
 ret
+or:
 leave
 ret
-MOV $True, %rax
-MOV %rax, -0(%rbp)
-MOV $False, %rax
-MOV %rax, -0(%rbp)
+main:
+MOV $True, %eax
+MOV %eax, -4(%ebp)
+MOV $False, %eax
+MOV %eax, -8(%ebp)
 CALL neg
-MOV  %eax, -4(%ebp)
-MOV $temp1, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -24(%ebp)
+MOV -24(%ebp), %eax
+MOV %eax, -8(%ebp)
 CALL or
-MOV  %eax, -8(%ebp)
-MOV $temp2, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -28(%ebp)
+MOV -28(%ebp), %eax
+MOV %eax, -12(%ebp)
 CALL printf
+

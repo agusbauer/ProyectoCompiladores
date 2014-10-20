@@ -1,5 +1,8 @@
-MOV -0(%rbp), %rax
-ADD $1, %rax
-MOV  %rax, -4(%rbp)
-MOV $temp1, %rax
-MOV %rax, -0(%rbp)
+
+alo:
+MOV -0(%ebp), %eax
+ADD $1, %eax
+MOV  %eax, -8(%ebp)
+MOV -8(%ebp), %eax
+MOV %eax, -0(%ebp)
+

@@ -1,31 +1,34 @@
-MOV $0.0, %rax
-MOV %rax, -0(%rbp)
-MOV $0, %rax
-MOV %rax, -0(%rbp)
+
+sumx:
+MOV $0.0, %eax
+MOV %eax, -4(%ebp)
+MOV $0, %eax
+MOV %eax, -8(%ebp)
 BI1:
-MOV -0(%ebp), %eax
+MOV -8(%ebp), %eax
 MOV -0(%ebp), %ebx
 CMP  %ebx, %eax
 JL SHORT ok
-JNE SHORT ok:
 MOV $0, %eax
 ok:
 MOV $1, %eax
-MOV  %eax, -4(%ebp)
-JL, EI2
-MOV -0(%rbp), %rax
-MOV -0(%rbp), %rdx
-ADD %rdx, %rax
-MOV  %rax, -8(%rbp)
-MOV $temp2, %rax
-MOV %rax, -0(%rbp)
-MOV -0(%rbp), %rax
-ADD $1, %rax
-MOV  %rax, -12(%rbp)
-MOV $temp3, %rax
-MOV %rax, -0(%rbp)
-JMP, BI1
+MOV  %eax, -12(%ebp)
+JL EI2
+MOV -4(%ebp), %eax
+MOV -0(%ebp), %edx
+ADD %edx, %eax
+MOV  %eax, -16(%ebp)
+MOV -16(%ebp), %eax
+MOV %eax, -4(%ebp)
+MOV -8(%ebp), %eax
+ADD $1, %eax
+MOV  %eax, -20(%ebp)
+MOV -20(%ebp), %eax
+MOV %eax, -8(%ebp)
+JMP BI1
 EI2:
 leave
 ret
+main:
 CALL printf
+

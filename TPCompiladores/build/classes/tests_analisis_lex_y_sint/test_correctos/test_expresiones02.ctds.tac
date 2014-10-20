@@ -5,7 +5,7 @@ STR a temp1
 ADD a p temp2
 STR p temp2
 STR pi 3.1
-MUL 2 pi temp3
+MUL 2.0 pi temp3
 STR f temp3
 DIV a f temp4
 CMP temp4 5 temp5

@@ -1,0 +1,549 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import ir.ast.Block;
+import ir.semcheck.TypeCheckVisitor;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import parser.CTDSLexer;
+import parser.parser;
+
+/**
+ *
+ * @author alan
+ */
+public class TestsCorrectos {
+    
+    public TestsCorrectos() {
+    }
+    
+    @Test
+    public void TestArreglo() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/tests_analisis_lex_y_sint/test_correctos/test_arreglos.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestBloque01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+
+    @Test
+    public void TestBloque02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestBooleanos() throws Exception{
+      BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);  
+    }
+    
+    @Test
+    public void TestBreak() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestComentarios() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestComentarios02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestCondiciones() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestContinueBreak() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestExpresiones01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestExpresiones02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFloat01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFloat02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFloat04() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFloat05() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFor01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFor02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFor03() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFor04() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestFor05() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestIf() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestIfAnidados() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestLogicos01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestLogicos02() throws Exception{
+     BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);   
+    }
+    
+    @Test
+    public void TestMainSolo() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMcd() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodos00() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodos01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodos02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodos03() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodosExternos01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMetodosExternos02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMod() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    @Test
+    public void TestMult01() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestMult02() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestProgSimple() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestRetorno() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestSuma() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestSumx() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/"+"test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+     @Test
+    public void TestWhile() throws Exception{
+        BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir")+"/TPCompiladores/src/tests_analisis_lex_y_sint/test_correctos/test_arreglo.c-tds"));
+        CTDSLexer lex = new CTDSLexer(br);
+        parser p = new parser(lex);
+        p.parse();
+        TypeCheckVisitor visitor = new TypeCheckVisitor(); 
+       for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
+        assertEquals(visitor.getErrors().size(), 0);
+    }
+    
+    
+}

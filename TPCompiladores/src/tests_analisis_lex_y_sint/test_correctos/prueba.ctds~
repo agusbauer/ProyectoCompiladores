@@ -1,0 +1,14 @@
+class prueba{
+
+int main(){
+	int a;
+	int b;
+	int c;
+
+	a = 1;
+	b = a+3;
+	c = b;
+
+}
+
+}

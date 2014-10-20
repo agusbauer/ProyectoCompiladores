@@ -1,29 +1,32 @@
-MOV $True, %rax
-MOV %rax, -0(%rbp)
-MOV -0(%ebp), %eax
+
+main:
+MOV $True, %eax
+MOV %eax, -4(%ebp)
+MOV -4(%ebp), %eax
 CMP %eax, $1
 JE SHORT isTrue
 MOV $1, %eax
 isTrue:
 MOV $0, %eax
-MOV  %eax, -4(%ebp)
-MOV $temp1, %rax
-MOV %rax, -0(%rbp)
-MOV -0(%rbp), %rax
-MOV -0(%rbp), %rdx
-AND %rdx, %rax
-MOV  %rax, -8(%rbp)
-MOV -0(%ebp), %eax
+MOV  %eax, -24(%ebp)
+MOV -24(%ebp), %eax
+MOV %eax, -8(%ebp)
+MOV -4(%ebp), %eax
+MOV -8(%ebp), %edx
+AND %edx, %eax
+MOV  %eax, -28(%ebp)
+MOV -8(%ebp), %eax
 CMP %eax, $1
 JE SHORT isTrue
 MOV $1, %eax
 isTrue:
 MOV $0, %eax
-MOV  %eax, -12(%ebp)
-MOV -8(%rbp), %rax
-MOV -12(%rbp), %rdx
-OR %rdx, %rax
-MOV  %rax, -16(%rbp)
-MOV $temp4, %rax
-MOV %rax, -0(%rbp)
+MOV  %eax, -32(%ebp)
+MOV -28(%ebp), %eax
+MOV -32(%ebp), %edx
+OR %edx, %eax
+MOV  %eax, -36(%ebp)
+MOV -36(%ebp), %eax
+MOV %eax, -12(%ebp)
 CALL printf
+

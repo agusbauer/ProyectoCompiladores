@@ -12,6 +12,15 @@ import ir.ASTVisitor;
 
 public class Block extends Statement {
 	private List<Statement> statements;
+        private String methodName; // para las etiquetas de assembler
+        
+        public void setMethodName(String n){
+            methodName=n;
+        }
+        
+        public String getMethodName(){
+            return methodName;
+        }
 	
 	public Block( List<Statement> s) {
 		statements = s;
