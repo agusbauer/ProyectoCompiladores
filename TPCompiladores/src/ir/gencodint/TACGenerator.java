@@ -71,7 +71,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ReturnStmt stmt) {;
-        code.add(new TACCommand(TACOpType.RET,stmt.getExpression(),null,null));
+        code.add(new TACCommand(TACOpType.RET,stmt.getExpression().accept(this),null,null));
         return null; 
     }
 
