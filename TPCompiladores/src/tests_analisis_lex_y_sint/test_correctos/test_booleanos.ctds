@@ -18,7 +18,7 @@ void main(){
     a= true;
     b= false;
     b= neg(a);
-    c= or(and(a,b), neg(b) );
+    c= or(and(a,b,a), neg(b) );
 
     externinvk("printf", boolean , c);
 }

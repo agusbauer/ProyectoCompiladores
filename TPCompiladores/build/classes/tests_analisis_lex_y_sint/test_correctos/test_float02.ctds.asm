@@ -3,7 +3,7 @@ sumatoria:
 MOV $0.0, %eax
 MOV %eax, -4(%ebp)
 MOV -0(%ebp), %eax
-MOV %eax, -0(%ebp)
+MOV %eax, -8(%ebp)
 BI1:
 MOV -8(%ebp), %eax
 CMP $0.0, %eax
@@ -39,7 +39,7 @@ MOV -8(%ebp), %edx
 ADD %edx, %eax
 MOV  %eax, -40(%ebp)
 MOV -40(%ebp), %eax
-MOV %eax, -40(%ebp)
+MOV %eax, -4(%ebp)
 LIF3:
 MOV -8(%ebp), %eax
 SUB $1.0, %eax
@@ -47,7 +47,7 @@ MOV  %eax, -8(%ebp)
 JMP BI1
 EI2:
 MOV -4(%ebp), %eax
-MOV %eax, -4(%ebp)
+MOV %eax, -12(%ebp)
 leave
 ret
 main:
@@ -56,7 +56,7 @@ MOV %eax, -20(%ebp)
 CALL sumatoria
 MOV  %eax, -44(%ebp)
 MOV -44(%ebp), %eax
-MOV %eax, -44(%ebp)
+MOV %eax, -16(%ebp)
 CALL printf
 leave
 ret

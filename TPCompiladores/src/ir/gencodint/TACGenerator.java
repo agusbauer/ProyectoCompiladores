@@ -71,7 +71,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ReturnStmt stmt) {;
-        code.add(new TACCommand(TACOpType.RET,stmt.getExpression(),null,null));
+        code.add(new TACCommand(TACOpType.RET,stmt.getExpression().accept(this),null,null));
         return null; 
     }
 
@@ -293,7 +293,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     @Override
     public Expression visit(Block bl) {
         if (bl.getMethodName()!=null){
-            code.add(new TACCommand(TACOpType.LBL, new IntLiteral(null, bl.getMethodName()), null, null));
+            code.add(new TACCommand(TACOpType.MNAME, new IntLiteral(null, bl.getMethodName()), null, null));
         }
         if(bl.getStatements()!=null)
             for (Statement s : bl.getStatements()){

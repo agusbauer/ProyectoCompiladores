@@ -1,3 +1,4 @@
+MNAME dados
 CMP d1 6 temp2
 CMP d2 6 temp4
 CMP d3 6 temp6
@@ -66,4 +67,5 @@ AND temp54 temp55 temp56
 JAND LIF4 temp56
 RET 10.0
 LBL LIF4
+MNAME main
 EXCALL printf

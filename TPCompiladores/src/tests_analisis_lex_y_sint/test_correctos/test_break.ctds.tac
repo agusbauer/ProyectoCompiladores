@@ -1,3 +1,4 @@
+MNAME breaks
 STR i 0
 LBL BI1
 CMP i 10 temp1
@@ -12,5 +13,6 @@ JMP BI1
 JMP BI1
 LBL EI2
 RET i
+MNAME main
 EXCALL printf
 RET 1

@@ -1,3 +1,4 @@
+MNAME prueba
 STR g 50
 CMP g 0 temp1
 JG LIF1
@@ -25,4 +26,5 @@ LBL EI6
 LBL LIF6
 LBL LIF6
 RET c
+MNAME main
 EXCALL printf

@@ -1,3 +1,4 @@
+MNAME main
 STR a True
 NOT a temp1
 STR b temp1

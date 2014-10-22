@@ -18,8 +18,8 @@ echo "**************************************************************************
 echo "     " 
 echo "     " 
 
-comp="/home/luciano/Escritorio/Compiladores/ProyectoCompiladores/TPCompiladores/dist/TPCompiladores.jar"
-
+#comp="/home/luciano/Escritorio/Compiladores/ProyectoCompiladores/TPCompiladores/dist/TPCompiladores.jar"
+comp="/home/alan/UNRC/4to_anio/2do_cuatrimestre/Compiladores/Ultimo/ProyectoCompiladores/TPCompiladores/dist/TPCompiladores.jar"
 
 echo "///////////////////////// TESTS CORRECTOS ////////////////////////////////////////" 
 files=`ls test_correctos/*.ctds`

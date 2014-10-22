@@ -1,21 +1,35 @@
+SEGMENT .DATA
+
+SEGMENT .BSS
+
+SEGMENT .TEXT
+
+  GLOBAL main
 
 pruAritmetica:
-MOV -0(%ebp), %eax
-MOV -0(%ebp), %ebx
-CMP  %ebx, %eax
-JG SHORT ok
-MOV $0, %eax
+  PUSH %ebp
+  MOV %ebp, %esp
+  MOV -0(%ebp), %eax
+  MOV -0(%ebp), %ebx
+  CMP  %ebx, %eax
+  JG SHORT ok
+  MOV $0, %eax
 ok:
-MOV $1, %eax
-MOV  %eax, -8(%ebp)
-JG LIF1
-MOV -0(%ebp), %eax
-MOV %eax, -4(%ebp)
+  MOV $1, %eax
+  MOV  %eax, -12(%ebp)
+  JG LIF1
+  MOV -0(%ebp), %eax
+  MOV %eax, -4(%ebp)
 LIF1:
-MOV -0(%ebp), %eax
-MOV %eax, -4(%ebp)
-leave
-ret
-main:
-CALL printf
+  MOV -0(%ebp), %eax
+  MOV %eax, -4(%ebp)
+  MOV res, %eax
+  leave
+  ret
 
+main:
+  PUSH %ebp
+  MOV %ebp, %esp
+  CALL printf
+  LEAVE
+  RET

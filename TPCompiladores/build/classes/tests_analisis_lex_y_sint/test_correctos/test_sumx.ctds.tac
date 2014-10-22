@@ -1,3 +1,4 @@
+MNAME sumx
 STR aux 0.0
 STR i 0
 LBL BI1
@@ -10,4 +11,5 @@ STR i temp3
 JMP BI1
 LBL EI2
 RET aux
+MNAME main
 EXCALL printf

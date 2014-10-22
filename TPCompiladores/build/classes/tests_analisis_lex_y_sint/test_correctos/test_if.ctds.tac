@@ -1,3 +1,4 @@
+MNAME pruAritmetica
 CMP b c temp1
 JG LIF1
 SUB b c temp2
@@ -11,6 +12,7 @@ LBL LIF2
 SUB c b temp5
 STR res temp5
 RET res
+MNAME main
 EXCALL printf
 EXCALL printf
 EXCALL printf

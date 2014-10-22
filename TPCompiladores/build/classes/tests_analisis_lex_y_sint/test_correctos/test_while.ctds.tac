@@ -1,3 +1,4 @@
+MNAME maxcomdiv
 STR resto 1
 LBL BI1
 CMP resto 0 temp1
@@ -20,4 +21,5 @@ JNE EI6
 JMP BI5
 LBL EI6
 RET dividendo
+MNAME main
 EXCALL printf

@@ -1,3 +1,4 @@
+MNAME id
 STR i 100
 STR j 0
 STR z x
@@ -46,4 +47,5 @@ STR j temp19
 JMP BI6
 LBL EI7
 RET x
+MNAME main
 EXCALL printf

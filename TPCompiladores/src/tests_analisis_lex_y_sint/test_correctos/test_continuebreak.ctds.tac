@@ -1,3 +1,4 @@
+MNAME pruContinue
 OPP 1.0 temp1
 STR total temp1
 STR n 23
@@ -23,5 +24,8 @@ STR total temp9
 JMP BI2
 JMP BI1
 LBL EI2
-RET - 2 * total
+MUL 2 total temp11
+OPP temp11 temp10
+RET temp10
+MNAME main
 EXCALL printf

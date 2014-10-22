@@ -1,32 +1,42 @@
+SEGMENT .DATA
+
+SEGMENT .BSS
+
+SEGMENT .TEXT
+
+  GLOBAL main
 
 main:
-MOV $True, %eax
-MOV %eax, -4(%ebp)
-MOV -4(%ebp), %eax
-CMP %eax, $1
-JE SHORT isTrue
-MOV $1, %eax
+  PUSH %ebp
+  MOV %ebp, %esp
+  MOV $True, %eax
+  MOV %eax, -4(%ebp)
+  MOV -4(%ebp), %eax
+  CMP %eax, $1
+  JE SHORT isTrue
+  MOV $1, %eax
 isTrue:
-MOV $0, %eax
-MOV  %eax, -24(%ebp)
-MOV -24(%ebp), %eax
-MOV %eax, -8(%ebp)
-MOV -4(%ebp), %eax
-MOV -8(%ebp), %edx
-AND %edx, %eax
-MOV  %eax, -28(%ebp)
-MOV -8(%ebp), %eax
-CMP %eax, $1
-JE SHORT isTrue
-MOV $1, %eax
+  MOV $0, %eax
+  MOV  %eax, -40(%ebp)
+  MOV -40(%ebp), %eax
+  MOV %eax, -8(%ebp)
+  MOV -4(%ebp), %eax
+  MOV -8(%ebp), %edx
+  AND %edx, %eax
+  MOV  %eax, -44(%ebp)
+  MOV -8(%ebp), %eax
+  CMP %eax, $1
+  JE SHORT isTrue
+  MOV $1, %eax
 isTrue:
-MOV $0, %eax
-MOV  %eax, -32(%ebp)
-MOV -28(%ebp), %eax
-MOV -32(%ebp), %edx
-OR %edx, %eax
-MOV  %eax, -36(%ebp)
-MOV -36(%ebp), %eax
-MOV %eax, -12(%ebp)
-CALL printf
-
+  MOV $0, %eax
+  MOV  %eax, -48(%ebp)
+  MOV -44(%ebp), %eax
+  MOV -48(%ebp), %edx
+  OR %edx, %eax
+  MOV  %eax, -52(%ebp)
+  MOV -52(%ebp), %eax
+  MOV %eax, -12(%ebp)
+  CALL printf
+  LEAVE
+  RET

@@ -1,3 +1,4 @@
+MNAME prueba
 STR b 4
 STR c 5
 MUL b c temp1
@@ -13,4 +14,5 @@ JG LIF1
 RET 1
 LBL LIF1
 RET 0
+MNAME main
 EXCALL printf

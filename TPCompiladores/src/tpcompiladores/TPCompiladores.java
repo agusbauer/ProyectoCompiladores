@@ -31,7 +31,7 @@ public class TPCompiladores {
     }
     
     private static void genCodInt(parser p, String nombre) throws IOException{
-    /*   TACGenerator visitor = new TACGenerator(); 
+       TACGenerator visitor = new TACGenerator(); 
        for (Block b : p.getASTs()){
            visitor.visit(b);
        }
@@ -43,7 +43,7 @@ public class TPCompiladores {
            out.write(comm.toString());
            out.write("\n");
        }
-       out.close();*/
+       out.close();
     }
     
     private static void genAssembly(parser p, String nombre) throws IOException{
@@ -75,7 +75,7 @@ public class TPCompiladores {
         parser p = new parser(lex);
         p.parse();
         semCheck(p);
-       // genCodInt(p,args[0]);
+        genCodInt(p,args[0]);
         genAssembly(p, args[0]);
         
         }
