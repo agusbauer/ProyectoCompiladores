@@ -154,8 +154,8 @@ precedence right UMINUS;
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
 
-   method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;:}
-					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;:};
+   method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:}
+					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:};
 
    method	 ::= type:t id:i LPAREN RPAREN block:b {: b.setMethodName(i);
 					    parser.asts.add(b);  
@@ -236,16 +236,26 @@ precedence right UMINUS;
 
 	method_call ::= id:i LPAREN RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
-											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Expression>(),ileft,iright) ;
+											if (d.getClase().equals("descriptorFuncion")){
+												DescriptorFuncion df = (DescriptorFuncion) d;
+												if (df.getParametros().size()==0)
+													RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Expression>(),ileft,iright) ;
+												else
+													parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+											}					
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
 										else
 											parser.report_fatal_error("Los tipos no concuerdan",ileft,iright); :}
 				| id:i LPAREN expr_sequence:l RPAREN {: Descriptor d = tds.search(i);
 										if (d!=null)
-											if (d.getClase().equals("descriptorFuncion"))
-												RESULT = new MethodCall(i,d.getTipo(),l,ileft,iright) ;
+											if (d.getClase().equals("descriptorFuncion")){
+												DescriptorFuncion df = (DescriptorFuncion) d;
+												if (df.getParametros().size()==l.size())
+													RESULT = new MethodCall(i,d.getTipo(),l,ileft,iright) ;
+												else
+													parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+											}
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);			
 										else
