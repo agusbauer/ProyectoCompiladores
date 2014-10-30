@@ -1,56 +1,63 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL div
+  TYPE div, @function
 div:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %edx
-  MOV -0(%ebp), %ecx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $32%ebp
+  MOVL -0(%ebp), %edx
+  MOVL -0(%ebp), %ecx
   IDIV %ecx
-  MOV  %eax, -32(%ebp)
-  MOV temp1, %eax
-  leave
-  ret
+  MOVL  %eax, -20(%ebp)
+  MOVL temp1, %eax
+  LEAVE
+  RET
 
+  .GLOBL resta
+  TYPE resta, @function
 resta:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  SUB %edx, %eax
-  MOV  %eax, -36(%ebp)
-  MOV temp2, %eax
-  leave
-  ret
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $32%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  SUBL %edx, %eax
+  MOVL  %eax, -24(%ebp)
+  MOVL temp2, %eax
+  LEAVE
+  RET
 
+  .GLOBL sum
+  TYPE sum, @function
 sum:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -40(%ebp)
-  MOV temp3, %eax
-  leave
-  ret
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $32%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -28(%ebp)
+  MOVL temp3, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $6.98, %eax
-  MOV %eax, -4(%ebp)
-  MOV 2.0, %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $32%ebp
+  MOVL $6.98, %eax
+  MOVL %eax, -4(%ebp)
+  MOVL 2.0, %eax
   NOT  %eax
-  MOV  %eax, -44(%ebp)
-  MOV -44(%ebp), %eax
-  MOV %eax, -8(%ebp)
-  MOV $3.569, %eax
-  MOV %eax, -12(%ebp)
+  MOVL  %eax, -32(%ebp)
+  MOVL -32(%ebp), %eax
+  MOVL %eax, -8(%ebp)
+  MOVL $3.569, %eax
+  MOVL %eax, -12(%ebp)
   CALL printf
   LEAVE
   RET

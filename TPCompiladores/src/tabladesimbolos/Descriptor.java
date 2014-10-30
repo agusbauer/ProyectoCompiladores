@@ -16,6 +16,7 @@ public abstract class Descriptor {
     protected static int offsetCorriente;
     protected int offset;
     protected BinOpType op; // solo sirve para assembler
+    
 
     public static int getOffsetCorriente() {
         return offsetCorriente;

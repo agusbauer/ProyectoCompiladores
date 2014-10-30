@@ -31,6 +31,8 @@ action code{:
 		}
 
 		
+
+		
 :};
 parser code {:
     
@@ -60,7 +62,11 @@ parser code {:
 	public LinkedList<Block> getASTs(){
 		return asts;
 	}
+	TablaDeSimbolos t = new TablaDeSimbolos();
 
+	public TablaDeSimbolos getTds(){
+			return t;
+	}
 :};
    
 
@@ -127,7 +133,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:parser.t=tds.clone(); tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl

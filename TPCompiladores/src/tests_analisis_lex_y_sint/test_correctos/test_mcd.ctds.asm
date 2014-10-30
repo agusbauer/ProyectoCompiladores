@@ -1,62 +1,63 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL maxcomdiv
+  TYPE maxcomdiv, @function
 maxcomdiv:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -28(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -16(%ebp)
   JG LIF1
-  MOV -0(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV -0(%ebp), %eax
-  MOV %eax, -8(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -8(%ebp)
 LIF1:
-  MOV -0(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV -0(%ebp), %eax
-  MOV %eax, -8(%ebp)
-  MOV $1, %eax
-  MOV %eax, -12(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -8(%ebp)
+  MOVL $1, %eax
+  MOVL %eax, -12(%ebp)
 BI2:
-  MOV -12(%ebp), %eax
+  MOVL -12(%ebp), %eax
   CMP $0, %eax
   JNE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -32(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -20(%ebp)
   JNE EI3
-  MOV -4(%ebp), %edx
-  MOV -8(%ebp), %ecx
+  MOVL -4(%ebp), %edx
+  MOVL -8(%ebp), %ecx
   IDIV %ecx
-  MOV  %edx, -36(%ebp)
-  MOV -36(%ebp), %eax
-  MOV %eax, -12(%ebp)
-  MOV -8(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV -12(%ebp), %eax
-  MOV %eax, -8(%ebp)
+  MOVL  %edx, -24(%ebp)
+  MOVL -24(%ebp), %eax
+  MOVL %eax, -12(%ebp)
+  MOVL -8(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   JMP BI2
 EI3:
-  MOV dividendo, %eax
-  leave
-  ret
+  MOVL dividendo, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
   CALL printf
   LEAVE
   RET

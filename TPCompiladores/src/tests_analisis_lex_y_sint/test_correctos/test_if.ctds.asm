@@ -1,58 +1,59 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL pruAritmetica
+  TYPE pruAritmetica, @function
 pruAritmetica:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -28(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -24(%ebp)
   JG LIF1
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  SUB %edx, %eax
-  MOV  %eax, -32(%ebp)
-  MOV -32(%ebp), %eax
-  MOV %eax, -4(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  SUBL %edx, %eax
+  MOVL  %eax, -28(%ebp)
+  MOVL -28(%ebp), %eax
+  MOVL %eax, -4(%ebp)
 LIF1:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -36(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -32(%ebp)
   JE LIF2
-  MOV -0(%ebp), %eax
+  MOVL -0(%ebp), %eax
   IMUL $5, %eax
-  MOV  %eax, -40(%ebp)
-  MOV -40(%ebp), %eax
-  MOV %eax, -4(%ebp)
+  MOVL  %eax, -36(%ebp)
+  MOVL -36(%ebp), %eax
+  MOVL %eax, -4(%ebp)
 LIF2:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  SUB %edx, %eax
-  MOV  %eax, -44(%ebp)
-  MOV -44(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV res, %eax
-  leave
-  ret
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  SUBL %edx, %eax
+  MOVL  %eax, -40(%ebp)
+  MOVL -40(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL res, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
   CALL printf
   CALL printf
   CALL printf

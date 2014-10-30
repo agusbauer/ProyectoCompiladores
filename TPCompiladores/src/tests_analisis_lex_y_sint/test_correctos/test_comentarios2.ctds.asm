@@ -1,35 +1,36 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL pruAritmetica
+  TYPE pruAritmetica, @function
 pruAritmetica:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $8%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -12(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -8(%ebp)
   JG LIF1
-  MOV -0(%ebp), %eax
-  MOV %eax, -4(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -4(%ebp)
 LIF1:
-  MOV -0(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV res, %eax
-  leave
-  ret
+  MOVL -0(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL res, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $8%ebp
   CALL printf
   LEAVE
   RET

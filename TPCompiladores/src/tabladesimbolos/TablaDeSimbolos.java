@@ -31,6 +31,10 @@ public class TablaDeSimbolos {
         cantidad--;
     }
     
+    public Ambiente getFirst(){
+        return pila.getLast(); //retorna el nivel 0 de la pila.
+    } 
+    
     public boolean isEmpty(){
         return cantidad==0;
     }
@@ -43,6 +47,34 @@ public class TablaDeSimbolos {
             }
         }
         return null;
+    }
+
+    public LinkedList<Ambiente> getPila() {
+        return pila;
+    }
+
+    public void setPila(LinkedList<Ambiente> pila) {
+        this.pila = pila;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+    
+    public TablaDeSimbolos clone(){
+        TablaDeSimbolos t = new TablaDeSimbolos();
+        t.cantidad = cantidad;
+        LinkedList<Ambiente> l = new LinkedList();
+        for(Ambiente a : pila){
+            Ambiente am = (Ambiente) a.clone();
+            l.add(am);
+         }
+        t.setPila(l);
+        return t;
     }
     
 }

@@ -1,48 +1,49 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL pruebaLogica
+  TYPE pruebaLogica, @function
 pruebaLogica:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $True, %eax
-  MOV %eax, -4(%ebp)
-  MOV -4(%ebp), %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
+  MOVL $True, %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -4(%ebp), %eax
   OR $False, %eax
-  MOV  %eax, -28(%ebp)
-  MOV True, %eax
+  MOVL  %eax, -24(%ebp)
+  MOVL True, %eax
   CMP %eax, $1
   JE SHORT isTrue
-  MOV $1, %eax
+  MOVL $1, %eax
 isTrue:
-  MOV $0, %eax
-  MOV  %eax, -32(%ebp)
-  MOV -28(%ebp), %eax
-  MOV -32(%ebp), %edx
+  MOVL $0, %eax
+  MOVL  %eax, -28(%ebp)
+  MOVL -24(%ebp), %eax
+  MOVL -28(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -36(%ebp)
-  MOV -0(%ebp), %eax
+  MOVL  %eax, -32(%ebp)
+  MOVL -0(%ebp), %eax
   CMP %eax, $1
   JE SHORT isTrue
-  MOV $1, %eax
+  MOVL $1, %eax
 isTrue:
-  MOV $0, %eax
-  MOV  %eax, -40(%ebp)
-  MOV -36(%ebp), %eax
-  MOV -40(%ebp), %edx
+  MOVL $0, %eax
+  MOVL  %eax, -36(%ebp)
+  MOVL -32(%ebp), %eax
+  MOVL -36(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -44(%ebp)
-  MOV temp5, %eax
-  leave
-  ret
+  MOVL  %eax, -40(%ebp)
+  MOVL temp5, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
   CALL printf
   LEAVE
   RET

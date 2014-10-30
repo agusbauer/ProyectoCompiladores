@@ -48,6 +48,7 @@ public class VarLocation extends Location {
         this.id = id;
         this.desc = d;
     }
+    
 
     public VarLocation(String id, Block b, Descriptor d, int line, int col) {
         this.setLineNumber(line);

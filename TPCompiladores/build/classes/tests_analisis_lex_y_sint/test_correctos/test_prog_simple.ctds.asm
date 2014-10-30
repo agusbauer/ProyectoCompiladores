@@ -1,18 +1,17 @@
-SEGMENT .DATA
+COMM c, 4, 4
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL alo
+  TYPE alo, @function
 alo:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  ADD $1, %eax
-  MOV  %eax, -12(%ebp)
-  MOV -12(%ebp), %eax
-  MOV %eax, -0(%ebp)
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $8%ebp
+  MOVL -0(%ebp), %eax
+  ADDL $1, %eax
+  MOVL  %eax, -8(%ebp)
+  MOVL -8(%ebp), %eax
+  MOVL %eax, -0(%ebp)
   LEAVE
   RET

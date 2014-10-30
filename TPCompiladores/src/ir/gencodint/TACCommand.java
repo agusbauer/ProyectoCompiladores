@@ -20,7 +20,7 @@ public class TACCommand {
         this.p3 = p3;
     }
     
-        public TACOpType getOp() {
+    public TACOpType getOp() {
         return op;
     }
 

@@ -1,59 +1,64 @@
-SEGMENT .DATA
+COMM res, 4, 4
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL inc
+  TYPE inc, @function
 inc:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  ADD $1, %eax
-  MOV  %eax, -40(%ebp)
-  MOV temp1, %eax
-  leave
-  ret
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $48%ebp
+  MOVL -0(%ebp), %eax
+  ADDL $1, %eax
+  MOVL  %eax, -28(%ebp)
+  MOVL temp1, %eax
+  LEAVE
+  RET
 
+  .GLOBL resto
+  TYPE resto, @function
 resto:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $2, %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $48%ebp
+  MOVL $2, %eax
   IMUL $3, %eax
-  MOV  %eax, -44(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -44(%ebp), %ebx
+  MOVL  %eax, -32(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -32(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -48(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -36(%ebp)
   JG LIF1
-  MOV -0(%ebp), %edx
+  MOVL -0(%ebp), %edx
   IDIV $3
-  MOV  %eax, -52(%ebp)
-  MOV -52(%ebp), %eax
-  MOV %eax, -8(%ebp)
+  MOVL  %eax, -40(%ebp)
+  MOVL -40(%ebp), %eax
+  MOVL %eax, -4(%ebp)
 LIF1:
-  MOV -0(%ebp), %edx
+  MOVL -0(%ebp), %edx
   IDIV $2
-  MOV  %edx, -56(%ebp)
-  MOV -56(%ebp), %eax
-  MOV %eax, -8(%ebp)
-  MOV res, %eax
-  leave
-  ret
+  MOVL  %edx, -44(%ebp)
+  MOVL -44(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL res, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $False, %eax
-  MOV %eax, -4(%ebp)
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $48%ebp
+  MOVL $False, %eax
+  MOVL %eax, -4(%ebp)
   CALL resto
-  MOV  %eax, -60(%ebp)
-  MOV -60(%ebp), %eax
-  MOV %eax, -12(%ebp)
+  MOVL  %eax, -48(%ebp)
+  MOVL -48(%ebp), %eax
+  MOVL %eax, -4(%ebp)
   LEAVE
   RET

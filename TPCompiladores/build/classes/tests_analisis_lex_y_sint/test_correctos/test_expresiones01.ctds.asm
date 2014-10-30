@@ -1,85 +1,86 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL prueba
+  TYPE prueba, @function
 prueba:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $50, %eax
-  MOV %eax, -12(%ebp)
-  MOV -12(%ebp), %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $64%ebp
+  MOVL $50, %eax
+  MOVL %eax, -12(%ebp)
+  MOVL -12(%ebp), %eax
   CMP $0, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -48(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -36(%ebp)
   JG LIF1
-  MOV $4, %eax
-  MOV %eax, -4(%ebp)
-  MOV -4(%ebp), %eax
+  MOVL $4, %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -4(%ebp), %eax
   CMP $4, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -52(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -40(%ebp)
   JE LIF2
 BI3:
-  MOV -4(%ebp), %eax
+  MOVL -4(%ebp), %eax
   CMP $4, %eax
   JL SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -56(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -44(%ebp)
   JL EI4
 BI5:
-  MOV -12(%ebp), %eax
+  MOVL -12(%ebp), %eax
   CMP $4, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -60(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -48(%ebp)
   JG EI6
-  MOV -12(%ebp), %eax
-  SUB $1, %eax
-  MOV  %eax, -64(%ebp)
-  MOV -64(%ebp), %eax
-  MOV %eax, -12(%ebp)
-  MOV -4(%ebp), %eax
+  MOVL -12(%ebp), %eax
+  SUBL $1, %eax
+  MOVL  %eax, -52(%ebp)
+  MOVL -52(%ebp), %eax
+  MOVL %eax, -12(%ebp)
+  MOVL -4(%ebp), %eax
   IMUL $2, %eax
-  MOV  %eax, -68(%ebp)
-  MOV -68(%ebp), %eax
-  MOV %eax, -8(%ebp)
+  MOVL  %eax, -56(%ebp)
+  MOVL -56(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   JMP BI5
 EI6:
-  MOV -4(%ebp), %eax
-  ADD $1, %eax
-  MOV  %eax, -72(%ebp)
-  MOV -72(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV -8(%ebp), %edx
+  MOVL -4(%ebp), %eax
+  ADDL $1, %eax
+  MOVL  %eax, -60(%ebp)
+  MOVL -60(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -8(%ebp), %edx
   IDIV $2
-  MOV  %eax, -76(%ebp)
-  MOV -76(%ebp), %eax
-  MOV %eax, -8(%ebp)
+  MOVL  %eax, -64(%ebp)
+  MOVL -64(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   JMP BI5
 EI6:
 LIF6:
 LIF6:
-  MOV c, %eax
-  leave
-  ret
+  MOVL c, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $64%ebp
   CALL printf
   LEAVE
   RET

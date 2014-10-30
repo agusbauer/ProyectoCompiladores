@@ -1,36 +1,37 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL pruMult
+  TYPE pruMult, @function
 pruMult:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $5, %eax
-  MOV %eax, -4(%ebp)
-  MOV $2000, %eax
-  MOV %eax, -8(%ebp)
-  MOV -4(%ebp), %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
+  MOVL $5, %eax
+  MOVL %eax, -4(%ebp)
+  MOVL $2000, %eax
+  MOVL %eax, -8(%ebp)
+  MOVL -4(%ebp), %eax
   IMUL $1000, %eax
-  MOV  %eax, -24(%ebp)
-  MOV -24(%ebp), %eax
-  MOV -0(%ebp), %edx
+  MOVL  %eax, -16(%ebp)
+  MOVL -16(%ebp), %eax
+  MOVL -0(%ebp), %edx
   IMUL %edx, %eax
-  MOV  %eax, -28(%ebp)
-  MOV -28(%ebp), %eax
-  MOV -8(%ebp), %edx
+  MOVL  %eax, -20(%ebp)
+  MOVL -20(%ebp), %eax
+  MOVL -8(%ebp), %edx
   IMUL %edx, %eax
-  MOV  %eax, -32(%ebp)
-  MOV temp3, %eax
-  leave
-  ret
+  MOVL  %eax, -24(%ebp)
+  MOVL temp3, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
   CALL printf
   LEAVE
   RET

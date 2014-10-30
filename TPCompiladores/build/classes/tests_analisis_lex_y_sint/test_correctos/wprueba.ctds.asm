@@ -1,15 +1,13 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $1, %eax
-  MOV %eax, -4(%ebp)
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $0%ebp
+  MOVL $2, %eax
+  MOVL %eax, -4(%ebp)
   LEAVE
   RET

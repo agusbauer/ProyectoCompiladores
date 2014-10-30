@@ -1,61 +1,62 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL prueba
+  TYPE prueba, @function
 prueba:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $4, %eax
-  MOV %eax, -12(%ebp)
-  MOV $5, %eax
-  MOV %eax, -16(%ebp)
-  MOV -12(%ebp), %eax
-  MOV -16(%ebp), %edx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
+  MOVL $4, %eax
+  MOVL %eax, -12(%ebp)
+  MOVL $5, %eax
+  MOVL %eax, -16(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL -16(%ebp), %edx
   IMUL %edx, %eax
-  MOV  %eax, -44(%ebp)
-  MOV -44(%ebp), %eax
-  MOV %eax, -4(%ebp)
-  MOV -4(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -48(%ebp)
-  MOV -48(%ebp), %eax
-  MOV %eax, -0(%ebp)
-  MOV $3.1, %eax
-  MOV %eax, -20(%ebp)
-  MOV -20(%ebp), %eax
+  MOVL  %eax, -24(%ebp)
+  MOVL -24(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -4(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -28(%ebp)
+  MOVL -28(%ebp), %eax
+  MOVL %eax, -0(%ebp)
+  MOVL $3.1, %eax
+  MOVL %eax, -20(%ebp)
+  MOVL -20(%ebp), %eax
   IMUL $2.0, %eax
-  MOV  %eax, -52(%ebp)
-  MOV -52(%ebp), %eax
-  MOV %eax, -8(%ebp)
-  MOV -4(%ebp), %edx
-  MOV -8(%ebp), %ecx
+  MOVL  %eax, -32(%ebp)
+  MOVL -32(%ebp), %eax
+  MOVL %eax, -8(%ebp)
+  MOVL -4(%ebp), %edx
+  MOVL -8(%ebp), %ecx
   IDIV %ecx
-  MOV  %eax, -56(%ebp)
-  MOV -56(%ebp), %eax
+  MOVL  %eax, -36(%ebp)
+  MOVL -36(%ebp), %eax
   CMP $5, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -60(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -40(%ebp)
   JG LIF1
-  MOV 1, %eax
-  leave
-  ret
+  MOVL 1, %eax
+  LEAVE
+  RET
 
 LIF1:
-  MOV 0, %eax
-  leave
-  ret
+  MOVL 0, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $40%ebp
   CALL printf
   LEAVE
   RET

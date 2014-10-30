@@ -1,26 +1,26 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
+  .GLOBL main
+.TYPE main, @function
 
 pruAritmetica:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV $90, %eax
-  MOV %eax, -4(%ebp)
-  MOV -4(%ebp), %edx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $12%ebp
+  MOVL $90, %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -4(%ebp), %edx
   IDIV $7
-  MOV  %edx, -12(%ebp)
-  MOV temp1, %eax
+  MOVL  %edx, -12(%ebp)
+  MOVL temp1, %eax
   leave
   ret
 
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $12%ebp
   CALL printf
   LEAVE
   RET

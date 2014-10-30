@@ -1,166 +1,167 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL promedio
+  TYPE promedio, @function
 promedio:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $160%ebp
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -84(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL $1, %eax
+  MOVL  %eax, -84(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -88(%ebp)
-  MOV -84(%ebp), %eax
-  MOV -88(%ebp), %edx
+  MOVL $1, %eax
+  MOVL  %eax, -88(%ebp)
+  MOVL -84(%ebp), %eax
+  MOVL -88(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -92(%ebp)
-  MOV -92(%ebp), %eax
+  MOVL  %eax, -92(%ebp)
+  MOVL -92(%ebp), %eax
   CMP %eax, $1
   JE LIF1
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -96(%ebp)
-  MOV -96(%ebp), %edx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -96(%ebp)
+  MOVL -96(%ebp), %edx
   IDIV $2.0
-  MOV  %eax, -100(%ebp)
-  MOV temp5, %eax
-  leave
-  ret
+  MOVL  %eax, -100(%ebp)
+  MOVL temp5, %eax
+  LEAVE
+  RET
 
 LIF1:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -104(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL $1, %eax
+  MOVL  %eax, -104(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -108(%ebp)
-  MOV -104(%ebp), %eax
-  MOV -108(%ebp), %edx
+  MOVL $1, %eax
+  MOVL  %eax, -108(%ebp)
+  MOVL -104(%ebp), %eax
+  MOVL -108(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -112(%ebp)
-  MOV -112(%ebp), %eax
+  MOVL  %eax, -112(%ebp)
+  MOVL -112(%ebp), %eax
   CMP %eax, $1
   JE LIF2
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -116(%ebp)
-  MOV -116(%ebp), %edx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -116(%ebp)
+  MOVL -116(%ebp), %edx
   IDIV $2.0
-  MOV  %eax, -120(%ebp)
-  MOV temp10, %eax
-  leave
-  ret
+  MOVL  %eax, -120(%ebp)
+  MOVL temp10, %eax
+  LEAVE
+  RET
 
 LIF2:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -124(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL $1, %eax
+  MOVL  %eax, -124(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JG SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -128(%ebp)
-  MOV -124(%ebp), %eax
-  MOV -128(%ebp), %edx
+  MOVL $1, %eax
+  MOVL  %eax, -128(%ebp)
+  MOVL -124(%ebp), %eax
+  MOVL -128(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -132(%ebp)
-  MOV -132(%ebp), %eax
+  MOVL  %eax, -132(%ebp)
+  MOVL -132(%ebp), %eax
   CMP %eax, $1
   JE LIF3
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -136(%ebp)
-  MOV -136(%ebp), %edx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -136(%ebp)
+  MOVL -136(%ebp), %edx
   IDIV $2.0
-  MOV  %eax, -140(%ebp)
-  MOV temp15, %eax
-  leave
-  ret
+  MOVL  %eax, -140(%ebp)
+  MOVL temp15, %eax
+  LEAVE
+  RET
 
 LIF3:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -144(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL $1, %eax
+  MOVL  %eax, -144(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -148(%ebp)
-  MOV -144(%ebp), %eax
-  MOV -148(%ebp), %edx
+  MOVL $1, %eax
+  MOVL  %eax, -148(%ebp)
+  MOVL -144(%ebp), %eax
+  MOVL -148(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -152(%ebp)
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %ebx
+  MOVL  %eax, -152(%ebp)
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %ebx
   CMP  %ebx, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -156(%ebp)
-  MOV -152(%ebp), %eax
-  MOV -156(%ebp), %edx
+  MOVL $1, %eax
+  MOVL  %eax, -156(%ebp)
+  MOVL -152(%ebp), %eax
+  MOVL -156(%ebp), %edx
   AND %edx, %eax
-  MOV  %eax, -160(%ebp)
-  MOV -160(%ebp), %eax
+  MOVL  %eax, -160(%ebp)
+  MOVL -160(%ebp), %eax
   CMP %eax, $1
   JE LIF4
-  MOV nota1, %eax
-  leave
-  ret
+  MOVL nota1, %eax
+  LEAVE
+  RET
 
 LIF4:
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $160%ebp
   CALL printf
-  MOV 1, %eax
-  leave
-  ret
+  MOVL 1, %eax
+  LEAVE
+  RET
 
   LEAVE
   RET

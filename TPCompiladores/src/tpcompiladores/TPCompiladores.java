@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.*;
 import java.util.LinkedList;
 import parser.*;
+import tabladesimbolos.TablaDeSimbolos;
 
 
 
@@ -51,7 +52,7 @@ public class TPCompiladores {
        for (Block b : p.getASTs()){
            visitor.visit(b);
        }
-       GenAssembly gen = new GenAssembly(visitor.getCode());
+       GenAssembly gen = new GenAssembly(visitor.getCode(),p);
        LinkedList<String> assembly = gen.genAssembly();
              
        PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".asm")));

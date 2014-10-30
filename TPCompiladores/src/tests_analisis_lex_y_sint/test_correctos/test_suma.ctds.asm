@@ -1,51 +1,52 @@
-SEGMENT .DATA
 
-SEGMENT .BSS
+.TEXT
 
-SEGMENT .TEXT
-
-  GLOBAL main
-
+  .GLOBL suma
+  TYPE suma, @function
 suma:
-  PUSH %ebp
-  MOV %ebp, %esp
-  MOV -0(%ebp), %eax
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
+  MOVL -0(%ebp), %eax
   CMP $0, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -16(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -16(%ebp)
   JE LIF1
-  MOV num2, %eax
-  leave
-  ret
+  MOVL num2, %eax
+  LEAVE
+  RET
 
 LIF1:
-  MOV -0(%ebp), %eax
+  MOVL -0(%ebp), %eax
   CMP $0, %eax
   JE SHORT ok
-  MOV $0, %eax
+  MOVL $0, %eax
 ok:
-  MOV $1, %eax
-  MOV  %eax, -20(%ebp)
+  MOVL $1, %eax
+  MOVL  %eax, -20(%ebp)
   JE LIF2
-  MOV num1, %eax
-  leave
-  ret
+  MOVL num1, %eax
+  LEAVE
+  RET
 
 LIF2:
-  MOV -0(%ebp), %eax
-  MOV -0(%ebp), %edx
-  ADD %edx, %eax
-  MOV  %eax, -24(%ebp)
-  MOV temp3, %eax
-  leave
-  ret
+  MOVL -0(%ebp), %eax
+  MOVL -0(%ebp), %edx
+  ADDL %edx, %eax
+  MOVL  %eax, -24(%ebp)
+  MOVL temp3, %eax
+  LEAVE
+  RET
 
+  .GLOBL main
+  TYPE main, @function
 main:
-  PUSH %ebp
-  MOV %ebp, %esp
+  PUSHL %ebp
+  MOVL %ebp, %esp
+  SUBL $24%ebp
   CALL printf
   LEAVE
   RET
