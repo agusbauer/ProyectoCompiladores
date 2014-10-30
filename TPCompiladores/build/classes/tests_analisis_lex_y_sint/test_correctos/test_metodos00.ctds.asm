@@ -19,8 +19,8 @@ alo2:
   PUSHL %ebp
   MOVL %ebp, %esp
   SUBL $8%ebp
-MOVL 0(%ebp), %eax
-MOVL %eax, 0(%esp)
+  MOVL -0(%ebp), %eax
+  MOVL %eax, 0(%esp)
   CALL alo
   LEAVE
   RET

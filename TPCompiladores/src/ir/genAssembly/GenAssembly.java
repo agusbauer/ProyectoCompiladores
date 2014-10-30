@@ -140,9 +140,16 @@ public class GenAssembly {
         for(Expression ex : e.getExpressions()){
             VarLocation param = (VarLocation) ex;
            // movl	-4(%ebp), %eax ;K
-           // movl	%eax, (%esp) ; 
-            assembly.add("  MOVL -"+param.getDesc().getOffset()+"(%ebp), %eax");
-            assembly.add("  MOVL %eax, "+i+"(%esp)");
+           // movl	%eax, (%esp) ;
+            Ambiente a = p.getTds().getFirst();
+            if(a.get(param.getDesc().getNombre()) != null){
+                assembly.add("  MOVL "+param.getDesc().getNombre()+", %eax");
+                assembly.add("  MOVL %eax, "+i+"(%esp)");
+            }else{
+                assembly.add("  MOVL -"+param.getDesc().getOffset()+"(%ebp), %eax");
+                assembly.add("  MOVL %eax, "+i+"(%esp)");
+                
+            }
             i = i+4;
         }
         assembly.add("  CALL "+e.getId());
