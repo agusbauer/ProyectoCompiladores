@@ -922,7 +922,7 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            if (isGlobal(loc.getDesc())) {
+            if (isGlobal(loc1.getDesc())) {
                     assembly.add("  MOVL " + loc1.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
             } 
             else {
