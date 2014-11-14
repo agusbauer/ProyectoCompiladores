@@ -891,14 +891,24 @@ public class GenAssembly {
     public void and(TACCommand c) {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("  MOVL " +  loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            if (isGlobal(loc.getDesc())) {
+                    assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
+            } 
+            else {
+                    assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            }
             assembly.add("  AND $" + c.getP2().toString() + ", %eax");
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  MOVL " + " %eax, "  + res.getDesc().getOffset() + "(%ebp)");
         }
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("  MOVL " +  loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            if (isGlobal(loc.getDesc())) {
+                    assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
+            } 
+            else {
+                    assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            }
             assembly.add("  AND $" + c.getP1().toString() + ", %eax");
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  MOVL " + " %eax, "  + res.getDesc().getOffset() + "(%ebp)"); //guardo el resultado en el tercer parametro        
@@ -912,8 +922,18 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("  MOVL " + loc1.getDesc().getOffset() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
-            assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
+            if (isGlobal(loc.getDesc())) {
+                    assembly.add("  MOVL " + loc1.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
+            } 
+            else {
+                    assembly.add("  MOVL " + loc1.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            }
+            if (isGlobal(loc2.getDesc())) {
+                    assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %edx"); 
+            } 
+            else {
+                    assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %edx");
+            }
             assembly.add("  AND %edx, %eax"); //sumo los dos registros
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  MOVL " + " %eax, " + res.getDesc().getOffset() + "(%ebp)");
