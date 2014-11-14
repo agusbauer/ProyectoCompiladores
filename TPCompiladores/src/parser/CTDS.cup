@@ -20,6 +20,7 @@ action code{:
 	TablaDeSimbolos tds = new TablaDeSimbolos();
 	Type tipoVar;
 	LinkedList<DescriptorSimple> params;
+	int OffsetParametros = 8;
 	
 
 		private void putParameters(){
@@ -37,6 +38,7 @@ action code{:
 parser code {:
     
 	LinkedList<Block> asts = new LinkedList<Block>();
+	
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
        reason for the error which is passed into the method in the
@@ -150,12 +152,12 @@ precedence right UMINUS;
 
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true) ;
+								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright,true) ;
+								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright,true,true) ;
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
@@ -188,10 +190,16 @@ precedence right UMINUS;
 						params = null; :}  ;
 
    parameters ::= type:t id:i {: LinkedList<DescriptorSimple> l = new LinkedList<DescriptorSimple>() ;
-								l.add(new DescriptorSimple(i,t));
+   								DescriptorSimple desc = new DescriptorSimple(i,t);
+   								desc.setOffset(OffsetParametros);
+								l.add(desc);
+								OffsetParametros = OffsetParametros + 4;
 								RESULT = l; :}
-				| parameters:p COMMA type:t id:i {:  p.add(new DescriptorSimple(i,t));
-											RESULT = p ; :};
+				| parameters:p COMMA type:t id:i {: DescriptorSimple desc = new DescriptorSimple(i,t);
+   													desc.setOffset(OffsetParametros); 
+													p.add(desc);
+													OffsetParametros = OffsetParametros + 4;
+													RESULT = p ; :};
 
 
    block ::=  LKEY {:tds.push(new Ambiente()) ; putParameters();:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
@@ -213,7 +221,9 @@ precedence right UMINUS;
 						| statement_decl:sd statement:s {:  sd.add(s);
 															RESULT = sd ; :};
 
-   statement ::= location:loc assign_op:aop expr:e SEMI {: RESULT = new AssignStmt(loc,aop,e,locleft,locright) ; :}
+   statement ::= location:loc assign_op:aop expr:e SEMI {: VarLocation vl = (VarLocation) loc;
+   															vl.getDesc().setValor(e);
+   															RESULT = new AssignStmt(loc,aop,e,locleft,locright) ; :}
 			| method_call:m SEMI {: RESULT = new MethodCallStmt(m) ; :}
 			| extern:e SEMI {: RESULT = new ExternStmt(e) ; :}
 			| IF LPAREN expr:e RPAREN block:b1 ELSE block:b2 {: RESULT = new IfStmt(e,b1,b2) ; :}
@@ -244,10 +254,12 @@ precedence right UMINUS;
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion")){
 												DescriptorFuncion df = (DescriptorFuncion) d;
-												if (df.getParametros().size()==0)
-													RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Expression>(),ileft,iright) ;
-												else
-													parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+												if (df.getParametros() != null){
+													if (df.getParametros().size()==0)
+														RESULT = new MethodCall(i,d.getTipo(),new LinkedList<Expression>(),ileft,iright) ;
+													else
+														parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+												}
 											}					
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
@@ -257,10 +269,12 @@ precedence right UMINUS;
 										if (d!=null)
 											if (d.getClase().equals("descriptorFuncion")){
 												DescriptorFuncion df = (DescriptorFuncion) d;
-												if (df.getParametros().size()==l.size())
-													RESULT = new MethodCall(i,d.getTipo(),l,ileft,iright) ;
-												else
-													parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+												if (df.getParametros() != null){
+													if (df.getParametros().size()==l.size())
+														RESULT = new MethodCall(i,d.getTipo(),l,ileft,iright) ;
+													else
+														parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
+												}
 											}
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);			
@@ -273,21 +287,29 @@ precedence right UMINUS;
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,Type.VOID,l,sleft,sright)  ;:};
 
 	location ::= id:i {:  Descriptor d = tds.search(i);
-						if (d!=null)
-							if (d.getClase().equals("descriptorSimple"))
-								RESULT = new VarLocation(i,d,ileft,iright,false);
-							else
-								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
-						else
-							parser.report_fatal_error("Variable no declarada",ileft,iright); :} 
+						if (d!=null){
+							if (d.getClase().equals("descriptorSimple")){
+								if(tds.getFirst().get(i) == null){
+									RESULT = new VarLocation(i,d,ileft,iright,false,false);
+								}else{
+									RESULT = new VarLocation(i,d,ileft,iright,false,true);
+								}
+							}else{
+								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
+						}else{
+							parser.report_fatal_error("Variable no declarada",ileft,iright);} :} 
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
-						if (d!=null)
-							if (d.getClase().equals("descriptorArreglo"))
-								RESULT = new VarLocation(i,d,ileft,iright,false); 
-							else
-								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);				
-						else
-							parser.report_fatal_error("Variable no declarada",ileft,iright);:}  ;
+						if (d!=null){
+							if (d.getClase().equals("descriptorArreglo")){
+								if(tds.getFirst().get(i) == null){
+									RESULT = new VarLocation(i,d,ileft,iright,false,false);
+								}else{
+									RESULT = new VarLocation(i,d,ileft,iright,false,true);
+								} 
+							}else{
+								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
+						}else{
+							parser.report_fatal_error("Variable no declarada",ileft,iright);}:}  ;
 
 	expr_sequence ::= expr:e {: LinkedList<Expression> l = new LinkedList<Expression>() ;
 								l.add(e);

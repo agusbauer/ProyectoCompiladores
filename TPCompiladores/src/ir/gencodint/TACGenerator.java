@@ -73,7 +73,11 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ReturnStmt stmt) {;
-        code.add(new TACCommand(TACOpType.RET,stmt.getExpression().accept(this),null,null));
+        if(stmt.getExpression()!=null)
+            code.add(new TACCommand(TACOpType.RET,stmt.getExpression().accept(this),null,null));
+        else
+            code.add(new TACCommand(TACOpType.RET,null,null,null));;
+        
         return null; 
     }
 
@@ -131,13 +135,16 @@ public class TACGenerator implements ASTVisitor<Expression> {
         Expression to = stmt.getExprfin().accept(this);
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT));
+        DescriptorSimple d = new DescriptorSimple("temp" + id,Type.INT); // hay que ver si esto es asi!!!!!!
+        d.setOp(BinOpType.GTEQ);
+        VarLocation var = new VarLocation("temp" + id,d);
+        
         code.add(new TACCommand(TACOpType.CMP,from,to,var));
         code.add(new TACCommand(TACOpType.JLE,new IntLiteral(endIter, "EI"), null, null));
         stmt.getBlock().accept(this);
         code.add(new TACCommand(TACOpType.JMP,new IntLiteral(beginIter, "BI"), null, null));//salto al comienzo del for
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(endIter, "EI"), null, null));//label end del for
-        pila.pop(); // elimino los valores de end y begin      
+        pila.pop(); // elimino los valores de end y begin     
         return null;
     }
 
@@ -240,6 +247,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
                 case OR :  code.add(new TACCommand(TACOpType.OR,left,right,var)); break;  
             }
         return var;
+
     }
 
     @Override
@@ -261,6 +269,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType()));
         code.add(new TACCommand(TACOpType.CALL,expr, var, null));
         return var;
+   
     }
 
     @Override
@@ -270,6 +279,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType()));
         code.add(new TACCommand(TACOpType.EXCALL,expr, var, null));
         return var;
+
     }
 
     @Override

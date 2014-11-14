@@ -16,8 +16,18 @@ public abstract class Descriptor {
     protected static int offsetCorriente;
     protected int offset;
     protected BinOpType op; // solo sirve para assembler
-    
+    protected Object valor; //esto es para saber el valor una variable, ya sea para chequear variables no declaradas o hacer movidas con los float en asm
 
+    public Object getValor() {
+        return valor;
+    }
+
+    public void setValor(Object valor) {
+        this.valor = valor;
+    }
+    
+    
+        
     public static int getOffsetCorriente() {
         return offsetCorriente;
     }

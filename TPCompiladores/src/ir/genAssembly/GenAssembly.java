@@ -196,17 +196,22 @@ public class GenAssembly {
         MethodCall e = (MethodCall) c.getP1();
         int i = 0;
         for (Expression ex : e.getExpressions()) {
-            VarLocation param = (VarLocation) ex;
-            // movl	-4(%ebp), %eax ;K
-            // movl	%eax, (%esp) ;
-            Ambiente a = p.getTds().getFirst();
-            if (a.get(param.getDesc().getNombre()) != null) {
-                assembly.add("  MOVL " + param.getDesc().getNombre() + ", %eax");
-                assembly.add("  MOVL %eax, " + i + "(%esp)");
-            } else {
-                assembly.add("  MOVL -" + param.getDesc().getOffset() + "(%ebp), %eax");
-                assembly.add("  MOVL %eax, " + i + "(%esp)");
+            if(ex instanceof VarLocation){
+                VarLocation param = (VarLocation) ex;
+                // movl	-4(%ebp), %eax ;K
+                // movl	%eax, (%esp) ;
+                Ambiente a = p.getTds().getFirst();
+                if (a.get(param.getDesc().getNombre()) != null) {
+                    assembly.add("  MOVL " + param.getDesc().getNombre() + ", %eax");
+                    assembly.add("  MOVL %eax, " + i + "(%esp)");
+                } else {
+                    assembly.add("  MOVL -" + param.getDesc().getOffset() + "(%ebp), %eax");
+                    assembly.add("  MOVL %eax, " + i + "(%esp)");
 
+                }
+            }
+            else{
+                //El lenguaje admite solo variables simples como parametro
             }
             i = i + 4;
         }
@@ -219,8 +224,9 @@ public class GenAssembly {
 
     public void ret(TACCommand c) {
         //en algun momento hay que asignarle a eax el resultado
-
-        assembly.add("  MOVL " + c.getP1().toString() + ", %eax");
+        if(c.getP1() != null){
+            assembly.add("  MOVL " + c.getP1().toString() + ", %eax");
+        }
         assembly.add("  LEAVE");
         assembly.add("  RET");
         assembly.add("");
@@ -401,7 +407,7 @@ public class GenAssembly {
         }
     }
 
-    public void not(TACCommand c) { //copiar y pegar lo del alan de una, no hay float
+    public void not(TACCommand c) { 
         if (c.getP1() instanceof VarLocation) {
             VarLocation loc = (VarLocation) c.getP1();
             if (isGlobal(loc.getDesc())) {
@@ -457,30 +463,35 @@ public class GenAssembly {
     }
 
     public void str(TACCommand c) {
-        VarLocation res = (VarLocation) c.getP1();
-        if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
-            VarLocation loc = (VarLocation) c.getP2();
-            assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
-            assembly.add("  MOVL %eax, " +  res.getDesc().getOffset() + "(%ebp)");
-        } else {
-            if (c.getP2() instanceof FloatLiteral) {
-                assembly.add("  MOVL .LC" + codFloat++ + ", %eax");
-                FloatLiteral f1 = (FloatLiteral) c.getP2();
-                listaFloats.add(new Pair(codFloat, f1.getValue()));
-                if (isGlobal(res.getDesc())) {
-                    assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
-                } else {
-                    assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
-                }
+        if(c.getP1() instanceof VarLocation){
+            VarLocation res = (VarLocation) c.getP1();
+            if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
+                VarLocation loc = (VarLocation) c.getP2();
+                assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+                assembly.add("  MOVL %eax, " +  res.getDesc().getOffset() + "(%ebp)");
             } else {
-                assembly.add("  MOVL $" + c.getP2().toString() + ", %eax");
-                if (isGlobal(res.getDesc())) {
-                    assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
+                if (c.getP2() instanceof FloatLiteral) {
+                    assembly.add("  MOVL .LC" + codFloat++ + ", %eax");
+                    FloatLiteral f1 = (FloatLiteral) c.getP2();
+                    listaFloats.add(new Pair(codFloat, f1.getValue()));
+                    if (isGlobal(res.getDesc())) {
+                        assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
+                    } else {
+                        assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
+                    }
                 } else {
-                    assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
+                    assembly.add("  MOVL $" + c.getP2().toString() + ", %eax");
+                    if (isGlobal(res.getDesc())) {
+                        assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
+                    } else {
+                        assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
+                    }
                 }
             }
         }
+        else{
+                //agregar el caso en que sea IntLiteral con label (en el for lo tratamos asi)
+        }    
     }
 
     public void add(TACCommand c) {
