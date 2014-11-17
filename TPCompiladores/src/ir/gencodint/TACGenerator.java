@@ -131,12 +131,12 @@ public class TACGenerator implements ASTVisitor<Expression> {
         pila.push(new Pair<>(beginIter,endIter)); //guardo los valores del begin y end
         code.add(new TACCommand(TACOpType.LBL,new IntLiteral(beginIter, "BI"), null, null)); // label del for
         Expression from = stmt.getExpr().accept(this);
-        code.add(new TACCommand(TACOpType.STR,new IntLiteral(0,stmt.getId()),from,new IntLiteral(++commId,"r"))); //asignacion ojo aca!!!
+        code.add(new TACCommand(TACOpType.STR,new VarLocation(stmt.getId(),stmt.getVar()),from,null)); //asignacion ojo aca!!!
         Expression to = stmt.getExprfin().accept(this);
         ++commId;
         int id = commId;
         DescriptorSimple d = new DescriptorSimple("temp" + id,Type.INT); // hay que ver si esto es asi!!!!!!
-        d.setOp(BinOpType.GTEQ);
+        d.setOp(BinOpType.LTEQ);
         VarLocation var = new VarLocation("temp" + id,d);
         
         code.add(new TACCommand(TACOpType.CMP,from,to,var));
@@ -219,7 +219,9 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(MethodCallStmt stmt) {
-        code.add(new TACCommand(TACOpType.CALL,stmt.getM(), null, null));
+        ++commId;
+        int id = commId;
+        code.add(new TACCommand(TACOpType.CALL,stmt.getM(), new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT)),null));
         return null;
     }
 

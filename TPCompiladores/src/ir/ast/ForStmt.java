@@ -6,19 +6,30 @@
 package ir.ast;
 
 import ir.ASTVisitor;
+import tabladesimbolos.Descriptor;
 
 
 public class ForStmt extends Statement {
+    private Descriptor var;
     private String id;
     private Expression expr;
     private Expression exprfin;
     private Block block;
 
-    public ForStmt(String id, Expression expr, Expression exprfin, Block block) {
+    public ForStmt(Descriptor d,String id, Expression expr, Expression exprfin, Block block) {
+        this.var = d;
         this.id = id;
         this.expr = expr;
         this.exprfin = exprfin;
         this.block = block;
+    }
+
+    public Descriptor getVar() {
+        return var;
+    }
+
+    public void setVar(Descriptor var) {
+        this.var = var;
     }
 
     public String getId() {

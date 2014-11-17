@@ -57,7 +57,6 @@ public class GenAssembly {
     parser p;
     private static int codFloat = 0; // esto es para los labels que vamos creando para cada valor float
     private LinkedList<Pair<Integer, Float>> listaFloats; //al final del programa declaramos todas las etiquetas con sus valores
-    //alan modificamos el add nomas para los floats
 
     public GenAssembly(LinkedList l, parser par) {
         TACCode = l;
@@ -463,35 +462,30 @@ public class GenAssembly {
     }
 
     public void str(TACCommand c) {
-        if(c.getP1() instanceof VarLocation){
-            VarLocation res = (VarLocation) c.getP1();
-            if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
-                VarLocation loc = (VarLocation) c.getP2();
-                assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
-                assembly.add("  MOVL %eax, " +  res.getDesc().getOffset() + "(%ebp)");
-            } else {
-                if (c.getP2() instanceof FloatLiteral) {
-                    assembly.add("  MOVL .LC" + codFloat++ + ", %eax");
-                    FloatLiteral f1 = (FloatLiteral) c.getP2();
-                    listaFloats.add(new Pair(codFloat, f1.getValue()));
-                    if (isGlobal(res.getDesc())) {
-                        assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
-                    } else {
-                        assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
-                    }
+        VarLocation res = (VarLocation) c.getP1();
+        if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
+            VarLocation loc = (VarLocation) c.getP2();
+            assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
+            assembly.add("  MOVL %eax, " +  res.getDesc().getOffset() + "(%ebp)");
+        } else {
+            if (c.getP2() instanceof FloatLiteral) {
+                assembly.add("  MOVL .LC" + codFloat++ + ", %eax");
+                FloatLiteral f1 = (FloatLiteral) c.getP2();
+                listaFloats.add(new Pair(codFloat, f1.getValue()));
+                if (isGlobal(res.getDesc())) {
+                    assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
                 } else {
-                    assembly.add("  MOVL $" + c.getP2().toString() + ", %eax");
-                    if (isGlobal(res.getDesc())) {
-                        assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
-                    } else {
-                        assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
-                    }
+                    assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
+                }
+            } else {
+                assembly.add("  MOVL $" + c.getP2().toString() + ", %eax");
+                if (isGlobal(res.getDesc())) {
+                    assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
+                } else {
+                    assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
                 }
             }
-        }
-        else{
-                //agregar el caso en que sea IntLiteral con label (en el for lo tratamos asi)
-        }    
+        }           
     }
 
     public void add(TACCommand c) {
