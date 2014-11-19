@@ -9,5 +9,15 @@ import java.util.HashMap;
 
 
 public class Ambiente extends HashMap<String,Descriptor>{
+   private int level;
+   
+   public Ambiente(int lvl){
+       level = lvl;
+   }
+
+    public int getLevel() {
+        return level;
+    }
+   
    
 }

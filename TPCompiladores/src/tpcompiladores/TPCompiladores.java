@@ -74,11 +74,15 @@ public class TPCompiladores {
         try{
         CTDSLexer lex = new CTDSLexer(br);
         parser p = new parser(lex);
+            System.out.println("ok0");
         p.parse();
+            System.out.println("ok1");
         semCheck(p);
+        System.out.println("ok2");
         genCodInt(p,args[0]);
+        System.out.println("ok3");
         genAssembly(p, args[0]);
-        
+            System.out.println("ok4");
         }
         catch (RuntimeException e) {
             System.err.print(e.toString());

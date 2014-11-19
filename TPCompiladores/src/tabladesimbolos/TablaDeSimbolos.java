@@ -5,6 +5,7 @@
  */
 package tabladesimbolos;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class TablaDeSimbolos {
@@ -47,6 +48,37 @@ public class TablaDeSimbolos {
             }
         }
         return null;
+    }
+    
+    public int searchLevel(String id){
+        for(Ambiente nivel : pila){
+            if(nivel != pila.getLast()){
+                System.out.println("MUCHACACACACACACACACACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!");
+                Descriptor d = nivel.get(id);
+                if(d!=null){
+                    System.out.println("nivelll"+nivel.getLevel());
+                    return nivel.getLevel();
+                }
+            }
+        }
+        Ambiente a = pila.getLast();
+        if(a.get(id) != null){
+            return a.getLevel(); // retorna 0
+        }else{
+            return -1;
+        }
+    }
+    
+    public void imprimir(){
+        for(Ambiente a : pila){
+            System.out.println("AMBIENTE/NIVEL: "+a.getLevel());
+            for(Descriptor d : a.values()){
+                System.out.println(d.getTipo().toString()+" "+d.getNombre());
+            }
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+        }
     }
 
     public LinkedList<Ambiente> getPila() {
