@@ -50,6 +50,9 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
 	@Override
 	public Type visit(BinOpExpr expr) {
+            //if (expr.getLeftOperand() instanceof VarLocation){
+                // ta todo bien si no lo hacemos
+            //}
             Type left = expr.getLeftOperand().accept(this);
             BinOpType op = expr.getOperator();
             Type right = expr.getRightOperand().accept(this);
@@ -229,7 +232,7 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     @Override
     public Type visit(MethodCall expr) {
         List<Expression> ls = expr.getExpressions();
-        if (ls!=null){
+        if (ls != null){
             for (Expression elem : ls) {
             if (elem.accept(this).isUndefined()){
                    addError(expr,"hay parametros con tipos inapropiados");

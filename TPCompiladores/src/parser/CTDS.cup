@@ -168,14 +168,14 @@ precedence right UMINUS;
    method	 ::= type:t id:i LPAREN RPAREN block:b {: b.setMethodName(i);					    
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,null),ileft,iright) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,new LinkedList<DescriptorSimple>()),ileft,iright) ;
 							}
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
 				    |VOID id:i LPAREN RPAREN block:b {: b.setMethodName(i);    
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
-								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,null),ileft,iright) ;
+								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,new LinkedList<DescriptorSimple>()),ileft,iright) ;
 							}
 							else 
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
@@ -267,6 +267,7 @@ precedence right UMINUS;
 													else
 														parser.report_fatal_error("Incorrecta cantidad de parametros",ileft,iright);
 												}
+
 											}					
 											else
 												parser.report_fatal_error("Funcion no declarada",ileft,iright);		
