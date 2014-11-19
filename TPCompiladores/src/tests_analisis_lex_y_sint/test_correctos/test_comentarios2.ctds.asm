@@ -6,20 +6,21 @@
 pruAritmetica:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $8%ebp
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
+  SUBL $-8%ebp
+  MOVL 8(%ebp), %eax
+  MOVL 12(%ebp), %ebx
   CMP  %ebx, %eax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -8(%ebp)
   JG LIF1
-  MOVL -0(%ebp), %eax
+  MOVL 8(%ebp), %eax
   MOVL %eax, -4(%ebp)
 LIF1:
-  MOVL -0(%ebp), %eax
+  MOVL 12(%ebp), %eax
   MOVL %eax, -4(%ebp)
   MOVL res, %eax
   LEAVE
@@ -30,7 +31,7 @@ LIF1:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $8%ebp
+  SUBL $-8%ebp
   CALL printf
   LEAVE
   RET

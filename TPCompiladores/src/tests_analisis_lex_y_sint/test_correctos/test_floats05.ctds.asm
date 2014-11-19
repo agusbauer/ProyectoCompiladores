@@ -6,11 +6,11 @@
 div:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $32%ebp
-  MOVL -0(%ebp), %edx
-  MOVL -0(%ebp), %ecx
-  IDIV %ecx
-  MOVL  %eax, -20(%ebp)
+  SUBL $-32%ebp
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FDIVP %st, %st(1)
+  FSTPS -20(%ebp)
   MOVL temp1, %eax
   LEAVE
   RET
@@ -20,11 +20,11 @@ div:
 resta:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $32%ebp
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %edx
-  SUBL %edx, %eax
-  MOVL  %eax, -24(%ebp)
+  SUBL $-32%ebp
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FSUBP %st, %st(1)
+  FSTPS -24(%ebp)
   MOVL temp2, %eax
   LEAVE
   RET
@@ -34,11 +34,11 @@ resta:
 sum:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $32%ebp
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %edx
-  ADDL %edx, %eax
-  MOVL  %eax, -28(%ebp)
+  SUBL $-32%ebp
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FADDP %st, %st(1)
+  FSTPS -28(%ebp)
   MOVL temp3, %eax
   LEAVE
   RET
@@ -48,16 +48,22 @@ sum:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $32%ebp
-  MOVL $6.98, %eax
+  SUBL $-32%ebp
+  MOVL .LC0, %eax
   MOVL %eax, -4(%ebp)
-  MOVL 2.0, %eax
-  NOT  %eax
-  MOVL  %eax, -32(%ebp)
+  FLDS .LC1
+  FCHS 
+  FSTPS -32(%ebp)
   MOVL -32(%ebp), %eax
   MOVL %eax, -8(%ebp)
-  MOVL $3.569, %eax
+  MOVL .LC2, %eax
   MOVL %eax, -12(%ebp)
   CALL printf
   LEAVE
   RET
+.LC1:
+  .float 6.98
+.LC2:
+  .float 2.0
+.LC3:
+  .float 3.569

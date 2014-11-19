@@ -6,7 +6,7 @@
 prueba:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $40%ebp
+  SUBL $-40%ebp
   MOVL $4, %eax
   MOVL %eax, -12(%ebp)
   MOVL $5, %eax
@@ -18,16 +18,17 @@ prueba:
   MOVL -24(%ebp), %eax
   MOVL %eax, -4(%ebp)
   MOVL -4(%ebp), %eax
-  MOVL -0(%ebp), %edx
+  MOVL 8(%ebp), %edx
   ADDL %edx, %eax
   MOVL  %eax, -28(%ebp)
   MOVL -28(%ebp), %eax
-  MOVL %eax, -0(%ebp)
-  MOVL $3.1, %eax
+  MOVL %eax, 8(%ebp)
+  MOVL .LC0, %eax
   MOVL %eax, -20(%ebp)
-  MOVL -20(%ebp), %eax
-  IMUL $2.0, %eax
-  MOVL  %eax, -32(%ebp)
+  FLDS -20(%ebp)
+  FLDS .LC1
+  FMULP %st, %st(1)
+  FSTPS -32(%ebp)
   MOVL -32(%ebp), %eax
   MOVL %eax, -8(%ebp)
   MOVL -4(%ebp), %edx
@@ -36,6 +37,7 @@ prueba:
   MOVL  %eax, -36(%ebp)
   MOVL -36(%ebp), %eax
   CMP $5, %eax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -56,7 +58,11 @@ LIF1:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $40%ebp
+  SUBL $-40%ebp
   CALL printf
   LEAVE
   RET
+.LC1:
+  .float 3.1
+.LC2:
+  .float 2.0

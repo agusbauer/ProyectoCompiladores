@@ -7,20 +7,21 @@ COMM c, 4, 4
 alo:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $8%ebp
-  MOVL -0(%ebp), %eax
+  SUBL $-16%ebp
+  MOVL 8(%ebp), %eax
   ADDL $1, %eax
-  MOVL  %eax, -8(%ebp)
-  MOVL -8(%ebp), %eax
-  MOVL %eax, -0(%ebp)
+  MOVL  %eax, -12(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, 8(%ebp)
   .GLOBL alo2
   TYPE alo2, @function
 alo2:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $8%ebp
-  MOVL -0(%ebp), %eax
+  SUBL $-16%ebp
+  MOVL -8(%ebp), %eax
   MOVL %eax, 0(%esp)
   CALL alo
+  MOVL  %eax, -16(%ebp)
   LEAVE
   RET

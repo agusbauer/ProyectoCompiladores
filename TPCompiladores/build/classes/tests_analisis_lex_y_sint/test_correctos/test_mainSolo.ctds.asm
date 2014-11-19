@@ -6,7 +6,7 @@
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $32%ebp
+  SUBL $-32%ebp
   MOVL $True, %eax
   MOVL %eax, -4(%ebp)
   MOVL -4(%ebp), %eax

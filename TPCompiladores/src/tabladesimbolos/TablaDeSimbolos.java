@@ -41,13 +41,15 @@ public class TablaDeSimbolos {
     }
     
     public Descriptor search(String id){
-        for(Ambiente nivel : pila){
-            Descriptor d = nivel.get(id);
-            if(d!=null){
+        for(int i = pila.size()-1; i >= 0; i--){
+            Ambiente a = pila.get(i);
+            Descriptor d = a.get(id);
+            if(d != null){
                 return d;
             }
         }
         return null;
+       
     }
     
     public int searchLevel(String id){

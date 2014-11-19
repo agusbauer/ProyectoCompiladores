@@ -6,18 +6,22 @@
 promedio:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $160%ebp
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  SUBL $-160%ebp
+  FLDS 8(%ebp)
+  FLDS 16(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -84(%ebp)
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 12(%ebp)
+  FLDS 16(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -30,29 +34,34 @@ ok:
   MOVL -92(%ebp), %eax
   CMP %eax, $1
   JE LIF1
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %edx
-  ADDL %edx, %eax
-  MOVL  %eax, -96(%ebp)
-  MOVL -96(%ebp), %edx
-  IDIV $2.0
-  MOVL  %eax, -100(%ebp)
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FADDP %st, %st(1)
+  FSTPS -96(%ebp)
+  FLDS -96(%ebp)
+  FLDS .LC0
+  FDIVP %st, %st(1)
+  FSTPS -100(%ebp)
   MOVL temp5, %eax
   LEAVE
   RET
 
 LIF1:
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -104(%ebp)
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 16(%ebp)
+  FLDS 12(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -65,29 +74,34 @@ ok:
   MOVL -112(%ebp), %eax
   CMP %eax, $1
   JE LIF2
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %edx
-  ADDL %edx, %eax
-  MOVL  %eax, -116(%ebp)
-  MOVL -116(%ebp), %edx
-  IDIV $2.0
-  MOVL  %eax, -120(%ebp)
+  FLDS 8(%ebp)
+  FLDS 16(%ebp)
+  FADDP %st, %st(1)
+  FSTPS -116(%ebp)
+  FLDS -116(%ebp)
+  FLDS .LC1
+  FDIVP %st, %st(1)
+  FSTPS -120(%ebp)
   MOVL temp10, %eax
   LEAVE
   RET
 
 LIF2:
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 12(%ebp)
+  FLDS 8(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -124(%ebp)
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 16(%ebp)
+  FLDS 8(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -100,29 +114,36 @@ ok:
   MOVL -132(%ebp), %eax
   CMP %eax, $1
   JE LIF3
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %edx
-  ADDL %edx, %eax
-  MOVL  %eax, -136(%ebp)
-  MOVL -136(%ebp), %edx
-  IDIV $2.0
-  MOVL  %eax, -140(%ebp)
+  FLDS 16(%ebp)
+  FLDS 12(%ebp)
+  FADDP %st, %st(1)
+  FSTPS -136(%ebp)
+  FLDS -136(%ebp)
+  FLDS .LC2
+  FDIVP %st, %st(1)
+  FSTPS -140(%ebp)
   MOVL temp15, %eax
   LEAVE
   RET
 
 LIF3:
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 8(%ebp)
+  FLDS 12(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
+  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -144(%ebp)
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 8(%ebp)
+  FLDS 16(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
+  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -132,9 +153,12 @@ ok:
   MOVL -148(%ebp), %edx
   AND %edx, %eax
   MOVL  %eax, -152(%ebp)
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
-  CMP  %ebx, %eax
+  FLDS 12(%ebp)
+  FLDS 16(%ebp)
+  FUCOMPP
+  FNSTSW %ax
+  ANDB $69,%ah
+  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -157,7 +181,7 @@ LIF4:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $160%ebp
+  SUBL $-160%ebp
   CALL printf
   MOVL 1, %eax
   LEAVE
@@ -165,3 +189,9 @@ main:
 
   LEAVE
   RET
+.LC1:
+  .float 2.0
+.LC2:
+  .float 2.0
+.LC3:
+  .float 2.0

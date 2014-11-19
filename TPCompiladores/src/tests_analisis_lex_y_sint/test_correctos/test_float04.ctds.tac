@@ -1,3 +1,4 @@
+MNAME potencia
 STR neg False
 STR i 1
 STR prod 1.0
@@ -22,24 +23,28 @@ LBL EI3
 NOT neg temp10
 NOT temp10 temp9
 JNOT LIF4
-RET 1.0 / prod
+DIV 1.0 prod temp11
+RET temp11
 LBL LIF4
 RET prod
-RET - 100.0
-MUL a a temp11
-MUL temp11 b temp12
-MUL temp12 b temp13
+OPP 100.0 temp12
+RET temp12
+MNAME multRepeat
+MUL a a temp13
 MUL temp13 b temp14
-MUL temp14 a temp15
-STR c temp15
+MUL temp14 b temp15
+MUL temp15 b temp16
+MUL temp16 a temp17
+STR c temp17
 RET c
-OPP 15.0 temp16
-STR res temp16
+MNAME main
+OPP 15.0 temp18
+STR res temp18
 STR w 4.0
-OPP 7.0 temp17
-STR m temp17
+OPP 7.0 temp19
+STR m temp19
 STR a 80.0
-CALL potencia(a,2,) temp18
-STR f temp18
+CALL potencia(a,2,) temp20
+STR f temp20
 EXCALL printf
 RET

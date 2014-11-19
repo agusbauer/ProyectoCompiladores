@@ -1,3 +1,4 @@
+MNAME sumatoria
 STR total 0.0
 STR i b
 LBL BI1
@@ -15,6 +16,7 @@ JMP BI1
 LBL EI2
 STR res total
 RET res
+MNAME main
 STR a 8.0
 CALL sumatoria(a,) temp6
 STR f temp6

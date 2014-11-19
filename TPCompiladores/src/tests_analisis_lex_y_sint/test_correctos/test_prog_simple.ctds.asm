@@ -7,11 +7,11 @@ COMM c, 4, 4
 alo:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $8%ebp
-  MOVL -0(%ebp), %eax
+  SUBL $-8%ebp
+  MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -8(%ebp)
   MOVL -8(%ebp), %eax
-  MOVL %eax, -0(%ebp)
+  MOVL %eax, 8(%ebp)
   LEAVE
   RET

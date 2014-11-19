@@ -6,30 +6,33 @@
 maxcomdiv:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $24%ebp
-  MOVL -0(%ebp), %eax
-  MOVL -0(%ebp), %ebx
+  SUBL $-24%ebp
+  MOVL 8(%ebp), %eax
+  MOVL 12(%ebp), %ebx
   CMP  %ebx, %eax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -16(%ebp)
   JG LIF1
-  MOVL -0(%ebp), %eax
+  MOVL 8(%ebp), %eax
   MOVL %eax, -4(%ebp)
-  MOVL -0(%ebp), %eax
+  MOVL 12(%ebp), %eax
   MOVL %eax, -8(%ebp)
 LIF1:
-  MOVL -0(%ebp), %eax
+  MOVL 12(%ebp), %eax
   MOVL %eax, -4(%ebp)
-  MOVL -0(%ebp), %eax
+  MOVL 8(%ebp), %eax
   MOVL %eax, -8(%ebp)
   MOVL $1, %eax
   MOVL %eax, -12(%ebp)
 BI2:
   MOVL -12(%ebp), %eax
   CMP $0, %eax
+  ANDB $68,%ah
+  XORB $64,%ah
   JNE SHORT ok
   MOVL $0, %eax
 ok:
@@ -57,7 +60,7 @@ EI3:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $24%ebp
+  SUBL $-24%ebp
   CALL printf
   LEAVE
   RET

@@ -2,14 +2,14 @@ MNAME pruArreglos
 STR A 2
 RET A
 LBL BI1
-STR i0 0 r1
-OPP 10 temp2
-MUL 11 2 temp3
-ADD temp2 temp3 temp4
-CMP 0 temp4 temp5
+STR i 0
+OPP 10 temp1
+MUL 11 2 temp2
+ADD temp1 temp2 temp3
+CMP 0 temp3 temp4
 JLE EI2
-ADD i 2 temp6
-STR A temp6
+ADD i 2 temp5
+STR A temp5
 JMP BI1
 LBL EI2
 MNAME main

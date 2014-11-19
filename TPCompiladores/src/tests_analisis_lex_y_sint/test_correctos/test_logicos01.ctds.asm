@@ -6,7 +6,7 @@
 pruebaLogica:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $40%ebp
+  SUBL $-40%ebp
   MOVL $True, %eax
   MOVL %eax, -4(%ebp)
   MOVL -4(%ebp), %eax
@@ -23,7 +23,7 @@ isTrue:
   MOVL -28(%ebp), %edx
   AND %edx, %eax
   MOVL  %eax, -32(%ebp)
-  MOVL -0(%ebp), %eax
+  MOVL 8(%ebp), %eax
   CMP %eax, $1
   JE SHORT isTrue
   MOVL $1, %eax
@@ -43,7 +43,7 @@ isTrue:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $40%ebp
+  SUBL $-40%ebp
   CALL printf
   LEAVE
   RET

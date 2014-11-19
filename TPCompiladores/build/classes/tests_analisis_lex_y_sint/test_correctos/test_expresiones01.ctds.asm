@@ -6,11 +6,12 @@
 prueba:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $64%ebp
+  SUBL $-64%ebp
   MOVL $50, %eax
   MOVL %eax, -12(%ebp)
   MOVL -12(%ebp), %eax
   CMP $0, %eax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -21,6 +22,8 @@ ok:
   MOVL %eax, -4(%ebp)
   MOVL -4(%ebp), %eax
   CMP $4, %eax
+  ANDB $69,%ah
+  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -30,6 +33,8 @@ ok:
 BI3:
   MOVL -4(%ebp), %eax
   CMP $4, %eax
+  ANDB $69,%ah
+  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
@@ -39,6 +44,7 @@ ok:
 BI5:
   MOVL -12(%ebp), %eax
   CMP $4, %eax
+  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -80,7 +86,7 @@ LIF6:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $64%ebp
+  SUBL $-64%ebp
   CALL printf
   LEAVE
   RET

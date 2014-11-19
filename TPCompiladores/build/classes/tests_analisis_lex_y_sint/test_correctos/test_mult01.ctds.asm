@@ -6,7 +6,7 @@
 pruMult:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $24%ebp
+  SUBL $-24%ebp
   MOVL $5, %eax
   MOVL %eax, -4(%ebp)
   MOVL $2000, %eax
@@ -15,7 +15,7 @@ pruMult:
   IMUL $1000, %eax
   MOVL  %eax, -16(%ebp)
   MOVL -16(%ebp), %eax
-  MOVL -0(%ebp), %edx
+  MOVL 8(%ebp), %edx
   IMUL %edx, %eax
   MOVL  %eax, -20(%ebp)
   MOVL -20(%ebp), %eax
@@ -31,7 +31,7 @@ pruMult:
 main:
   PUSHL %ebp
   MOVL %ebp, %esp
-  SUBL $24%ebp
+  SUBL $-24%ebp
   CALL printf
   LEAVE
   RET

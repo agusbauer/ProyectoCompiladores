@@ -222,9 +222,14 @@ public class GenAssembly {
     }
 
     public void ret(TACCommand c) {
-        //en algun momento hay que asignarle a eax el resultado
         if(c.getP1() != null){
-            assembly.add("  MOVL " + c.getP1().toString() + ", %eax");
+            if(c.getP1() instanceof VarLocation){
+                VarLocation v = (VarLocation) c.getP1();
+                assembly.add("  MOVL " + v.getDesc().getNombre() + ", %eax");
+            }else{
+                assembly.add("  MOVL " + c.getP1().toString() + ", %eax");
+            }
+            
         }
         assembly.add("  LEAVE");
         assembly.add("  RET");
