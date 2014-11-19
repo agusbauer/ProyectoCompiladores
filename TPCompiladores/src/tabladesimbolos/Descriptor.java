@@ -13,6 +13,7 @@ public abstract class Descriptor {
     
     protected String nombre;
     protected Type tipo;
+    protected boolean esGlobal;
     protected static int offsetCorriente;
     protected int offset;
     protected BinOpType op; // solo sirve para assembler
@@ -72,6 +73,14 @@ public abstract class Descriptor {
     
     public String getClase(){
         return "descriptor";
+    }
+
+    public void setEsGlobal(boolean b) {
+        esGlobal = b;
+    }
+    
+      public boolean EsGlobal() {
+        return esGlobal;
     }
     
 }

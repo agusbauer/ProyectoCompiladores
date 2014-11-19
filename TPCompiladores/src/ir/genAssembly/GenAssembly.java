@@ -1031,10 +1031,6 @@ public class GenAssembly {
     }
 
     private boolean isGlobal(Descriptor desc) {
-        /*Ambiente a = p.getTds().getFirst();
-        
-        return a.get(desc.getNombre()) != null;*/
-        p.getTds().imprimir();
-        return (p.getTds().searchLevel(desc.getNombre()) == 0);
+        return (desc.EsGlobal());
     }
 }
