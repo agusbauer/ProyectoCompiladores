@@ -301,9 +301,10 @@ precedence right UMINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-								
-									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								
+									if(nivel == 0)						
+										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+									else
+										RESULT = new VarLocation(i,d,ileft,iright,false,false);
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
@@ -311,9 +312,10 @@ precedence right UMINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
-								
-									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								
+								if(nivel == 0)						
+										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+									else
+										RESULT = new VarLocation(i,d,ileft,iright,false,false);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{
