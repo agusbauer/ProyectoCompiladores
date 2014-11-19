@@ -21,7 +21,7 @@ action code{:
 	Type tipoVar;
 	LinkedList<DescriptorSimple> params;
 	int OffsetParametros = 8;
-	
+	int nivel = 0;
 
 		private void putParameters(){
 		if (params!=null){
@@ -135,7 +135,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente());:} decl  RKEY {:parser.t=tds.clone(); tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente(nivel++));:} decl  RKEY {:parser.t=tds.clone(); tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -152,7 +152,11 @@ precedence right UMINUS;
 
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true) ;
+								if(nivel == 0){
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true);
+								}else{
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,false);
+								}		
 							else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
@@ -209,8 +213,8 @@ precedence right UMINUS;
 													RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente()) ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
-	tds.pop();:};
+   block ::=  LKEY {:tds.push(new Ambiente(nivel++)) ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
+	tds.pop(); nivel--;:};
 																		 
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
@@ -297,11 +301,9 @@ precedence right UMINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-								if(tds.getFirst().get(i) == null){
+								
 									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								}else{
-									RESULT = new VarLocation(i,d,ileft,iright,false,true);
-								}
+								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
@@ -309,11 +311,9 @@ precedence right UMINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
-								if(tds.getFirst().get(i) == null){
+								
 									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								}else{
-									RESULT = new VarLocation(i,d,ileft,iright,false,true);
-								} 
+								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{
