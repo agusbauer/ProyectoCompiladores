@@ -11,8 +11,8 @@ alo:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -24(%ebp)
-  MOVL -24(%ebp), %eax
-  MOVL %eax, 8(%ebp)
+  MOVL --24(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   LEAVE
   RET
 
@@ -29,9 +29,9 @@ alo2:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -32(%ebp)
-  MOVL -32(%ebp), %eax
-  MOVL %eax, 8(%ebp)
-  MOVL x, %eax
+  MOVL --32(%ebp), %eax
+  MOVL %eax, -8(%ebp)
+  MOVL 8(%ebp), %eax
   LEAVE
   RET
 
@@ -49,12 +49,12 @@ main:
   MOVL %eax, 0(%esp)
   CALL alo2
   MOVL  %eax, -36(%ebp)
-  MOVL -36(%ebp), %eax
-  MOVL %eax, -4(%ebp)
+  MOVL --36(%ebp), %eax
+  MOVL %eax, --4(%ebp)
   CALL alo2
   MOVL  %eax, -40(%ebp)
-  MOVL -40(%ebp), %eax
-  MOVL %eax, -4(%ebp)
+  MOVL --40(%ebp), %eax
+  MOVL %eax, --4(%ebp)
   LEAVE
   RET
 

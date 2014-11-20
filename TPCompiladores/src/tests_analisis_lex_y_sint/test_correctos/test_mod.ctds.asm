@@ -12,7 +12,7 @@ pruAritmetica:
   MOVL -4(%ebp), %edx
   IDIV $7
   MOVL  %edx, -8(%ebp)
-  MOVL temp1, %eax
+  MOVL -8(%ebp), %eax
   LEAVE
   RET
 

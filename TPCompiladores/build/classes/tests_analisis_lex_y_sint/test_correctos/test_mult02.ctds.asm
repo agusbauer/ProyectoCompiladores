@@ -12,7 +12,7 @@ pruMult:
   MOVL -4(%ebp), %eax
   IMUL $7, %eax
   MOVL  %eax, -8(%ebp)
-  MOVL temp1, %eax
+  MOVL -8(%ebp), %eax
   LEAVE
   RET
 

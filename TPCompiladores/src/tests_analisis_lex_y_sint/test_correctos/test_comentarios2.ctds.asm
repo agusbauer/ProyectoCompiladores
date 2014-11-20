@@ -17,12 +17,12 @@ ok:
   MOVL $1, %eax
   MOVL  %eax, -8(%ebp)
   JG LIF1
-  MOVL 8(%ebp), %eax
-  MOVL %eax, -4(%ebp)
+  MOVL -8(%ebp), %eax
+  MOVL %eax, --4(%ebp)
 LIF1:
-  MOVL 12(%ebp), %eax
-  MOVL %eax, -4(%ebp)
-  MOVL res, %eax
+  MOVL -12(%ebp), %eax
+  MOVL %eax, --4(%ebp)
+  MOVL -4(%ebp), %eax
   LEAVE
   RET
 

@@ -15,22 +15,22 @@ prueba:
   MOVL -16(%ebp), %edx
   IMUL %edx, %eax
   MOVL  %eax, -24(%ebp)
-  MOVL -24(%ebp), %eax
-  MOVL %eax, -4(%ebp)
+  MOVL --24(%ebp), %eax
+  MOVL %eax, --4(%ebp)
   MOVL -4(%ebp), %eax
   MOVL 8(%ebp), %edx
   ADDL %edx, %eax
   MOVL  %eax, -28(%ebp)
-  MOVL -28(%ebp), %eax
-  MOVL %eax, 8(%ebp)
+  MOVL --28(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   MOVL .LC0, %eax
   MOVL %eax, -20(%ebp)
   FLDS -20(%ebp)
   FLDS .LC1
   FMULP %st, %st(1)
   FSTPS -32(%ebp)
-  MOVL -32(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL --32(%ebp), %eax
+  MOVL %eax, --8(%ebp)
   MOVL -4(%ebp), %edx
   MOVL -8(%ebp), %ecx
   IDIV %ecx

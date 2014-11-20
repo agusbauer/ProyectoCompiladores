@@ -34,7 +34,7 @@ isTrue:
   MOVL -36(%ebp), %edx
   AND %edx, %eax
   MOVL  %eax, -40(%ebp)
-  MOVL temp5, %eax
+  MOVL -40(%ebp), %eax
   LEAVE
   RET
 

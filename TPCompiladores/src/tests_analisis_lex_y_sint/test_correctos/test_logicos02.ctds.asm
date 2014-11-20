@@ -42,7 +42,7 @@ ok:
   FLDS .LC0
   FDIVP %st, %st(1)
   FSTPS -100(%ebp)
-  MOVL temp5, %eax
+  MOVL -100(%ebp), %eax
   LEAVE
   RET
 
@@ -82,7 +82,7 @@ ok:
   FLDS .LC1
   FDIVP %st, %st(1)
   FSTPS -120(%ebp)
-  MOVL temp10, %eax
+  MOVL -120(%ebp), %eax
   LEAVE
   RET
 
@@ -122,7 +122,7 @@ ok:
   FLDS .LC2
   FDIVP %st, %st(1)
   FSTPS -140(%ebp)
-  MOVL temp15, %eax
+  MOVL -140(%ebp), %eax
   LEAVE
   RET
 
@@ -171,7 +171,7 @@ ok:
   MOVL -160(%ebp), %eax
   CMP %eax, $1
   JE LIF4
-  MOVL nota1, %eax
+  MOVL 8(%ebp), %eax
   LEAVE
   RET
 

@@ -60,9 +60,11 @@ public class TACGenerator implements ASTVisitor<Expression> {
         AssignOpType op = stmt.getOperator();
         Expression expr = stmt.getExpression().accept(this);
         
-        if (op.isAssign())
+        if (op.isAssign()){
             code.add(new TACCommand(TACOpType.STR,loc,expr,null));
-        else
+            VarLocation v = (VarLocation) loc;
+            System.out.println("DATA DEL TAC "+v.getDesc().getNombre()+" "+v.getDesc().getOffset());
+        }else
             if (op.isDecrement())
                code.add(new TACCommand(TACOpType.SUB,loc,expr,loc));
             else

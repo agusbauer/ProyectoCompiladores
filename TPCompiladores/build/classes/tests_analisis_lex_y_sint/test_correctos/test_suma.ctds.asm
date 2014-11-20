@@ -17,7 +17,7 @@ ok:
   MOVL $1, %eax
   MOVL  %eax, -16(%ebp)
   JE LIF1
-  MOVL num2, %eax
+  MOVL 12(%ebp), %eax
   LEAVE
   RET
 
@@ -32,7 +32,7 @@ ok:
   MOVL $1, %eax
   MOVL  %eax, -20(%ebp)
   JE LIF2
-  MOVL num1, %eax
+  MOVL 8(%ebp), %eax
   LEAVE
   RET
 
@@ -41,7 +41,7 @@ LIF2:
   MOVL 12(%ebp), %edx
   ADDL %edx, %eax
   MOVL  %eax, -24(%ebp)
-  MOVL temp3, %eax
+  MOVL -24(%ebp), %eax
   LEAVE
   RET
 

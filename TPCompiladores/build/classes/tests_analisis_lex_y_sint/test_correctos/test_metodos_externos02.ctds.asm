@@ -17,15 +17,15 @@ ok:
   MOVL $1, %eax
   MOVL  %eax, -16(%ebp)
   JG LIF1
-  MOVL 8(%ebp), %eax
-  MOVL %eax, -4(%ebp)
-  MOVL 12(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -8(%ebp), %eax
+  MOVL %eax, --4(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, --8(%ebp)
 LIF1:
-  MOVL 12(%ebp), %eax
-  MOVL %eax, -4(%ebp)
-  MOVL 8(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, --4(%ebp)
+  MOVL -8(%ebp), %eax
+  MOVL %eax, --8(%ebp)
   MOVL $1, %eax
   MOVL %eax, -12(%ebp)
 BI2:
@@ -43,15 +43,15 @@ ok:
   MOVL -8(%ebp), %ecx
   IDIV %ecx
   MOVL  %edx, -24(%ebp)
-  MOVL -24(%ebp), %eax
-  MOVL %eax, -12(%ebp)
-  MOVL -8(%ebp), %eax
-  MOVL %eax, -4(%ebp)
-  MOVL -12(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL --24(%ebp), %eax
+  MOVL %eax, --12(%ebp)
+  MOVL --8(%ebp), %eax
+  MOVL %eax, --4(%ebp)
+  MOVL --12(%ebp), %eax
+  MOVL %eax, --8(%ebp)
   JMP BI2
 EI3:
-  MOVL dividendo, %eax
+  MOVL -4(%ebp), %eax
   LEAVE
   RET
 

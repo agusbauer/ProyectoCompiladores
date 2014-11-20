@@ -13,6 +13,7 @@ public class Ambiente extends HashMap<String,Descriptor>{
    
    public Ambiente(int lvl){
        level = lvl;
+       
    }
 
     public int getLevel() {

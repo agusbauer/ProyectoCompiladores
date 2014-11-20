@@ -14,6 +14,7 @@ public class VarLocation extends Location {
 
     private Block block;
     private Descriptor desc; 
+    private boolean soyGlobal;
 
     public VarLocation(String id, Descriptor d) {
         if (d.getClase().equals("descriptorSimple")) {
@@ -43,11 +44,17 @@ public class VarLocation extends Location {
                 d.setOffset(DescriptorArreglo.getOffsetCorriente());
             }
         }    
+        soyGlobal = isGlobal;
         this.setLineNumber(line);
         this.setColumnNumber(col);
         this.id = id;
         this.desc = d;
     }
+
+    public boolean isSoyGlobal() {
+        return soyGlobal;
+    }
+    
     
 
     public VarLocation(String id, Block b, Descriptor d, int line, int col) {

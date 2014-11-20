@@ -1,11 +1,12 @@
 class xprueba{
-	//int a;
-
+	int a;
 	
 	void main(){
-		int a;
-		a = 2;
 		
+		int a;
+		int b;
+		b = 3;
+		a = 2;
 	}
 }
 

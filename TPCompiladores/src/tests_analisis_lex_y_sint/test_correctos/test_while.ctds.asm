@@ -62,7 +62,7 @@ ok:
   JNE EI6
   JMP BI5
 EI6:
-  MOVL dividendo, %eax
+  MOVL -4(%ebp), %eax
   LEAVE
   RET
 

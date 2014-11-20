@@ -11,7 +11,7 @@ div:
   FLDS 12(%ebp)
   FDIVP %st, %st(1)
   FSTPS -20(%ebp)
-  MOVL temp1, %eax
+  MOVL -20(%ebp), %eax
   LEAVE
   RET
 
@@ -25,7 +25,7 @@ resta:
   FLDS 12(%ebp)
   FSUBP %st, %st(1)
   FSTPS -24(%ebp)
-  MOVL temp2, %eax
+  MOVL -24(%ebp), %eax
   LEAVE
   RET
 
@@ -39,7 +39,7 @@ sum:
   FLDS 12(%ebp)
   FADDP %st, %st(1)
   FSTPS -28(%ebp)
-  MOVL temp3, %eax
+  MOVL -28(%ebp), %eax
   LEAVE
   RET
 
@@ -54,8 +54,8 @@ main:
   FLDS .LC1
   FCHS 
   FSTPS -32(%ebp)
-  MOVL -32(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL --32(%ebp), %eax
+  MOVL %eax, --8(%ebp)
   MOVL .LC2, %eax
   MOVL %eax, -12(%ebp)
   CALL printf

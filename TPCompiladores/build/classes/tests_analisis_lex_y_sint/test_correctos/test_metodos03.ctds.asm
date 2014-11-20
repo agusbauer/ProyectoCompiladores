@@ -11,7 +11,7 @@ inc:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -28(%ebp)
-  MOVL temp1, %eax
+  MOVL -28(%ebp), %eax
   LEAVE
   RET
 
@@ -37,15 +37,15 @@ ok:
   MOVL 8(%ebp), %edx
   IDIV $3
   MOVL  %eax, -40(%ebp)
-  MOVL -40(%ebp), %eax
-  MOVL %eax, -4(%ebp)
+  MOVL --40(%ebp), %eax
+  MOVL %eax, -50(%ebp)
 LIF1:
   MOVL 8(%ebp), %edx
   IDIV $2
   MOVL  %edx, -44(%ebp)
-  MOVL -44(%ebp), %eax
-  MOVL %eax, -4(%ebp)
-  MOVL res, %eax
+  MOVL --44(%ebp), %eax
+  MOVL %eax, -50(%ebp)
+  MOVL 50(%ebp), %eax
   LEAVE
   RET
 
@@ -59,7 +59,7 @@ main:
   MOVL %eax, res
   CALL resto
   MOVL  %eax, -48(%ebp)
-  MOVL -48(%ebp), %eax
-  MOVL %eax, 0(%ebp)
+  MOVL --48(%ebp), %eax
+  MOVL %eax, -50(%ebp)
   LEAVE
   RET

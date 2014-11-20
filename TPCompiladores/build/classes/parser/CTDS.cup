@@ -31,7 +31,29 @@ action code{:
 		}
 		}
 
-		
+		public void imprimir(){
+        for(Ambiente a : tds.getPila()){
+            System.out.println("AMBIENTE/NIVEL: "+a.getLevel());
+            for(Descriptor d : a.values()){
+                System.out.println(d.getTipo().toString()+" "+d.getNombre());
+            }
+            System.out.println("");
+            System.out.println("");
+            System.out.println("");
+        }
+    }
+
+    public int searchLevel(String id){
+        for(Ambiente nivel : tds.getPila()){
+            if(nivel != tds.getPila().getLast()){
+                Descriptor d = nivel.get(id);
+                if(d!=null){
+                    return nivel.getLevel();
+                }
+            }
+        }
+        return 0;
+    }
 
 		
 :};
@@ -135,7 +157,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente(nivel++));:} decl  RKEY {:parser.t=tds.clone(); tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente(nivel++)); parser.t=tds.clone();:} decl  RKEY {: parser.t=tds.clone();tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -152,9 +174,11 @@ precedence right UMINUS;
 
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null)
-								if(nivel == 0){
+								if(nivel == 1){
+									System.out.println("HAY UNA VARIABLE GLOBAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true);
 								}else{
+									System.out.println("HAY UNA VARIABLE LOCAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,false);
 								}		
 							else
@@ -301,9 +325,13 @@ precedence right UMINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-								
-									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								
+									if(searchLevel(i) == 0){
+										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
+										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+									}else{
+										System.out.println("HAGO REFERENCIA A UNA VAR LOCAL!");
+										RESULT = new VarLocation(i,d,ileft,iright,false,false);
+									}	
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
@@ -311,9 +339,10 @@ precedence right UMINUS;
 				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
-								
-									RESULT = new VarLocation(i,d,ileft,iright,false,false);
-								
+								if(nivel == 0)						
+										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+									else
+										RESULT = new VarLocation(i,d,ileft,iright,false,false);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{
