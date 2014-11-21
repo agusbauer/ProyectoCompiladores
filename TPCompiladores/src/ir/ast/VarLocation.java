@@ -43,8 +43,12 @@ public class VarLocation extends Location {
                 DescriptorArreglo.setOffsetCorriente(DescriptorArreglo.getOffsetCorriente() - 4 * da.getLongitud());
                 d.setOffset(DescriptorArreglo.getOffsetCorriente());
             }
-        }    
-        soyGlobal = isGlobal;
+        } 
+        if(isdecl && isGlobal){
+            System.out.println("holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+isGlobal);
+            d.setGlob();
+            System.out.println("que paso? "+d.isGlob());
+        }
         this.setLineNumber(line);
         this.setColumnNumber(col);
         this.id = id;

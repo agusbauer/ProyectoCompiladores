@@ -40,8 +40,20 @@ public class TablaDeSimbolos {
         return cantidad==0;
     }
     
-    public Descriptor search(String id){
+    /*public Descriptor search(String id){
         for(int i = pila.size()-1; i >= 0; i--){
+            Ambiente a = pila.get(i);
+            Descriptor d = a.get(id);
+            if(d != null){
+                return d;
+            }
+        }
+        return null;
+       
+    }*/
+    
+    public Descriptor search(String id){
+        for(int i = 0; i < pila.size(); i++){
             Ambiente a = pila.get(i);
             Descriptor d = a.get(id);
             if(d != null){
@@ -52,7 +64,7 @@ public class TablaDeSimbolos {
        
     }
     
-    public int searchLevel(String id){
+    /*public int searchLevel(String id){
         for(Ambiente nivel : pila){
             if(nivel != pila.getLast()){
                 System.out.println("MUCHACACACACACACACACACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!");
@@ -81,7 +93,7 @@ public class TablaDeSimbolos {
             System.out.println("");
             System.out.println("");
         }
-    }
+    }*/
 
     public LinkedList<Ambiente> getPila() {
         return pila;

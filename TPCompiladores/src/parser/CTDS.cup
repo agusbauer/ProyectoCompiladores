@@ -32,28 +32,29 @@ action code{:
 		}
 
 		public void imprimir(){
-        for(Ambiente a : tds.getPila()){
-            System.out.println("AMBIENTE/NIVEL: "+a.getLevel());
-            for(Descriptor d : a.values()){
-                System.out.println(d.getTipo().toString()+" "+d.getNombre());
-            }
+			for(int i = 0; i < tds.getPila().size(); i++){
+				System.out.println("AMBIENTE/NIVEL: "+i);
+            	Ambiente a = tds.getPila().get(i);
+            	for(Descriptor d : a.values()){
+               		System.out.println(d.getTipo().toString()+" "+d.getNombre()+" "+d.isGlob());
+            	}
+			}
             System.out.println("");
             System.out.println("");
             System.out.println("");
-        }
+        
     }
-
+/*
     public int searchLevel(String id){
-        for(Ambiente nivel : tds.getPila()){
-            if(nivel != tds.getPila().getLast()){
-                Descriptor d = nivel.get(id);
-                if(d!=null){
-                    return nivel.getLevel();
-                }
+        for(int i = tds.getPila().size()-1; i >= 0; i--){
+            Ambiente a = tds.getPila().get(i);
+            Descriptor d = a.get(id);
+            if(d != null){
+                return a.getLevel();
             }
         }
-        return 0;
-    }
+        return -1;
+    }*/
 
 		
 :};
@@ -157,7 +158,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente(nivel++)); parser.t=tds.clone();:} decl  RKEY {: parser.t=tds.clone();tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente()); ;parser.t=tds.clone();:} decl  RKEY {: parser.t=tds.clone();tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -173,16 +174,16 @@ precedence right UMINUS;
 
 
    location_decl ::= id:i {: 
-						if (tds.top().get(i)==null)
-								if(nivel == 1){
+						if (tds.top().get(i)==null){
+								if(nivel == 0){
 									System.out.println("HAY UNA VARIABLE GLOBAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true);
 								}else{
 									System.out.println("HAY UNA VARIABLE LOCAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,false);
 								}		
-							else
-								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
+							}else{
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);}:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
 						if (tds.top().get(i)==null)
 								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright,true,true) ;
@@ -237,7 +238,7 @@ precedence right UMINUS;
 													RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente(nivel++)) ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
+   block ::=  LKEY {:tds.push(new Ambiente());nivel++ ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
 	tds.pop(); nivel--;:};
 																		 
 
@@ -323,9 +324,11 @@ precedence right UMINUS;
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,Type.VOID,l,sleft,sright)  ;:};
 
 	location ::= id:i {:  Descriptor d = tds.search(i);
+							//System.out.println("ENCONTRE UN DESC "+d.getNombre()+" ES GLOBAL? "+d.EsGlobal());
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-									if(searchLevel(i) == 0){
+								imprimir();
+									if(d.isGlob()){
 										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
 										RESULT = new VarLocation(i,d,ileft,iright,false,true);
 									}else{

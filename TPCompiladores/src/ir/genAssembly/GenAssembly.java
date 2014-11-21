@@ -225,7 +225,7 @@ public class GenAssembly {
         if(c.getP1() != null){
             if(c.getP1() instanceof VarLocation){
                 VarLocation v = (VarLocation) c.getP1();
-                if(isGlobal(v)){
+                if(isGlobal(v.getDesc())){
                     assembly.add("  MOVL " + v.getDesc().getNombre() + ", %eax");
                 }else{
                     assembly.add("  MOVL " + v.getDesc().getOffset()+"(%ebp)" + ", %eax");
@@ -244,7 +244,7 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
             if (c.getP2() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -255,7 +255,7 @@ public class GenAssembly {
                 assembly.add("  FUCOMPP");
                 assembly.add("  FNSTSW %ax");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -266,7 +266,7 @@ public class GenAssembly {
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
             if (c.getP1() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -277,7 +277,7 @@ public class GenAssembly {
                 assembly.add("  FUCOMPP");
                 assembly.add("  FNSTSW %ax");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -304,12 +304,12 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  FLDS " + loc2.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc2.getDesc().getOffset() + "(%ebp)");
@@ -317,12 +317,12 @@ public class GenAssembly {
                 assembly.add("  FUCOMPP");
                 assembly.add("  FNSTSW %ax");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %ebx");
                 } else {
                     assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %ebx"); //muevo el segundo operando al registro edx
@@ -379,7 +379,7 @@ public class GenAssembly {
         if (c.getP1() instanceof VarLocation) {
             VarLocation loc = (VarLocation) c.getP1();
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -388,7 +388,7 @@ public class GenAssembly {
                 VarLocation res = (VarLocation) c.getP2();
                 assembly.add("  FSTPS "  + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -418,7 +418,7 @@ public class GenAssembly {
     public void not(TACCommand c) { 
         if (c.getP1() instanceof VarLocation) {
             VarLocation loc = (VarLocation) c.getP1();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -474,12 +474,12 @@ public class GenAssembly {
         VarLocation res = (VarLocation) c.getP1();
         if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
             VarLocation loc = (VarLocation) c.getP2();
-            if(isGlobal(loc)){
+            if(isGlobal(loc.getDesc())){
                 assembly.add("  MOVL "+ loc.getDesc().getNombre()+", %eax");            
             }else{
                 assembly.add("  MOVL "+ "-"+loc.getDesc().getOffset()+"(%ebp)"+", %eax");
             }           
-            if(isGlobal(res)){
+            if(isGlobal(res.getDesc())){
                 assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
             }else{
                 assembly.add("  MOVL %eax, " + "-"+res.getDesc().getOffset()+"(%ebp)"); 
@@ -490,14 +490,14 @@ public class GenAssembly {
                 assembly.add("  MOVL .LC" + codFloat++ + ", %eax");
                 FloatLiteral f1 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat, f1.getValue()));
-                if (isGlobal(res)) {
+                if (isGlobal(res.getDesc())) {
                     assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
                 } else {
                     assembly.add("  MOVL %eax, " + res.getDesc().getOffset() + "(%ebp)");
                 }
             } else {
                 assembly.add("  MOVL $" + c.getP2().toString() + ", %eax");
-                if (isGlobal(res)) {
+                if (isGlobal(res.getDesc())) {
                     assembly.add("  MOVL %eax, " + res.getDesc().getNombre());
                     System.out.println("SOY GLOBAL, PONE MI NOMBRE!");
                 } else {
@@ -513,7 +513,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -524,7 +524,7 @@ public class GenAssembly {
                 assembly.add("  FADDP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -537,7 +537,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -548,7 +548,7 @@ public class GenAssembly {
                 assembly.add("  FADDP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -580,12 +580,12 @@ public class GenAssembly {
             VarLocation loc2 = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  FLDS " + loc2.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc2.getDesc().getOffset() + "(%ebp)");
@@ -593,12 +593,12 @@ public class GenAssembly {
                 assembly.add("  FADDP %st, %st(1)");               
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 } else {
                     assembly.add("  MOVL "+ loc.getDesc().getOffset() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
                 } else {
                     assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
@@ -614,7 +614,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -625,7 +625,7 @@ public class GenAssembly {
                 assembly.add("  FSUBP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -638,7 +638,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -649,7 +649,7 @@ public class GenAssembly {
                 assembly.add("  FSUBP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -681,12 +681,12 @@ public class GenAssembly {
             VarLocation loc2 = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  FLDS " + loc2.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc2.getDesc().getOffset() + "(%ebp)");
@@ -694,12 +694,12 @@ public class GenAssembly {
                 assembly.add("  FSUBP %st, %st(1)");               
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 } else {
                     assembly.add("  MOVL "+ loc.getDesc().getOffset() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
                 } else {
                     assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
@@ -715,7 +715,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -726,7 +726,7 @@ public class GenAssembly {
                 assembly.add("  FMULP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -739,7 +739,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -750,7 +750,7 @@ public class GenAssembly {
                 assembly.add("  FMULP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + ", %eax");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %eax");
@@ -782,12 +782,12 @@ public class GenAssembly {
             VarLocation loc2 = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  FLDS " + loc2.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc2.getDesc().getOffset() + "(%ebp)");
@@ -795,12 +795,12 @@ public class GenAssembly {
                 assembly.add("  FMULP %st, %st(1)");               
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 } else {
                     assembly.add("  MOVL "+ loc.getDesc().getOffset() + "(%ebp)" + ", %eax"); //muevo el primer operando al registro eax
                 }
-                if (isGlobal(loc2)) {
+                if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
                 } else {
                     assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el segundo operando al registro edx
@@ -816,7 +816,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre());
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -827,7 +827,7 @@ public class GenAssembly {
                 assembly.add("  FDIVP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %edx");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %edx");
@@ -840,7 +840,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
@@ -851,7 +851,7 @@ public class GenAssembly {
                 assembly.add("  FDIVP %st, %st(1)");
                 assembly.add("  FSTPS "  + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %ecx");
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %ecx");
@@ -884,12 +884,12 @@ public class GenAssembly {
             VarLocation loc2 = (VarLocation) c.getP2();
             VarLocation res = (VarLocation) c.getP3();            
             if (loc.getDesc().getTipo().isFloat()) {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc.getDesc().getOffset() + "(%ebp)");
                 }
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  FLDS " + loc2.getDesc().getNombre() + "(%ebp)");
                 } else {
                     assembly.add("  FLDS " + loc2.getDesc().getOffset() + "(%ebp)");
@@ -897,12 +897,12 @@ public class GenAssembly {
                 assembly.add("  FDIVP %st, %st(1)");
                 assembly.add("  FSTPS " + res.getDesc().getOffset() + "(%ebp)");
             } else {
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el dividendo operando al registro edx
                 } else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el dividendo operando al registro edx
                 }
-                if (isGlobal(loc)) {
+                if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %ecx"); //muevo el dividendo operando al registro edx
                 } else {
                     assembly.add("  MOVL " + loc2.getDesc().getOffset() + "(%ebp)" + ", %ecx"); //muevo el dividendo operando al registro edx
@@ -916,7 +916,7 @@ public class GenAssembly {
     public void and(TACCommand c) {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
             } 
             else {
@@ -928,7 +928,7 @@ public class GenAssembly {
         }
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
             } 
             else {
@@ -947,13 +947,13 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc1 = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            if (isGlobal(loc1)) {
+            if (isGlobal(loc1.getDesc())) {
                     assembly.add("  MOVL " + loc1.getDesc().getNombre() + "(%ebp)" + ", %eax"); 
             } 
             else {
                     assembly.add("  MOVL " + loc1.getDesc().getOffset() + "(%ebp)" + ", %eax");
             }
-            if (isGlobal(loc2)) {
+            if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %edx"); 
             } 
             else {
@@ -1000,7 +1000,7 @@ public class GenAssembly {
     public void mod(TACCommand c) {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el dividendo operando al registro edx
             } 
             else {
@@ -1012,7 +1012,7 @@ public class GenAssembly {
         }
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %ecx"); //muevo el dividendo operando al registro edx
             } 
             else {
@@ -1032,13 +1032,13 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            if (isGlobal(loc)) {
+            if (isGlobal(loc.getDesc())) {
                     assembly.add("  MOVL " + loc.getDesc().getNombre() + "(%ebp)" + ", %edx"); //muevo el dividendo operando al registro edx
             } 
             else {
                     assembly.add("  MOVL " + loc.getDesc().getOffset() + "(%ebp)" + ", %edx"); //muevo el dividendo operando al registro edx
             }
-            if (isGlobal(loc2)) {
+            if (isGlobal(loc2.getDesc())) {
                     assembly.add("  MOVL " + loc2.getDesc().getNombre() + "(%ebp)" + ", %ecx"); //muevo el dividendo operando al registro edx
             } 
             else {
@@ -1050,11 +1050,10 @@ public class GenAssembly {
         }
     }
 
-   /* private boolean isGlobal(Descriptor desc) {
-        p.getTds().imprimir();
-        return p.getTds().searchLevel(desc.getNombre()) == 0;
-    }*/
-    private boolean isGlobal(VarLocation v) {
-        return v.isSoyGlobal();
+    private boolean isGlobal(Descriptor desc) {
+        return desc.isGlob();
     }
+   /* private boolean isGlobal(VarLocation v) {
+        return v.isSoyGlobal();
+    }*/
 }
