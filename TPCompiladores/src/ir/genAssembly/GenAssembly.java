@@ -14,6 +14,7 @@ import static ir.ast.BinOpType.NOTEQ;
 import ir.ast.Expression;
 import ir.ast.Extern;
 import ir.ast.FloatLiteral;
+import ir.ast.IntLiteral;
 import ir.ast.Literal;
 import ir.ast.MethodCall;
 import ir.ast.VarLocation;
@@ -1052,6 +1053,25 @@ public class GenAssembly {
 
     private boolean isGlobal(Descriptor desc) {
         return desc.isGlob();
+    }
+    private int arrayAccessOffset (VarLocation v){
+        Expression index = v.getIndice();
+        DescriptorArreglo d = (DescriptorArreglo) v.getDesc();
+        if (index!=null){
+            if (index instanceof IntLiteral){
+                IntLiteral i = (IntLiteral) index;
+                if (i.getValue()<0 || i.getValue()>d.getLongitud())
+                    System.out.println("ERROR: indice fuera de rango");
+                return i.getValue()*4;
+            }
+            else{
+                VarLocation tmp = (VarLocation) index;
+                assembly.add("  MOVL " + tmp.getDesc().getOffset() + "(%ebp),"+"edx");
+                return -1;
+            }
+        }
+        else
+            return 0;
     }
    /* private boolean isGlobal(VarLocation v) {
         return v.isSoyGlobal();

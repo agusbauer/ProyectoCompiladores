@@ -156,7 +156,17 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(VarLocation loc) {
-        return loc.getDesc().getTipo();
+        if (loc.getIndice()!=null){
+            Type ti = loc.getIndice().accept(this);
+            if (ti!=Type.INT)
+                return loc.getDesc().getTipo();
+            else{
+                addError(loc.getIndice(),"Tipo invalido, se esperaba un entero");
+                return Type.UNDEFINED;
+            }
+        }
+        else
+            return loc.getDesc().getTipo();
     }
 
     @Override

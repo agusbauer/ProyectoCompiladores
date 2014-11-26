@@ -177,17 +177,20 @@ precedence right UMINUS;
 						if (tds.top().get(i)==null){
 								if(nivel == 0){
 									System.out.println("HAY UNA VARIABLE GLOBAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true);
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),null,ileft,iright,true,true);
 								}else{
 									System.out.println("HAY UNA VARIABLE LOCAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,false);
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),null,ileft,iright,true,false);
 								}		
 							}else{
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);}:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
-						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright,true,true) ;
-							else
+						if (tds.top().get(i)==null){
+								if (nivel == 0)
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),null,ileft,iright,true,true);
+								else
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),null,ileft,iright,true,false);
+							}else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
 
@@ -330,22 +333,22 @@ precedence right UMINUS;
 								imprimir();
 									if(d.isGlob()){
 										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
-										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+										RESULT = new VarLocation(i,d,null,ileft,iright,false,true);
 									}else{
 										System.out.println("HAGO REFERENCIA A UNA VAR LOCAL!");
-										RESULT = new VarLocation(i,d,ileft,iright,false,false);
+										RESULT = new VarLocation(i,d,null,ileft,iright,false,false);
 									}	
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
 							parser.report_fatal_error("Variable no declarada",ileft,iright);} :} 
-				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
+				| id:i LBRACKET expr:e RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
 								if(nivel == 0)						
-										RESULT = new VarLocation(i,d,ileft,iright,false,true);
+										RESULT = new VarLocation(i,d,e,ileft,iright,false,true);
 									else
-										RESULT = new VarLocation(i,d,ileft,iright,false,false);								
+										RESULT = new VarLocation(i,d,e,ileft,iright,false,false);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{

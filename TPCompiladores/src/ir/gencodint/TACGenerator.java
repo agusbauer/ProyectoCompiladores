@@ -303,6 +303,9 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(VarLocation loc) {
+        if (loc.getIndice()!=null){
+            loc.setIndice(loc.getIndice().accept(this)); // guarda el resultado de evaluar la expresion del indice del arreglo
+        }  
         return loc;
     }
 
