@@ -47,10 +47,15 @@ public class TACGenerator implements ASTVisitor<Expression> {
     private int beginIter; // sirve para el label del comienzo de un bucle 
     private int endIter; // sirve para el label del fin de un bucle
     private Stack pila;
+    private int cantMetodos;
     
     public TACGenerator(){
         code = new LinkedList();
         pila = new Stack<>();
+    }
+
+    public int getCantMetodos() {
+        return cantMetodos;
     }
     
     @Override
@@ -311,8 +316,22 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(Block bl) {
-        if (bl.getMethodName()!=null){
-            code.add(new TACCommand(TACOpType.MNAME, new IntLiteral(null, bl.getMethodName()), null, null));
+        if (bl.getMethodName()!=null){ //es un metodo
+            //primero busco el anterior metodo para actualizarle su offset maximo con los temporales agregados
+            boolean found = false;
+            for (int j=code.size()-1; j>=0 && !found;j--){
+                if (code.get(j).getOp().equals(MNAME)){
+                    found = true;
+                    IntLiteral il = (IntLiteral)code.get(j).getP1();
+                    il.setAuxValue(Descriptor.getOffsetCorriente());
+                }
+            }
+            //ahora si me ocupo el metodo actual
+            IntLiteral i = new IntLiteral(null, bl.getMethodName());
+            Descriptor.setOffsetCorriente(bl.getOffSetMax());
+            i.setAuxValue(Descriptor.getOffsetCorriente());
+            code.add(new TACCommand(TACOpType.MNAME, i , null, null));
+            cantMetodos++;
         }
         if(bl.getStatements()!=null)
             for (Statement s : bl.getStatements()){

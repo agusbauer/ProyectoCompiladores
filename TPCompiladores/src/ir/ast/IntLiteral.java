@@ -10,6 +10,7 @@ import ir.ASTVisitor;
 
 public class IntLiteral extends Literal {
 	private Integer value;
+        private Integer auxValue; //offsetmax
 	
 	/*
 	 * Constructor for int literal that takes a string as an input
@@ -33,6 +34,15 @@ public class IntLiteral extends Literal {
             this.value = value;
             this.label = lbl;
         }
+
+        public Integer getAuxValue() {
+            return auxValue;
+        }
+
+        public void setAuxValue(Integer auxValue) {
+            this.auxValue = auxValue;
+        }
+
 
 	@Override
 	public Type getType() {

@@ -13,6 +13,7 @@ import ir.ASTVisitor;
 public class Block extends Statement {
 	private List<Statement> statements;
         private String methodName; // para las etiquetas de assembler
+        private Integer offSetMax;
         
         public void setMethodName(String n){
             methodName=n;
@@ -52,5 +53,13 @@ public class Block extends Statement {
 	public <T> T accept(ASTVisitor<T> v) {
 		return v.visit(this);
 	}
+
+    public Integer getOffSetMax() {
+        return offSetMax;
+    }
+    
+    public void setOffSetMax(Integer n){
+        offSetMax = n;
+    }
 	
 }

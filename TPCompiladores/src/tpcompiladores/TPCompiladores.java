@@ -31,31 +31,18 @@ public class TPCompiladores {
        visitor.showErrors();
     }
     
-    private static void genCodInt(parser p, String nombre) throws IOException{
-       TACGenerator visitor = new TACGenerator(); 
-       for (Block b : p.getASTs()){
-           visitor.visit(b);
-       }
-       
-      LinkedList<TACCommand> code = visitor.getCode();
-       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".tac")));
-       for (TACCommand comm : code){
-           System.out.println(comm.toString());
-           out.write(comm.toString());
-           out.write("\n");
-       }
-       out.close();
-    }
+
     
     private static void genAssembly(parser p, String nombre) throws IOException{
        TACGenerator visitor = new TACGenerator(); 
        for (Block b : p.getASTs()){
            visitor.visit(b);
        }
-       GenAssembly gen = new GenAssembly(visitor.getCode(),p);
+       GenAssembly gen = new GenAssembly(visitor.getCode(),p,visitor.getCantMetodos());
        LinkedList<String> assembly = gen.genAssembly();
+       assembly.addFirst("  .file  "+"\""+nombre.replace(".ctds", ".asm")+"\"");
              
-       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre+".asm")));
+       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre.replace(".ctds", ".asm"))));
        for (String comm : assembly){
            System.out.println(comm);
            out.write(comm);
@@ -74,15 +61,9 @@ public class TPCompiladores {
         try{
         CTDSLexer lex = new CTDSLexer(br);
         parser p = new parser(lex);
-            System.out.println("ok0");
         p.parse();
-            System.out.println("ok1");
         semCheck(p);
-        System.out.println("ok2");
-        genCodInt(p,args[0]);
-        System.out.println("ok3");
         genAssembly(p, args[0]);
-            System.out.println("ok4");
         }
         catch (RuntimeException e) {
             System.err.print(e.toString());
