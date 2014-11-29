@@ -122,22 +122,22 @@ public class GenAssembly {
                     assembly.add("  jmp " + c.getP1().toString());
                     break;
                 case JG:
-                    assembly.add("  jg " + c.getP1().toString());
-                    break;
-                case JL:
-                    assembly.add("  jl " + c.getP1().toString());
-                    break;
-                case JGE:
-                    assembly.add("  jge " + c.getP1().toString());
-                    break;
-                case JLE:
                     assembly.add("  jle " + c.getP1().toString());
                     break;
+                case JL:
+                    assembly.add("  jge " + c.getP1().toString());
+                    break;
+                case JGE:
+                    assembly.add("  jl " + c.getP1().toString());
+                    break;
+                case JLE:
+                    assembly.add("  jg " + c.getP1().toString());
+                    break;
                 case JE:
-                    assembly.add("  je " + c.getP1().toString());
+                    assembly.add("  jne " + c.getP1().toString());
                     break;
                 case JNE:
-                    assembly.add("  jne " + c.getP1().toString());
+                    assembly.add("  je " + c.getP1().toString());
                     break;
                 case JAND:
                     jmp(c);
@@ -296,9 +296,8 @@ public class GenAssembly {
                 assembly.add("  fnstsw %ax");
             } else {
                 assembly.add("  movl " + offset(loc) + ", %eax");
-                assembly.add("  movl " + offset(loc2) + ", %ebx");
                 //muevo el primer operando al registro eax
-                assembly.add("  cmp  %ebx, %eax"); //sumo los dos registros
+                assembly.add("  cmp "+offset(loc2)+ ", %eax"); //sumo los dos registros
             }
         }
         VarLocation res = (VarLocation) c.getP3();
@@ -308,7 +307,7 @@ public class GenAssembly {
                     assembly.add("  andb $68,%ah");
                     assembly.add("  xorb $64,%ah");
                 }
-                assembly.add("  jne short ok");
+                assembly.add("  jne short .ok");
             }
             break;
             case EQEQ: {
@@ -316,14 +315,14 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  je short ok");
+                assembly.add("  je short .ok");
             }
             break;
             case GTEQ: {
                 if (res.getDesc().getTipo().isFloat()){
                     assembly.add("  andb $5,%ah");
                 }
-                assembly.add("  jge short ok");
+                assembly.add("  jge short .ok");
             }
             break;
             case LTEQ: {
@@ -331,14 +330,14 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  jle short ok");
+                assembly.add("  jle short .ok");
             }
             break;
             case GT: {
                 if (res.getDesc().getTipo().isFloat()){
                     assembly.add("  andb $69,%ah");
                 }
-                assembly.add("  jg short ok");
+                assembly.add("  jg short .ok");
             }
             break;
             case LT: {
@@ -346,12 +345,12 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $1,%ah");
                 }
-                assembly.add("  jl short ok");
+                assembly.add("  jl short .ok");
             }
             break;
         }
         assembly.add("  movl $0, %eax");
-        assembly.add("ok:");
+        assembly.add(".ok:");
         assembly.add("  movl $1, %eax");
         assembly.add("  movl " + " %eax, " + res.getDesc().getOffset() + "(%ebp)");
     }
@@ -605,7 +604,7 @@ public class GenAssembly {
                 assembly.add("  fstps " + offset(res));
             } else {
                 assembly.add("  movl " + offset(loc) + ", %eax");
-                assembly.add("  imul $" + c.getP2().toString() + ", %eax");
+                assembly.add("  imull $" + c.getP2().toString() + ", %eax");
                 assembly.add("  movl " + " %eax, " + offset(res));
             }
         }
@@ -621,7 +620,7 @@ public class GenAssembly {
                 assembly.add("  fstps " + offset(res));
             } else {
                 assembly.add("  movl " + offset(loc) + ", %eax");
-                assembly.add("  imul $" + c.getP1().toString() + ", %eax");
+                assembly.add("  imull $" + c.getP1().toString() + ", %eax");
                 assembly.add("  movl " + " %eax, " + offset(res)); //guardo el resultado en el tercer parametro 
             }
         }
@@ -638,7 +637,7 @@ public class GenAssembly {
                 assembly.add("  fstps " + offset(res));
             } else {
                 assembly.add("  movl $" + c.getP2().toString() + ", %eax"); //muevo un literal a un registro
-                assembly.add("  imul $" + c.getP1().toString() + ", %eax");
+                assembly.add("  imull $" + c.getP1().toString() + ", %eax");
                 VarLocation res = (VarLocation) c.getP3();
                 assembly.add("  movl " + " %eax, " + offset(res));
             }
@@ -655,7 +654,7 @@ public class GenAssembly {
             } else {
                 assembly.add("  movl " + offset(loc) + ", %eax"); //muevo el primer operando al registro eax            
                 assembly.add("  movl " + offset(loc2) + ", %edx"); //muevo el segundo operando al registro edx              
-                assembly.add("  imul %edx, %eax"); //sumo los dos registros
+                assembly.add("  imull %edx, %eax"); //sumo los dos registros
                 assembly.add("  movl " + " %eax, " + offset(res));
             }
         }

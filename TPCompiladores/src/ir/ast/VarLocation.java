@@ -15,55 +15,19 @@ public class VarLocation extends Location {
     private Block block;
     private Descriptor desc;
     private Expression indice;
-    private boolean soyGlobal;
 
     public VarLocation(String id, Descriptor d) {
-        if (d.getClase().equals("descriptorSimple")) {
-            DescriptorSimple.setOffsetCorriente(DescriptorSimple.getOffsetCorriente() - 4);
-            d.setOffset(DescriptorSimple.getOffsetCorriente());
-        }
-        if (d.getClase().equals("descriptorArreglo")) {
-            DescriptorArreglo da = (DescriptorArreglo) d;
-            DescriptorArreglo.setOffsetCorriente(DescriptorArreglo.getOffsetCorriente() - 4 * da.getLongitud());
-            d.setOffset(DescriptorArreglo.getOffsetCorriente());
-        }
         this.id = id;
         this.desc = d;
     }
 
-    public VarLocation(String id, Descriptor d,Expression e, int line, int col, boolean isdecl, boolean isGlobal) {
-        if (isdecl && !isGlobal){ //para diferenciar el caso de la declaracion del caso de  la asignacion
-            if (d.getClase().equals("descriptorSimple")) {
-                //System.out.println("VOY A IMPRIMIR DATA"+DescriptorSimple.getOffsetCorriente());
-                DescriptorSimple.setOffsetCorriente(DescriptorSimple.getOffsetCorriente() - 4);
-                //System.out.println("VOY A IMPRIMIR DATAA"+DescriptorSimple.getOffsetCorriente());
-                d.setOffset(DescriptorSimple.getOffsetCorriente());
-            }
-            if (d.getClase().equals("descriptorArreglo")) {
-                DescriptorArreglo da = (DescriptorArreglo) d;
-                DescriptorArreglo.setOffsetCorriente(DescriptorArreglo.getOffsetCorriente() - 4 * da.getLongitud());
-                d.setOffset(DescriptorArreglo.getOffsetCorriente());
-            }
-        } 
-        if(isdecl && isGlobal){
-            System.out.println("holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "+isGlobal);
-            d.setGlob();
-            System.out.println("que paso? "+d.isGlob());
-        }
+    public VarLocation(String id, Descriptor d,Expression e, int line, int col) {
         this.indice = e;
         this.setLineNumber(line);
         this.setColumnNumber(col);
         this.id = id;
         this.desc = d;
-    }
-    
-
-
-    public boolean isSoyGlobal() {
-        return soyGlobal;
-    }
-    
-    
+    }    
 
     public VarLocation(String id, Block b, Descriptor d, int line, int col) {
         this.setLineNumber(line);

@@ -177,19 +177,19 @@ precedence right UMINUS;
 						if (tds.top().get(i)==null){
 								if(nivel == 0){
 									System.out.println("HAY UNA VARIABLE GLOBAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),null,ileft,iright,true,true);
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,true),null,ileft,iright);
 								}else{
 									System.out.println("HAY UNA VARIABLE LOCAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),null,ileft,iright,true,false);
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,false),null,ileft,iright);
 								}		
 							}else{
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);}:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
 						if (tds.top().get(i)==null){
 								if (nivel == 0)
-									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),null,ileft,iright,true,true);
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue(),true),null,ileft,iright);
 								else
-									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),null,ileft,iright,true,false);
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue(),false),null,ileft,iright);
 							}else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
@@ -333,10 +333,10 @@ precedence right UMINUS;
 								imprimir();
 									if(d.isGlob()){
 										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
-										RESULT = new VarLocation(i,d,null,ileft,iright,false,true);
+										RESULT = new VarLocation(i,d,null,ileft,iright);
 									}else{
 										System.out.println("HAGO REFERENCIA A UNA VAR LOCAL!");
-										RESULT = new VarLocation(i,d,null,ileft,iright,false,false);
+										RESULT = new VarLocation(i,d,null,ileft,iright);
 									}	
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
@@ -346,9 +346,9 @@ precedence right UMINUS;
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
 								if(nivel == 0)						
-										RESULT = new VarLocation(i,d,e,ileft,iright,false,true);
+										RESULT = new VarLocation(i,d,e,ileft,iright);
 									else
-										RESULT = new VarLocation(i,d,e,ileft,iright,false,false);								
+										RESULT = new VarLocation(i,d,e,ileft,iright);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{

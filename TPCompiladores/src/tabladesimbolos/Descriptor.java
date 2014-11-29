@@ -18,7 +18,6 @@ public abstract class Descriptor {
     protected int offset;
     protected BinOpType op; // solo sirve para assembler
     protected Object valor; //esto es para saber el valor una variable, ya sea para chequear variables no declaradas o hacer movidas con los float en asm
-    protected boolean glob;
     
     public Object getValor() {
         return valor;
@@ -76,11 +75,11 @@ public abstract class Descriptor {
     }
 
     public void setGlob() {
-        glob = true;
+        esGlobal = true;
     }
     
       public boolean isGlob() {
-        return glob;
+        return esGlobal;
     }
     
 }
