@@ -10,6 +10,7 @@ import ir.ast.*;
 import ir.genAssembly.GenAssembly;
 import ir.gencodint.TACCommand;
 import ir.gencodint.TACGenerator;
+import ir.optimizaciones.resolverConstantes;
 import ir.semcheck.TypeCheckVisitor;
 import java.io.FileReader;
 
@@ -29,6 +30,13 @@ public class TPCompiladores {
            visitor.visit(b);
        }
        visitor.showErrors();
+    }
+    
+    private static void optCons(parser p){
+        resolverConstantes visitor = new resolverConstantes();
+        for (Block b : p.getASTs()){
+           visitor.visit(b);
+       }
     }
     
 
@@ -63,6 +71,7 @@ public class TPCompiladores {
         parser p = new parser(lex);
         p.parse();
         semCheck(p);
+        optCons(p);
         genAssembly(p, args[0]);
         }
         catch (RuntimeException e) {

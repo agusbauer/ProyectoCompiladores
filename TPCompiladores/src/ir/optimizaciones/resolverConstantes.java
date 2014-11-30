@@ -46,24 +46,24 @@ public class resolverConstantes implements ASTVisitor<Expression>{
 
     @Override
     public Expression visit(AssignStmt stmt) {
-        Expression e = stmt.getExpression();
-        e = stmt.getExpression().accept(this);
+        Expression e = stmt.getExpression().accept(this);
+        stmt.setExpression(e);
         return null;
     }
 
     @Override
     public Expression visit(ReturnStmt stmt) {
         if (stmt.getExpression()!=null){
-            Expression e = stmt.getExpression();
-            e = stmt.getExpression().accept(this);
+            Expression e = stmt.getExpression().accept(this);
+            stmt.setExpression(e);
         }
         return null;
     }
 
     @Override
     public Expression visit(IfStmt stmt) {
-        Expression e = stmt.getCondition();
-        e=stmt.getCondition().accept(this);
+        Expression e = stmt.getCondition().accept(this);
+        stmt.setCondition(e);
         stmt.getIfBlock().accept(this);
         if(stmt.getElseBlock()!=null)
             stmt.getElseBlock().accept(this);
@@ -72,16 +72,18 @@ public class resolverConstantes implements ASTVisitor<Expression>{
 
     @Override
     public Expression visit(ForStmt stmt) {
-        stmt.getExpr().accept(this);
-        stmt.getExprfin().accept(this);
+        Expression e0 = stmt.getExpr().accept(this);
+        Expression e1 = stmt.getExprfin().accept(this);
+        stmt.setExpr(e0);
+        stmt.setExprfin(e1);
         stmt.getBlock().accept(this);
         return null;
     }
 
     @Override
     public Expression visit(WhileStmt stmt) {
-        Expression e = stmt.getExpr();
-        e = stmt.getExpr().accept(this);
+        Expression e = stmt.getExpr().accept(this);
+        stmt.setExpr(e);
         stmt.getBlock().accept(this);
         return null;
     }

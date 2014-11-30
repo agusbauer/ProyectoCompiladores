@@ -176,10 +176,8 @@ precedence right UMINUS;
    location_decl ::= id:i {: 
 						if (tds.top().get(i)==null){
 								if(nivel == 0){
-									System.out.println("HAY UNA VARIABLE GLOBAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,true),null,ileft,iright);
 								}else{
-									System.out.println("HAY UNA VARIABLE LOCAL");
 									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,false),null,ileft,iright);
 								}		
 							}else{
@@ -327,17 +325,10 @@ precedence right UMINUS;
 				| EXTERNINVK LPAREN string_literal:s COMMA VOID COMMA externinvk_arg_sequence:l RPAREN {: RESULT = new Extern(s,Type.VOID,l,sleft,sright)  ;:};
 
 	location ::= id:i {:  Descriptor d = tds.search(i);
-							//System.out.println("ENCONTRE UN DESC "+d.getNombre()+" ES GLOBAL? "+d.EsGlobal());
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-								imprimir();
-									if(d.isGlob()){
-										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
-										RESULT = new VarLocation(i,d,null,ileft,iright);
-									}else{
-										System.out.println("HAGO REFERENCIA A UNA VAR LOCAL!");
-										RESULT = new VarLocation(i,d,null,ileft,iright);
-									}	
+								//imprimir();
+								RESULT = new VarLocation(i,d,null,ileft,iright);	
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
@@ -345,10 +336,7 @@ precedence right UMINUS;
 				| id:i LBRACKET expr:e RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
-								if(nivel == 0)						
-										RESULT = new VarLocation(i,d,e,ileft,iright);
-									else
-										RESULT = new VarLocation(i,d,e,ileft,iright);								
+								RESULT = new VarLocation(i,d,e,ileft,iright);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{
