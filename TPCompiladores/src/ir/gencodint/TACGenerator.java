@@ -229,7 +229,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(MethodCallStmt stmt) {
         ++commId;
         int id = commId;
-        code.add(new TACCommand(TACOpType.CALL,stmt.getM(), new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,false)),null));
+        code.add(new TACCommand(TACOpType.CALL,stmt.getM(), new VarLocation("temp" + id,new DescriptorSimple("temp" + id,stmt.getM().getType(),false)),null));
         return null;
     }
 
@@ -240,7 +240,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
         Expression right = expr.getRightOperand().accept(this); // codigo de segundo operando
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,false));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),false));
         if (op.isRelational() || op.isEquational()){
             var.getDesc().setOp(op);
             code.add(new TACCommand(TACOpType.CMP,left,right,var)); 
@@ -264,7 +264,7 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(UnaryOpExpr expr) {
         ++commId;
         int id = commId;
-        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,Type.INT,false));
+        VarLocation var = new VarLocation("temp" + id,new DescriptorSimple("temp" + id,expr.getType(),false));
         if (expr.getOperator().isMinus())
             code.add(new TACCommand(TACOpType.OPP,expr.getOperand().accept(this),var,null));
         else

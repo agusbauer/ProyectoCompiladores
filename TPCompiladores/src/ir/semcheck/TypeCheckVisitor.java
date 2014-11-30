@@ -58,8 +58,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
             Type right = expr.getRightOperand().accept(this);
             if (left.equals(right))
                if (left.isBool())
-                   if (op.isConditional() || op.isEquational())
+                   if (op.isConditional() || op.isEquational()){
+                       expr.setType(Type.BOOL);
                        return Type.BOOL;
+                   }    
                    else
                        addError(expr, "Los operandos son logicos sin embargo el operador no lo es");
                else
@@ -67,8 +69,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
                        if (op.isArithmetic())
                            return left;
                        else
-                           if (op.isEquational() || op.isRelational())
+                           if (op.isEquational() || op.isRelational()){
+                               expr.setType(Type.BOOL);
                                return Type.BOOL;
+                           }
                            else
                                addError(expr, "Los operandos son aritmeticos sin embargo el operador es logico");
                    else
@@ -147,8 +151,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(IntLiteral lit) {
-        if (lit.getType().isInt())
+        if (lit.getType().isInt()){
+            lit.setType(Type.INT);
             return Type.INT;
+        }    
         else
             addError(lit,"Tipo invalido, se esperaba un entero");
             return Type.UNDEFINED;
@@ -158,15 +164,19 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
     public Type visit(VarLocation loc) {
         if (loc.getIndice()!=null){
             Type ti = loc.getIndice().accept(this);
-            if (ti!=Type.INT)
+            if (ti==Type.INT){
+                loc.setType(loc.getDesc().getTipo());
                 return loc.getDesc().getTipo();
+            }    
             else{
-                addError(loc.getIndice(),"Tipo invalido, se esperaba un entero");
+                addError(loc.getIndice(),"Tipo de indice invalido, se esperaba un entero");
                 return Type.UNDEFINED;
             }
         }
-        else
+        else{
+            loc.setType(loc.getDesc().getTipo());
             return loc.getDesc().getTipo();
+        }    
     }
 
     @Override
@@ -233,8 +243,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
        if(operator.isMinus() && (operand.isFloat() || operand.isInt()))
            return operand;
        else
-           if (operator.isNot() && operand.isBool())
+           if (operator.isNot() && operand.isBool()){
+               expr.setType(Type.BOOL);
                return Type.BOOL;
+           }
        addError(expr, "Error de tipos");
        return Type.UNDEFINED;     
     }
@@ -255,8 +267,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(BoolLiteral lit) {
-        if (lit.getType().isBool())
+        if (lit.getType().isBool()){
+            lit.setType(Type.BOOL);
             return Type.BOOL;
+        }    
         else
             addError(lit,"Tipo invalido, se esperaba un valor logico");
             return Type.UNDEFINED;
@@ -264,8 +278,10 @@ public class TypeCheckVisitor implements ASTVisitor<Type> {
 
     @Override
     public Type visit(FloatLiteral lit) {
-        if (lit.getType().isFloat())
+        if (lit.getType().isFloat()){
+            lit.setType(Type.FLOAT);
             return Type.FLOAT;
+        }    
         else
             addError(lit,"Tipo invalido, se esperaba un real");
             return Type.UNDEFINED;

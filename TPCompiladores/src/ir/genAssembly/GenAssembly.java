@@ -233,7 +233,13 @@ public class GenAssembly {
                 VarLocation v = (VarLocation) c.getP1();
                 assembly.add("  movl " + offset(v) + ", %eax");
             }else{
-                assembly.add("  movl " + c.getP1().toString() + ", %eax");
+                if (c.getP1() instanceof FloatLiteral){
+                    FloatLiteral f = (FloatLiteral) c.getP1();                   
+                    assembly.add("  movl .LC" + codFloat + ", %eax");
+                    listaFloats.add(new Pair(codFloat++, f.getValue()));
+                }
+                else
+                    assembly.add("  movl " + c.getP1().toString() + ", %eax");
             }
             
         }
@@ -243,9 +249,11 @@ public class GenAssembly {
     }
 
     public void cmp(TACCommand c) {
+        boolean opFloat = false;
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
             if (c.getP2() instanceof FloatLiteral) {
+                opFloat=true;
                 assembly.add("  flds " + offset(loc));
                 assembly.add("  flds .LC" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
@@ -260,6 +268,7 @@ public class GenAssembly {
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
             if (c.getP1() instanceof FloatLiteral) {
+                opFloat=true;
                 assembly.add("  flds " + offset(loc));
                 assembly.add("  flds .LC" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
@@ -273,6 +282,7 @@ public class GenAssembly {
         }
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             if (c.getP2() instanceof FloatLiteral) {
+                opFloat=true;
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
                 assembly.add("  flds .LC" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
@@ -290,6 +300,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
             if (loc.getDesc().getTipo().isFloat()) {
+                opFloat=true;
                 assembly.add("  flds " + offset(loc));
                 assembly.add("  flds " + offset(loc2));
                 assembly.add("  fucompp");
@@ -303,56 +314,58 @@ public class GenAssembly {
         VarLocation res = (VarLocation) c.getP3();
         switch (res.getDesc().getOp()) {
             case NOTEQ: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $68,%ah");
                     assembly.add("  xorb $64,%ah");
                 }
-                assembly.add("  jne short .ok");
+                assembly.add("  jne short .true");
             }
             break;
             case EQEQ: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  je short .ok");
+                assembly.add("  je short .true");
             }
             break;
             case GTEQ: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $5,%ah");
                 }
-                assembly.add("  jge short .ok");
+                assembly.add("  jge short .true");
             }
             break;
             case LTEQ: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  jle short .ok");
+                assembly.add("  jle short .true");
             }
             break;
             case GT: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $69,%ah");
                 }
-                assembly.add("  jg short .ok");
+                assembly.add("  jg short .true");
             }
             break;
             case LT: {
-                if (res.getDesc().getTipo().isFloat()){
+                if (opFloat){
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $1,%ah");
                 }
-                assembly.add("  jl short .ok");
+                assembly.add("  jl short .true");
             }
             break;
         }
         assembly.add("  movl $0, %eax");
-        assembly.add(".ok:");
+        assembly.add("  jmp short .endtrue");
+        assembly.add(".true:");
         assembly.add("  movl $1, %eax");
-        assembly.add("  movl " + " %eax, " + res.getDesc().getOffset() + "(%ebp)");
+        assembly.add(".endtrue:");
+        assembly.add("  movl " + " %eax, " + res.getDesc().getOffset() + "(%ebp)");       
     }
 
     public void opp(TACCommand c) {
