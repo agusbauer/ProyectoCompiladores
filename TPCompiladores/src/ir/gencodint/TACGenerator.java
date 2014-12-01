@@ -91,40 +91,40 @@ public class TACGenerator implements ASTVisitor<Expression> {
     public Expression visit(IfStmt stmt) {
         Expression cond = stmt.getCondition().accept(this); // cmp o lcon o opp
         String claseDeCondicion = stmt.getCondition().getClase();
-        labelId++;
+        int labelIf = labelId++;
         if (claseDeCondicion.equals("bool")){
             BoolLiteral e =  (BoolLiteral)stmt.getCondition();
             if (!e.isValue()){
-                code.add(new TACCommand(TACOpType.JMP,new IntLiteral(labelId, ".LIF"), null, null));
+                code.add(new TACCommand(TACOpType.JMP,new IntLiteral(labelIf, ".LIF"), null, null));
             }
         }
         else{
             if (claseDeCondicion.equals("unary")){
                UnaryOpExpr e =  (UnaryOpExpr)stmt.getCondition();
-               code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelId, ".LIF"), null, null));
+               code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelIf, ".LIF"), null, null));
             }
             else{
                 if(claseDeCondicion.equals("loc")){
                     VarLocation e =  (VarLocation)stmt.getCondition();
-                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelId, ".LIF"), null, null));
+                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelIf, ".LIF"), null, null));
                 }
                 else{
                     BinOpExpr e =  (BinOpExpr)stmt.getCondition();
                     switch (e.getOperator()){ // salto condicional
-                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(labelId, ".LIF"), null, null)); break;
-                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(labelId, ".LIF"), null, null)); break;
-                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(labelId, ".LIF"), null, null)); break;
-                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelId, ".LIF"), null, null)); break;
-                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelId, ".LIF"), null, null));break;
-                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelId, ".LIF"), null, null));break;
-                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelId, ".LIF"), cond, null));break;
-                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelId, ".LIF"), cond, null));break;
+                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(labelIf, ".LIF"), null, null)); break;
+                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(labelIf, ".LIF"), null, null)); break;
+                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(labelIf, ".LIF"), null, null)); break;
+                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(labelIf, ".LIF"), null, null)); break;
+                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(labelIf, ".LIF"), null, null));break;
+                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(labelIf, ".LIF"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(labelIf, ".LIF"), cond, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(labelIf, ".LIF"), cond, null));break;
                     }
                 }
             }
         }
         stmt.getIfBlock().accept(this); //bloque if
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(labelId, ".LIF"), null, null)); // label del else
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(labelIf, ".LIF"), null, null)); // label del else
         if(stmt.getElseBlock()!=null)
             stmt.getElseBlock().accept(this); //bloque else
         return null;

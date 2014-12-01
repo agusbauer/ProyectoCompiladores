@@ -59,6 +59,7 @@ public class GenAssembly {
     parser p;
     private boolean eaxLibre = true; //no se si usar esto todavia, es fuerte
     private static int codFloat = 0; // esto es para los labels que vamos creando para cada valor float
+    private static int labelTrue = 0;
     private LinkedList<Pair<Integer, Float>> listaFloats; //al final del programa declaramos todas las etiquetas con sus valores
     private int cantMetodos;
 
@@ -318,7 +319,7 @@ public class GenAssembly {
                     assembly.add("  andb $68,%ah");
                     assembly.add("  xorb $64,%ah");
                 }
-                assembly.add("  jne short .true");
+                assembly.add("  jne  .true" + labelTrue);
             }
             break;
             case EQEQ: {
@@ -326,14 +327,14 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  je short .true");
+                assembly.add("  je  .true" + labelTrue);
             }
             break;
             case GTEQ: {
                 if (opFloat){
                     assembly.add("  andb $5,%ah");
                 }
-                assembly.add("  jge short .true");
+                assembly.add("  jge  .true" + labelTrue);
             }
             break;
             case LTEQ: {
@@ -341,14 +342,14 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $64,%ah");
                 }
-                assembly.add("  jle short .true");
+                assembly.add("  jle  .true" + labelTrue);
             }
             break;
             case GT: {
                 if (opFloat){
                     assembly.add("  andb $69,%ah");
                 }
-                assembly.add("  jg short .true");
+                assembly.add("  jg  .true" + labelTrue);
             }
             break;
             case LT: {
@@ -356,15 +357,16 @@ public class GenAssembly {
                     assembly.add("  andb $69,%ah");
                     assembly.add("  cmpb $1,%ah");
                 }
-                assembly.add("  jl short .true");
+                assembly.add("  jl  .true" + labelTrue);
             }
             break;
         }
         assembly.add("  movl $0, %eax");
-        assembly.add("  jmp short .endtrue");
-        assembly.add(".true:");
+        assembly.add("  jmp  .endtrue" + labelTrue);
+        assembly.add(".true"+labelTrue+":");
         assembly.add("  movl $1, %eax");
-        assembly.add(".endtrue:");
+        assembly.add(".endtrue"+labelTrue+":");
+        labelTrue++;
         assembly.add("  movl " + " %eax, " + res.getDesc().getOffset() + "(%ebp)");       
     }
 
@@ -406,10 +408,10 @@ public class GenAssembly {
         } else {
             assembly.add("  movl " + c.getP1().toString() + ", %eax");
         }
-        assembly.add("  cmp %eax, $1");
-        assembly.add("  je short isTrue");
+        assembly.add("  cmp $1, %eax");
+        assembly.add("  je  .true"+labelTrue);
         assembly.add("  movl $1, %eax");
-        assembly.add("isTrue:");
+        assembly.add(".true"+labelTrue+":");labelTrue++;
         assembly.add("  movl $0, %eax");
         VarLocation res = (VarLocation) c.getP2();
         assembly.add("  movl " + " %eax, " + offset(res));
@@ -443,7 +445,7 @@ public class GenAssembly {
             }
 
         }
-        assembly.add("  cmp %eax, $1");
+        assembly.add("  cmp $1, %eax");
         assembly.add("  je " + c.getP1().toString());
     }
 
@@ -686,7 +688,8 @@ public class GenAssembly {
                 assembly.add("  fstps " + offset(res));
             } else {
                 assembly.add("  movl " + offset(loc) + ", %edx");
-                assembly.add("  idiv $" + c.getP2().toString()); //edx div divisor
+                assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
+                assembly.add("  idiv %ecx"); //edx div divisor
                 assembly.add("  movl " + " %eax, "  + offset(res)); //el cociente de la division queda en eax
             }
         }
@@ -720,7 +723,8 @@ public class GenAssembly {
                 assembly.add("  fstps " + offset(res));
             } else {
                 assembly.add("  movl $" + c.getP1().toString() + ", %edx");
-                assembly.add("  idiv $" + c.getP2().toString());
+                assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
+                assembly.add("  idiv %ecx");
                 VarLocation res = (VarLocation) c.getP3();
                 assembly.add("  movl " + " %eax, " + offset(res));
             }
@@ -811,7 +815,8 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
             assembly.add("  movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
-            assembly.add("  idiv $" + c.getP2().toString()); //edx div divisor
+            assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
+            assembly.add("  idiv %ecx"); //edx div divisor
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res)); //el resto de la division queda en edx
         }
@@ -825,7 +830,8 @@ public class GenAssembly {
         }
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             assembly.add("  movl $" + c.getP1().toString() + ", %edx");
-            assembly.add("  idiv $" + c.getP2().toString());
+            assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
+            assembly.add("  idiv %ecx");
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res));
         }

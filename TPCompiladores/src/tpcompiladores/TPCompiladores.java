@@ -48,9 +48,9 @@ public class TPCompiladores {
        }
        GenAssembly gen = new GenAssembly(visitor.getCode(),p,visitor.getCantMetodos());
        LinkedList<String> assembly = gen.genAssembly();
-       assembly.addFirst("  .file  "+"\""+nombre.replace(".ctds", ".asm")+"\"");
+       assembly.addFirst("  .file  "+"\""+nombre.replace(".ctds", ".s")+"\"");
              
-       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre.replace(".ctds", ".asm"))));
+       PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.dir") + "/" +nombre.replace(".ctds", ".s"))));
        for (String comm : assembly){
            System.out.println(comm);
            out.write(comm);
