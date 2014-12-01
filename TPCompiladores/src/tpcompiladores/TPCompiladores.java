@@ -62,9 +62,6 @@ public class TPCompiladores {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, Exception, RuntimeException {
-        /*System.out.println("nombre de archivo a compilar:");
-        BufferedReader brr = new BufferedReader(new InputStreamReader(System.in));
-        String path = brr.readLine();*/
         BufferedReader br = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/" +args[0]));
         try{
         CTDSLexer lex = new CTDSLexer(br);
