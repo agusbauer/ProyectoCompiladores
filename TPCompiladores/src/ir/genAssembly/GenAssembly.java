@@ -5,12 +5,7 @@
  */
 package ir.genAssembly;
 
-import static ir.ast.BinOpType.EQEQ;
-import static ir.ast.BinOpType.GT;
-import static ir.ast.BinOpType.GTEQ;
-import static ir.ast.BinOpType.LT;
-import static ir.ast.BinOpType.LTEQ;
-import static ir.ast.BinOpType.NOTEQ;
+import static ir.ast.BinOpType.*;
 import ir.ast.Expression;
 import ir.ast.Extern;
 import ir.ast.FloatLiteral;
@@ -20,30 +15,7 @@ import ir.ast.MethodCall;
 import ir.ast.VarLocation;
 import ir.gencodint.Pair;
 import ir.gencodint.TACCommand;
-import static ir.gencodint.TACOpType.ADD;
-import static ir.gencodint.TACOpType.AND;
-import static ir.gencodint.TACOpType.CALL;
-import static ir.gencodint.TACOpType.CMP;
-import static ir.gencodint.TACOpType.DIV;
-import static ir.gencodint.TACOpType.EXCALL;
-import static ir.gencodint.TACOpType.JAND;
-import static ir.gencodint.TACOpType.JE;
-import static ir.gencodint.TACOpType.JG;
-import static ir.gencodint.TACOpType.JGE;
-import static ir.gencodint.TACOpType.JL;
-import static ir.gencodint.TACOpType.JLE;
-import static ir.gencodint.TACOpType.JMP;
-import static ir.gencodint.TACOpType.JNE;
-import static ir.gencodint.TACOpType.JNOT;
-import static ir.gencodint.TACOpType.JOR;
-import static ir.gencodint.TACOpType.LBL;
-import static ir.gencodint.TACOpType.MOD;
-import static ir.gencodint.TACOpType.MUL;
-import static ir.gencodint.TACOpType.OPP;
-import static ir.gencodint.TACOpType.OR;
-import static ir.gencodint.TACOpType.RET;
-import static ir.gencodint.TACOpType.STR;
-import static ir.gencodint.TACOpType.SUB;
+import static ir.gencodint.TACOpType.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import parser.parser;
@@ -62,12 +34,15 @@ public class GenAssembly {
     private static int labelTrue = 0;
     private LinkedList<Pair<Integer, Float>> listaFloats; //al final del programa declaramos todas las etiquetas con sus valores
     private int cantMetodos;
+    private static int codString=0;
+    private LinkedList<Pair<Integer, String>> listaStrings;
 
     public GenAssembly(LinkedList l, parser par, int cantMetodos) {
         TACCode = l;
         assembly = new LinkedList();
         p = par;
         listaFloats = new LinkedList();
+        listaStrings = new LinkedList();
         this.cantMetodos = cantMetodos;
     }
 
@@ -181,9 +156,13 @@ public class GenAssembly {
         assembly.add("  ret");
         //ALAN
         //LUCHO
-        for (Pair<Integer, Float> p : listaFloats) {
-            assembly.add(".LC" + p.fst().toString() + ":");
-            assembly.add("  .float " + p.snd().toString());
+        for (Pair<Integer, Float> pair : listaFloats) {
+            assembly.add(".LF" + pair.fst().toString() + ":");
+            assembly.add("  .float " + pair.snd().toString());
+        }
+        for (Pair<Integer, String> pair : listaStrings) {
+            assembly.add(".LS" + pair.fst().toString() + ":");
+            assembly.add("  .string " + "\""+pair.snd()+"\"");
         }
         //LUCHO
         return assembly;
@@ -191,10 +170,36 @@ public class GenAssembly {
 
     public void excall(TACCommand c) {
         Extern e = (Extern) c.getP1();
+        int i = 0;
+        if (e.getArgs()!=null){
+            for (Object ex : e.getArgs()) { 
+                if (ex instanceof String){
+                    assembly.add("  movl    $.LS"+codString+", (%esp)");
+                    listaStrings.add(new Pair(codString++,ex));
+                }
+                else{
+                    if(ex instanceof VarLocation){
+                        VarLocation param = (VarLocation) ex;
+                        // movl	-4(%ebp), %eax ;K
+                        // movl	%eax, (%esp) ;
+                        Ambiente a = p.getTds().getFirst();
+                        assembly.add("  movl    " + offset(param) + ", %eax");
+                        assembly.add("  movl    %eax, " + i + "(%esp)");                            
+                    }
+                    else{
+                        Literal param = (Literal) ex;
+                        Ambiente a = p.getTds().getFirst();
+                        assembly.add("  movl    " + param.toString() + ", %eax");
+                        assembly.add("  movl    %eax, " + i + "(%esp)");       
+                    }
+                    i = i + 4;
+                }
+            }
+        }
         assembly.add("  call " + e.getString());
         if (c.getP2() != null) {
             VarLocation res = (VarLocation) c.getP2();
-            assembly.add("  movl " + " %eax, " + offset(res));
+            assembly.add("  movl " + " %eax, " +offset(res));
         }
     }
 
@@ -207,21 +212,18 @@ public class GenAssembly {
                 // movl	-4(%ebp), %eax ;K
                 // movl	%eax, (%esp) ;
                 Ambiente a = p.getTds().getFirst();
-                if (a.get(param.getDesc().getNombre()) != null) {
-                    assembly.add("  movl " + param.getDesc().getNombre() + ", %eax");
-                    assembly.add("  movl %eax, " + i + "(%esp)");
-                } else {
-                    assembly.add("  movl -" + param.getDesc().getOffset() + "(%ebp), %eax");
-                    assembly.add("  movl %eax, " + i + "(%esp)");
-
-                }
+                assembly.add("  movl " + offset(param) + ", %eax");
+                assembly.add("  movl %eax, " + i + "(%esp)");                            
             }
             else{
-                //El lenguaje admite solo variables simples como parametro
+                Literal param = (Literal) ex;
+                Ambiente a = p.getTds().getFirst();
+                assembly.add("  movl " + param.toString() + ", %eax");
+                assembly.add("  movl %eax, " + i + "(%esp)");       
             }
             i = i + 4;
         }
-        assembly.add("  CALL " + e.getId());
+        assembly.add("  call " + e.getId());
         if (c.getP2() != null) {
             VarLocation res = (VarLocation) c.getP2();
             assembly.add("  movl " + " %eax, " +offset(res));
@@ -236,7 +238,7 @@ public class GenAssembly {
             }else{
                 if (c.getP1() instanceof FloatLiteral){
                     FloatLiteral f = (FloatLiteral) c.getP1();                   
-                    assembly.add("  movl .LC" + codFloat + ", %eax");
+                    assembly.add("  movl .LF" + codFloat + ", %eax");
                     listaFloats.add(new Pair(codFloat++, f.getValue()));
                 }
                 else
@@ -256,7 +258,7 @@ public class GenAssembly {
             if (c.getP2() instanceof FloatLiteral) {
                 opFloat=true;
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fucompp");
@@ -271,7 +273,7 @@ public class GenAssembly {
             if (c.getP1() instanceof FloatLiteral) {
                 opFloat=true;
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fucompp");
@@ -285,10 +287,10 @@ public class GenAssembly {
             if (c.getP2() instanceof FloatLiteral) {
                 opFloat=true;
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fucompp");
                 assembly.add("  fnstsw %ax");
@@ -387,7 +389,7 @@ public class GenAssembly {
         } else {
             if (c.getP1() instanceof FloatLiteral) {
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 assembly.add("  fchs ");
                 VarLocation res = (VarLocation) c.getP2();
@@ -411,8 +413,10 @@ public class GenAssembly {
         assembly.add("  cmp $1, %eax");
         assembly.add("  je  .true"+labelTrue);
         assembly.add("  movl $1, %eax");
-        assembly.add(".true"+labelTrue+":");labelTrue++;
+        assembly.add("  jmp  .endtrue" + labelTrue);
+        assembly.add(".true"+labelTrue+":");
         assembly.add("  movl $0, %eax");
+        assembly.add(".endtrue"+labelTrue+":");labelTrue++;
         VarLocation res = (VarLocation) c.getP2();
         assembly.add("  movl " + " %eax, " + offset(res));
     }
@@ -451,19 +455,19 @@ public class GenAssembly {
 
     public void str(TACCommand c) {
         VarLocation res = (VarLocation) c.getP1();
-        String off = offset(res);
+        String offset = offset(res);
         if ((c.getP2() instanceof VarLocation)) { //copiar alan en este if
             VarLocation loc = (VarLocation) c.getP2();
             assembly.add("  movl "+ offset(loc)+", %eax");                      
-            assembly.add("  movl %eax, " + off);            
+            assembly.add("  movl %eax, " + offset);            
         } else {
             if (c.getP2() instanceof FloatLiteral) {
-                assembly.add("  movl .LC" + (codFloat) + ", %eax");
+                assembly.add("  movl .LF" + (codFloat) + ", %eax");
                 FloatLiteral f1 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
-                assembly.add("  movl %eax, " + off);
+                assembly.add("  movl %eax, " + offset);
             } else {
-                assembly.add("  movl $" + c.getP2().toString() + ","+off);
+                assembly.add("  movl $" + c.getP2().toString() + ","+offset);
             }
         }           
     }
@@ -474,7 +478,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  faddp %st, %st(1)");
@@ -490,7 +494,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  faddp %st, %st(1)");
@@ -504,10 +508,10 @@ public class GenAssembly {
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             if (c.getP2() instanceof FloatLiteral) {
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  faddp %st, %st(1)");
                 VarLocation res = (VarLocation) c.getP3();
@@ -543,7 +547,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fsubp %st, %st(1)");
@@ -559,7 +563,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fsubp %st, %st(1)");
@@ -573,10 +577,10 @@ public class GenAssembly {
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             if (c.getP2() instanceof FloatLiteral) {
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fsubp %st, %st(1)");
                 VarLocation res = (VarLocation) c.getP3();
@@ -612,7 +616,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fmulp %st, %st(1)");
@@ -628,7 +632,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fmulp %st, %st(1)");
@@ -642,10 +646,10 @@ public class GenAssembly {
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             if (c.getP2() instanceof FloatLiteral) {
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fmulp %st, %st(1)");
                 VarLocation res = (VarLocation) c.getP3();
@@ -681,7 +685,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP2() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));              
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fdivp %st, %st(1)");
@@ -689,7 +693,7 @@ public class GenAssembly {
             } else {
                 assembly.add("  movl " + offset(loc) + ", %edx");
                 assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
-                assembly.add("  idiv %ecx"); //edx div divisor
+                assembly.add("  idivl %ecx"); //edx div divisor
                 assembly.add("  movl " + " %eax, "  + offset(res)); //el cociente de la division queda en eax
             }
         }
@@ -698,7 +702,7 @@ public class GenAssembly {
             VarLocation res = (VarLocation) c.getP3();
             if (c.getP1() instanceof FloatLiteral) {
                 assembly.add("  flds " + offset(loc));              
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 FloatLiteral f2 = (FloatLiteral) c.getP1();
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fdivp %st, %st(1)");
@@ -706,17 +710,17 @@ public class GenAssembly {
             } else {
                 assembly.add("  movl " + offset(loc) + ", %ecx");
                 assembly.add("  movl $" + c.getP1().toString() + ", %edx");
-                assembly.add("  idiv %ecx");   //edx div ecx
+                assembly.add("  idivl %ecx");   //edx div ecx
                 assembly.add("  movl " + " %eax, "  + offset(res));
             }
         }
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             if (c.getP2() instanceof FloatLiteral) {
                 FloatLiteral f1 = (FloatLiteral) c.getP1();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f1.getValue()));
                 FloatLiteral f2 = (FloatLiteral) c.getP2();
-                assembly.add("  flds .LC" + codFloat);
+                assembly.add("  flds .LF" + codFloat);
                 listaFloats.add(new Pair(codFloat++, f2.getValue()));
                 assembly.add("  fdivp %st, %st(1)");
                 VarLocation res = (VarLocation) c.getP3();
@@ -724,7 +728,7 @@ public class GenAssembly {
             } else {
                 assembly.add("  movl $" + c.getP1().toString() + ", %edx");
                 assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
-                assembly.add("  idiv %ecx");
+                assembly.add("  idivl %ecx");
                 VarLocation res = (VarLocation) c.getP3();
                 assembly.add("  movl " + " %eax, " + offset(res));
             }
@@ -741,7 +745,7 @@ public class GenAssembly {
             } else {
                 assembly.add("  movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
                 assembly.add("  movl " + offset(loc2) + ", %ecx"); //muevo el dividendo operando al registro edx
-                assembly.add("  idiv %ecx");
+                assembly.add("  idivl %ecx");
                 assembly.add("  movl " + " %eax, "  + offset(res));
             }
         }
@@ -816,7 +820,7 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP1();
             assembly.add("  movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
             assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
-            assembly.add("  idiv %ecx"); //edx div divisor
+            assembly.add("  idivl %ecx"); //edx div divisor
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res)); //el resto de la division queda en edx
         }
@@ -824,14 +828,14 @@ public class GenAssembly {
             VarLocation loc = (VarLocation) c.getP2();
             assembly.add("  movl " + offset(loc) + ", %ecx"); //muevo el dividendo operando al registro edx
             assembly.add("  movl $" + c.getP1().toString() + ", %edx");
-            assembly.add("  idiv %ecx");   //edx div ecx
+            assembly.add("  idivl %ecx");   //edx div ecx
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res));
         }
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
             assembly.add("  movl $" + c.getP1().toString() + ", %edx");
             assembly.add("  movl $" + c.getP2().toString() + ", %ecx");
-            assembly.add("  idiv %ecx");
+            assembly.add("  idivl %ecx");
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res));
         }
@@ -840,7 +844,7 @@ public class GenAssembly {
             VarLocation loc2 = (VarLocation) c.getP2();
             assembly.add("  movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
             assembly.add("  movl " + offset(loc2) + ", %ecx"); //muevo el dividendo operando al registro edx
-            assembly.add("  idiv %ecx");
+            assembly.add("  idivl %ecx");
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("  movl " + " %edx, "  + offset(res));
         }
@@ -868,7 +872,12 @@ public class GenAssembly {
             }
             else{
                 VarLocation i = (VarLocation)index;
-                assembly.add("  movl "  + i.getDesc().getOffset() + "(%ebp), %edx");
+                if (isGlobal(i.getDesc())){
+                    assembly.add("  movl "  + i.getDesc().getNombre()+", %edx");
+                }
+                else{
+                    assembly.add("  movl "  + i.getDesc().getOffset() + "(%ebp), %edx");
+                }    
             }
             if (isGlobal(d))
                 return d.getNombre()+"(,%edx,4)";
