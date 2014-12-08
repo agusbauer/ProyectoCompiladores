@@ -32,28 +32,29 @@ action code{:
 		}
 
 		public void imprimir(){
-        for(Ambiente a : tds.getPila()){
-            System.out.println("AMBIENTE/NIVEL: "+a.getLevel());
-            for(Descriptor d : a.values()){
-                System.out.println(d.getTipo().toString()+" "+d.getNombre());
-            }
+			for(int i = 0; i < tds.getPila().size(); i++){
+				System.out.println("AMBIENTE/NIVEL: "+i);
+            	Ambiente a = tds.getPila().get(i);
+            	for(Descriptor d : a.values()){
+               		System.out.println(d.getTipo().toString()+" "+d.getNombre()+" "+d.isGlob());
+            	}
+			}
             System.out.println("");
             System.out.println("");
             System.out.println("");
-        }
+        
     }
-
+/*
     public int searchLevel(String id){
-        for(Ambiente nivel : tds.getPila()){
-            if(nivel != tds.getPila().getLast()){
-                Descriptor d = nivel.get(id);
-                if(d!=null){
-                    return nivel.getLevel();
-                }
+        for(int i = tds.getPila().size()-1; i >= 0; i--){
+            Ambiente a = tds.getPila().get(i);
+            Descriptor d = a.get(id);
+            if(d != null){
+                return a.getLevel();
             }
         }
-        return 0;
-    }
+        return -1;
+    }*/
 
 		
 :};
@@ -157,7 +158,7 @@ precedence right UMINUS;
 /* ----------------------------Grammar Section-------------------- */
    
    
-   program ::= CLASS id LKEY {: tds.push(new Ambiente(nivel++)); parser.t=tds.clone();:} decl  RKEY {: parser.t=tds.clone();tds.pop();:}
+   program ::= CLASS id LKEY {: tds.push(new Ambiente()); ;parser.t=tds.clone();:} decl  RKEY {: parser.t=tds.clone();tds.pop();:}
 			   |CLASS id LKEY RKEY;
 
    decl ::= field_decl
@@ -173,41 +174,42 @@ precedence right UMINUS;
 
 
    location_decl ::= id:i {: 
-						if (tds.top().get(i)==null)
-								if(nivel == 1){
-									System.out.println("HAY UNA VARIABLE GLOBAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,true);
+						if (tds.top().get(i)==null){
+								if(nivel == 0){
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,true),null,ileft,iright);
 								}else{
-									System.out.println("HAY UNA VARIABLE LOCAL");
-									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar),ileft,iright,true,false);
+									RESULT = new VarLocation(i,new DescriptorSimple(i,tipoVar,false),null,ileft,iright);
 								}		
-							else
-								parser.report_fatal_error("Variable redeclarada",ileft,iright);:}
+							}else{
+								parser.report_fatal_error("Variable redeclarada",ileft,iright);}:}
 				| id:i LBRACKET int_literal:il RBRACKET {: 
-						if (tds.top().get(i)==null)
-								RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue()),ileft,iright,true,true) ;
-							else
+						if (tds.top().get(i)==null){
+								if (nivel == 0)
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue(),true),null,ileft,iright);
+								else
+									RESULT = new VarLocation(i,new DescriptorArreglo(i,tipoVar,il.getValue(),false),null,ileft,iright);
+							}else
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
 
    method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:}
 					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:};
 
-   method	 ::= type:t id:i LPAREN RPAREN block:b {: b.setMethodName(i);					    
+   method	 ::= type:t id:i LPAREN RPAREN block:b {: b.setOffSetMax(Descriptor.getOffsetCorriente());b.setMethodName(i);					    
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,new LinkedList<DescriptorSimple>()),ileft,iright) ;
 							}
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :}
-				    |VOID id:i LPAREN RPAREN block:b {: b.setMethodName(i);    
+				    |VOID id:i LPAREN RPAREN block:b {: b.setOffSetMax(Descriptor.getOffsetCorriente());b.setMethodName(i);    
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,new LinkedList<DescriptorSimple>()),ileft,iright) ;
 							}
 							else 
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright); :} 
-					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  b.setMethodName(i); 
+					| VOID id:i LPAREN parameters:p  {:params = p;:} RPAREN block:b {:  b.setOffSetMax(Descriptor.getOffsetCorriente());b.setMethodName(i); 
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,Type.VOID,p),ileft,iright) ;
@@ -215,7 +217,7 @@ precedence right UMINUS;
 							else
 								parser.report_fatal_error("Metodo redeclarado",ileft,iright);
 						params = null; :}  
-					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {: b.setMethodName(i); 
+					| type:t id:i LPAREN parameters:p {:params = p;:} RPAREN block:b {: b.setOffSetMax(Descriptor.getOffsetCorriente());b.setMethodName(i); 
 						if (tds.top().get(i)==null){
 								parser.asts.add(b);
 								RESULT = new VarLocation(i,b,new DescriptorFuncion(i,t,p),ileft,iright) ;
@@ -237,8 +239,8 @@ precedence right UMINUS;
 													RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente(nivel++)) ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
-	tds.pop(); nivel--;:};
+   block ::=  LKEY {:tds.push(new Ambiente());nivel++ ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
+	tds.pop();:};
 																		 
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
@@ -325,24 +327,16 @@ precedence right UMINUS;
 	location ::= id:i {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorSimple")){
-									if(searchLevel(i) == 0){
-										System.out.println("HAGO REFERENCIA A UNA VAR GLOBAL!");				
-										RESULT = new VarLocation(i,d,ileft,iright,false,true);
-									}else{
-										System.out.println("HAGO REFERENCIA A UNA VAR LOCAL!");
-										RESULT = new VarLocation(i,d,ileft,iright,false,false);
-									}	
+								//imprimir();
+								RESULT = new VarLocation(i,d,null,ileft,iright);	
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}				
 						}else{
 							parser.report_fatal_error("Variable no declarada",ileft,iright);} :} 
-				| id:i LBRACKET expr RBRACKET {:  Descriptor d = tds.search(i);
+				| id:i LBRACKET expr:e RBRACKET {:  Descriptor d = tds.search(i);
 						if (d!=null){
 							if (d.getClase().equals("descriptorArreglo")){
-								if(nivel == 0)						
-										RESULT = new VarLocation(i,d,ileft,iright,false,true);
-									else
-										RESULT = new VarLocation(i,d,ileft,iright,false,false);								
+								RESULT = new VarLocation(i,d,e,ileft,iright);								
 							}else{
 								parser.report_fatal_error("Los tipos no concuerdan",ileft,iright);}			
 						}else{
@@ -371,8 +365,8 @@ precedence right UMINUS;
 		 | expr:e NOTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.NOTEQ,e2,eleft,eright) ; :}
 		 | expr:e AND expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.AND,e2,eleft,eright) ; :}
 		 | expr:e OR expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.OR,e2,eleft,eright) ; :}
-		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e,eleft,eright) ; :}
-		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e,eleft,eright) ; :}
+		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e,eleft,eright) ; :} %prec UMINUS
+		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e,eleft,eright) ; :} %prec UMINUS
 		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
 
 	externinvk_arg_sequence ::= externinvk_arg:e {: LinkedList<Object> l = new LinkedList<Object>() ;

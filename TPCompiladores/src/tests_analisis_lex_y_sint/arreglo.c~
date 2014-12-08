@@ -1,0 +1,7 @@
+float a[5];
+
+void main(){
+	int i;
+	i=2;
+	a[i]=3.2;
+}

@@ -12,8 +12,6 @@ breaks:
 BI1:
   MOVL -4(%ebp), %eax
   CMP $10, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
@@ -23,12 +21,10 @@ ok:
   MOVL -4(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -20(%ebp)
-  MOVL --20(%ebp), %eax
-  MOVL %eax, --4(%ebp)
+  MOVL -20(%ebp), %eax
+  MOVL %eax, -4(%ebp)
   MOVL 8(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:

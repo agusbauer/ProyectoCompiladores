@@ -2,6 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/gencodint/TACCommand.java</file>
+            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/semcheck/TypeCheckVisitor.java</file>
+            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/tpcompiladores/TPCompiladores.java</file>
+            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/gencodint/TACGenerator.java</file>
+            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/genAssembly/GenAssembly.java</file>
+        </group>
     </open-files>
 </project-private>

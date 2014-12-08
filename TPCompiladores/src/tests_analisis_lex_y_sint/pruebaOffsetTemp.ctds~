@@ -1,0 +1,15 @@
+class a{
+
+int suma(int a, int b){
+	//int c;
+	//c = a+b;
+	return a+b;
+}
+
+void main(){
+	int a,b,c;
+	a=3;
+	b=a;
+	c=b;
+}
+}

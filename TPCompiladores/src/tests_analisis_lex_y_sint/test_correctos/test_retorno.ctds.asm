@@ -11,26 +11,23 @@ id:
   MOVL %eax, -4(%ebp)
   MOVL $0, %eax
   MOVL %eax, -8(%ebp)
-  MOVL -8(%ebp), %eax
-  MOVL %eax, --12(%ebp)
+  MOVL 8(%ebp), %eax
+  MOVL %eax, -12(%ebp)
 BI1:
   MOVL -8(%ebp), %eax
   MOVL -4(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -80(%ebp)
   JL EI2
-  MOVL -8(%ebp), %eax
-  MOVL %eax, --4(%ebp)
+  MOVL 8(%ebp), %eax
+  MOVL %eax, -16(%ebp)
 BI3:
   MOVL 8(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -38,8 +35,6 @@ ok:
   MOVL  %eax, -84(%ebp)
   MOVL 8(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
@@ -54,7 +49,6 @@ ok:
   JE EI4
   MOVL 8(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -64,31 +58,28 @@ ok:
   MOVL 8(%ebp), %eax
   SUBL $1, %eax
   MOVL  %eax, -100(%ebp)
-  MOVL --100(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -100(%ebp), %eax
+  MOVL %eax, 8(%ebp)
 LIF5:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -104(%ebp)
-  MOVL --104(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -104(%ebp), %eax
+  MOVL %eax, 8(%ebp)
   JMP BI3
 EI4:
 BI6:
   MOVL 8(%ebp), %eax
-  MOVL -4(%ebp), %ebx
+  MOVL -16(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
   MOVL $1, %eax
   MOVL  %eax, -108(%ebp)
   MOVL 8(%ebp), %eax
-  MOVL -4(%ebp), %ebx
+  MOVL -16(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -102,10 +93,8 @@ ok:
   CMP %eax, $1
   JE EI7
   MOVL 8(%ebp), %eax
-  MOVL -4(%ebp), %ebx
+  MOVL -16(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
-  CMPB $1,%ah
   JL SHORT ok
   MOVL $0, %eax
 ok:
@@ -115,14 +104,12 @@ ok:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -124(%ebp)
-  MOVL --124(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -124(%ebp), %eax
+  MOVL %eax, 8(%ebp)
 LIF8:
   MOVL 8(%ebp), %eax
   MOVL 8(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -148,18 +135,18 @@ ok:
   MOVL -144(%ebp), %edx
   ADDL %edx, %eax
   MOVL  %eax, -148(%ebp)
-  MOVL --148(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -148(%ebp), %eax
+  MOVL %eax, 8(%ebp)
 LIF9:
   JMP BI6
 EI7:
-  MOVL --12(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, 8(%ebp)
   MOVL -8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -152(%ebp)
-  MOVL --152(%ebp), %eax
-  MOVL %eax, --8(%ebp)
+  MOVL -152(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   JMP BI6
 EI7:
   MOVL 8(%ebp), %eax

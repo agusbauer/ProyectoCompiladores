@@ -9,8 +9,6 @@ suma:
   SUBL $-24%ebp
   MOVL 8(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -24,8 +22,6 @@ ok:
 LIF1:
   MOVL 12(%ebp), %eax
   CMP $0, %eax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:

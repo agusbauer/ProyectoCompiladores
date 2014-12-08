@@ -54,8 +54,8 @@ main:
   FLDS .LC1
   FCHS 
   FSTPS -32(%ebp)
-  MOVL --32(%ebp), %eax
-  MOVL %eax, --8(%ebp)
+  MOVL -32(%ebp), %eax
+  MOVL %eax, -8(%ebp)
   MOVL .LC2, %eax
   MOVL %eax, -12(%ebp)
   CALL printf

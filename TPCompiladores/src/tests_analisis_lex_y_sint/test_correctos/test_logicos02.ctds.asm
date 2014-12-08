@@ -11,7 +11,6 @@ promedio:
   FLDS 16(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -21,7 +20,6 @@ ok:
   FLDS 16(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -51,7 +49,6 @@ LIF1:
   FLDS 12(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -61,7 +58,6 @@ ok:
   FLDS 12(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -91,7 +87,6 @@ LIF2:
   FLDS 8(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -101,7 +96,6 @@ ok:
   FLDS 8(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -131,8 +125,6 @@ LIF3:
   FLDS 12(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -142,8 +134,6 @@ ok:
   FLDS 16(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:
@@ -157,8 +147,6 @@ ok:
   FLDS 16(%ebp)
   FUCOMPP
   FNSTSW %ax
-  ANDB $69,%ah
-  CMPB $64,%ah
   JE SHORT ok
   MOVL $0, %eax
 ok:

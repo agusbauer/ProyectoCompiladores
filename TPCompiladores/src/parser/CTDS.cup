@@ -240,7 +240,7 @@ precedence right UMINUS;
 
 
    block ::=  LKEY {:tds.push(new Ambiente());nivel++ ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
-	tds.pop(); nivel--;:};
+	tds.pop();:};
 																		 
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
@@ -352,8 +352,21 @@ precedence right UMINUS;
 		 | method_call:mc {: RESULT = mc ; :}
 		 | extern:e {: RESULT = e  ;:}
 		 | literal:l {: RESULT =l ; :} 
-		 | expr:e bin_op:b expr:e2 {: RESULT = new BinOpExpr(e,b,e2,eleft,eright) ; :}
-		 | unary_op:u expr:e {: RESULT = new UnaryOpExpr(u,e,eleft,eright) ; :} %prec UMINUS
+		 | expr:e PLUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.PLUS,e2,eleft,eright) ; :}
+		 | expr:e MINUS expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MINUS,e2,eleft,eright) ; :}
+		 | expr:e TIMES expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.TIMES,e2,eleft,eright) ; :}
+		 | expr:e MOD expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.MOD,e2,eleft,eright) ; :}
+		 | expr:e DIVIDE expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.DIVIDE,e2,eleft,eright) ; :}
+		 | expr:e LT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LT,e2,eleft,eright) ; :}
+		 | expr:e GT expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GT,e2,eleft,eright) ; :}
+		 | expr:e LTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.LTEQ,e2,eleft,eright) ; :}
+		 | expr:e GTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.GTEQ,e2,eleft,eright) ; :}
+		 | expr:e EQEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.EQEQ,e2,eleft,eright) ; :}
+		 | expr:e NOTEQ expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.NOTEQ,e2,eleft,eright) ; :}
+		 | expr:e AND expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.AND,e2,eleft,eright) ; :}
+		 | expr:e OR expr:e2 {: RESULT = new BinOpExpr(e,BinOpType.OR,e2,eleft,eright) ; :}
+		 | MINUS expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.MINUS,e,eleft,eright) ; :} %prec UMINUS
+		 | NOT expr:e {: RESULT = new UnaryOpExpr(UnaryOpType.NOT,e,eleft,eright) ; :} %prec UMINUS
 		 | LPAREN expr:e RPAREN  {: RESULT = e; :};
 
 	externinvk_arg_sequence ::= externinvk_arg:e {: LinkedList<Object> l = new LinkedList<Object>() ;

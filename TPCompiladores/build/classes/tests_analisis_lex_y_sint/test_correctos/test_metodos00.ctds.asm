@@ -11,8 +11,8 @@ alo:
   MOVL 8(%ebp), %eax
   ADDL $1, %eax
   MOVL  %eax, -12(%ebp)
-  MOVL --12(%ebp), %eax
-  MOVL %eax, -8(%ebp)
+  MOVL -12(%ebp), %eax
+  MOVL %eax, 8(%ebp)
   .GLOBL alo2
   TYPE alo2, @function
 alo2:

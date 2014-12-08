@@ -12,8 +12,6 @@ maxcomdiv:
 BI1:
   MOVL -12(%ebp), %eax
   CMP $0, %eax
-  ANDB $68,%ah
-  XORB $64,%ah
   JNE SHORT ok
   MOVL $0, %eax
 ok:
@@ -38,8 +36,6 @@ EI2:
 BI3:
   MOVL -12(%ebp), %eax
   CMP $0, %eax
-  ANDB $68,%ah
-  XORB $64,%ah
   JNE SHORT ok
   MOVL $0, %eax
 ok:
@@ -52,8 +48,6 @@ EI4:
 BI5:
   MOVL -12(%ebp), %eax
   CMP $0, %eax
-  ANDB $68,%ah
-  XORB $64,%ah
   JNE SHORT ok
   MOVL $0, %eax
 ok:

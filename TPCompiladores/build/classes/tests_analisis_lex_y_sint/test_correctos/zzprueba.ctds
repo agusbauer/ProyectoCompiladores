@@ -1,0 +1,8 @@
+class xprueba{
+	
+	void main(){
+		int a;
+		a = 2;
+	}
+}
+

@@ -11,6 +11,6 @@ main:
   MOVL $3, %eax
   MOVL %eax, -8(%ebp)
   MOVL $2, %eax
-  MOVL %eax, 50(%ebp)
+  MOVL %eax, -4(%ebp)
   LEAVE
   RET

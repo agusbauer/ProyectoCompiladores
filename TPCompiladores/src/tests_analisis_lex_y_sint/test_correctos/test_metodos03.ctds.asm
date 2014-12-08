@@ -27,7 +27,6 @@ resto:
   MOVL 8(%ebp), %eax
   MOVL -32(%ebp), %ebx
   CMP  %ebx, %eax
-  ANDB $69,%ah
   JG SHORT ok
   MOVL $0, %eax
 ok:
@@ -37,15 +36,15 @@ ok:
   MOVL 8(%ebp), %edx
   IDIV $3
   MOVL  %eax, -40(%ebp)
-  MOVL --40(%ebp), %eax
-  MOVL %eax, -50(%ebp)
+  MOVL -40(%ebp), %eax
+  MOVL %eax, -4(%ebp)
 LIF1:
   MOVL 8(%ebp), %edx
   IDIV $2
   MOVL  %edx, -44(%ebp)
-  MOVL --44(%ebp), %eax
-  MOVL %eax, -50(%ebp)
-  MOVL 50(%ebp), %eax
+  MOVL -44(%ebp), %eax
+  MOVL %eax, -4(%ebp)
+  MOVL -4(%ebp), %eax
   LEAVE
   RET
 
@@ -59,7 +58,8 @@ main:
   MOVL %eax, res
   CALL resto
   MOVL  %eax, -48(%ebp)
-  MOVL --48(%ebp), %eax
-  MOVL %eax, -50(%ebp)
+  MOVL -48(%ebp), %eax
+  MOVL 0, %eax
+  MOVL %eax, -4(%ebp,%eax,4)
   LEAVE
   RET
