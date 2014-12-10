@@ -198,13 +198,13 @@ float potenciaR(float m, int n){
 void test(){
     float aux;
     aux = 2.0; 
-    externinvk("print_int",void,gcd(factorial(3),factorial(4)));
+    externinvk("print_int",void,2);
     externinvk("print_int",void,nthprimeArray(gcd(factorial(3),factorial(4))));
     
     aux = potenciaR(aux,nthprimeArray(gcd(factorial(3),factorial(4))));
     externinvk("print_float",void,aux);
 }
-/*
+
 // invoca test
 void test1(){
     float aux;
@@ -212,7 +212,7 @@ void test1(){
     test();
 	externinvk("print_float",void,aux);
 }
-*/
+
 // funcion main 
 void main (){
        
@@ -314,13 +314,13 @@ void main (){
         test();
 		externinvk("print_string",void,"---------------------------------------------------------");
 
-/*
+
 // test test1    
         externinvk("print_string",void,"test1----------------------------------");    
         test1();
 		externinvk("print_string",void,"---------------------------------------------------------");
 
         externinvk("close_input",void);
-*/
+
 } // endmain
 }
