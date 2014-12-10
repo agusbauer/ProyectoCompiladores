@@ -66,7 +66,7 @@ SingleCharacter = [^\r\n\'\\]
 
 OctDigit          = [0-7]
 
-%state STRING, CHARLITERAL
+%state STRING
 
 
 %%
@@ -132,8 +132,7 @@ OctDigit          = [0-7]
 /* string literal */
   \"                             { yybegin(STRING); string.setLength(0); }
 
-  /* character literal */
-  \'                             { yybegin(CHARLITERAL); }
+
 
 
 //identificadores
@@ -162,26 +161,7 @@ OctDigit          = [0-7]
   {LineTerminator}               { throw new RuntimeException("Unterminated string at end of line"); }
 }
 
-<CHARLITERAL> {
-  {SingleCharacter}\'            { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, yytext().charAt(0)); }
-  
-  /* escape sequences */
-  "\\b"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\b');}
-  "\\t"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\t');}
-  "\\n"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\n');}
-  "\\f"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\f');}
-  "\\r"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\r');}
-  "\\\""\'                       { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\"');}
-  "\\'"\'                        { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\'');}
-  "\\\\"\'                       { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, '\\'); }
-  \\[0-3]?{OctDigit}?{OctDigit}\' { yybegin(YYINITIAL); 
-			                              int val = Integer.parseInt(yytext().substring(1,yylength()-1),8);
-			                            return symbol(sym.CHAR_LITERAL, (char)val); }
-  
-  /* error cases */
-  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
-  {LineTerminator}               { throw new RuntimeException("Unterminated character literal at end of line"); }
-}
+
 
 /* error fallback */
 [^]                              { throw new RuntimeException("Illegal character \""+yytext()+

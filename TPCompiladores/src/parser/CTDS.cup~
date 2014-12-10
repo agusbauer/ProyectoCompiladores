@@ -87,10 +87,11 @@ parser code {:
 	public LinkedList<Block> getASTs(){
 		return asts;
 	}
-	TablaDeSimbolos t = new TablaDeSimbolos();
+
+	TablaDeSimbolos t = tds.clone();
 
 	public TablaDeSimbolos getTds(){
-			return t;
+		return t;
 	}
 :};
    
@@ -104,7 +105,6 @@ parser code {:
 terminal	Integer  INT_LITERAL; 
 terminal	Float  FLOAT_LITERAL;
 terminal	String  STRING_LITERAL;
-terminal	Character CHAR_LITERAL;
 /*OPERADORES*/
 terminal    PLUS, MINUS, TIMES, DIVIDE, MOD, AND, OR, NOT, EQ, NOTEQ, GT, LT, EQEQ, LTEQ, GTEQ, PLUSEQ, MINUSEQ;
 terminal UMINUS;
@@ -134,8 +134,6 @@ non terminal Block block, block_content ;
 non terminal String id;
  
 /*operadores*/
-non terminal 	UnaryOpType unary_op;
-non terminal 	BinOpType bin_op, arith_op, rel_op, eq_op, cond_op; 
 non terminal	AssignOpType assign_op;
 /*literales*/
 non terminal 	Literal literal;
@@ -192,8 +190,8 @@ precedence right UMINUS;
 								parser.report_fatal_error("Variable redeclarada",ileft,iright);:} ;
 	
 
-   method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:}
-					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);:};
+   method_decl ::= method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);OffsetParametros = 8;:}
+					| method_decl:md method:m {: tds.top().put(m.getId(),m.getDesc()) ;Descriptor.setOffsetCorriente(0);OffsetParametros = 8;:};
 
    method	 ::= type:t id:i LPAREN RPAREN block:b {: b.setOffSetMax(Descriptor.getOffsetCorriente());b.setMethodName(i);					    
 						if (tds.top().get(i)==null){
@@ -239,8 +237,8 @@ precedence right UMINUS;
 													RESULT = p ; :};
 
 
-   block ::=  LKEY {:tds.push(new Ambiente());nivel++ ; putParameters(); OffsetParametros = 8;:} block_content:b  RKEY {:/*if (!visitor.visit(b).isUndefined())*/ RESULT = b;
-	tds.pop(); nivel--;:};
+   block ::=  LKEY {:tds.push(new Ambiente());nivel++ ; putParameters();:} block_content:b  RKEY {: RESULT = b;
+	tds.pop();:};
 																		 
 
    block_content ::= statement_decl:sd {: RESULT = new Block(sd);:}
@@ -378,25 +376,7 @@ precedence right UMINUS;
 	externinvk_arg ::= expr:e {: RESULT = e  ;:} 
 					| string_literal:s {: RESULT = s  ;:};
 	
-	unary_op ::= NOT {: RESULT = UnaryOpType.NOT  ;:} %prec UMINUS
-				| MINUS {: RESULT = UnaryOpType.MINUS  ;:} %prec UMINUS ;
-	bin_op ::= arith_op:ao {: RESULT = ao  ;:}
-				| rel_op:ro {: RESULT = ro ;:}
-				| eq_op:eo {: RESULT = eo  ;:} 
-				 | cond_op:co {: RESULT = co  ;:};
-	arith_op ::= PLUS {: RESULT = BinOpType.PLUS  ;:}
-				| MINUS{: RESULT = BinOpType.MINUS  ;:}
-				 | TIMES {: RESULT = BinOpType.TIMES  ;:}
-				| MOD {: RESULT = BinOpType.MOD  ;:}
-				| DIVIDE {: RESULT = BinOpType.DIVIDE  ;:};
-	rel_op ::= LT {: RESULT = BinOpType.LT  ;:}
-			  | GT {: RESULT = BinOpType.GT  ;:} 
-			  | LTEQ {: RESULT = BinOpType.LTEQ  ;:}
-			  | GTEQ {: RESULT = BinOpType.GTEQ  ;:};
-	eq_op ::= EQEQ {: RESULT = BinOpType.EQEQ  ;:} 
-			  | NOTEQ {: RESULT = BinOpType.NOTEQ  ;:} ;
-	cond_op ::= AND {: RESULT = BinOpType.AND  ;:} 
-				| OR {: RESULT = BinOpType.OR  ;:};
+	
 	literal ::= int_literal:il {: RESULT = il ; :} | float_literal:fl {: RESULT = fl ; :} | bool_literal:bl {: RESULT = bl ; :};
 	id ::= IDENTIFIER:i {: RESULT = i ;:};
 	int_literal ::= INT_LITERAL:n {: RESULT = new IntLiteral(n,nleft,nright) ;:};

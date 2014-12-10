@@ -2,7 +2,7 @@
  
 /*
  * Autores: Agustin Bauer, Alan Gonzalez, Luciano Putruele.
- * Proyecto: TPCompiladores
+ * Proyecto: TPComiterLabelsdores
  * 
  */
 package ir.gencodint;
@@ -44,14 +44,12 @@ public class TACGenerator implements ASTVisitor<Expression> {
     private LinkedList<TACCommand> code;
     private int commId;
     private int labelId;
-    private int beginIter; // sirve para el label del comienzo de un bucle 
-    private int endIter; // sirve para el label del fin de un bucle
-    private Stack<Pair<Integer,Integer>> pila;
+    private Stack<Pair<Integer,Integer>> iterLabels;
     private int cantMetodos;
     
     public TACGenerator(){
         code = new LinkedList();
-        pila = new Stack();
+        iterLabels = new Stack();
     }
 
     public int getCantMetodos() {
@@ -67,7 +65,6 @@ public class TACGenerator implements ASTVisitor<Expression> {
         
         if (op.isAssign()){
             code.add(new TACCommand(TACOpType.STR,loc,expr,null));
-            VarLocation v = (VarLocation) loc;
         }else
             if (op.isDecrement())
                code.add(new TACCommand(TACOpType.SUB,loc,expr,loc));
@@ -100,12 +97,10 @@ public class TACGenerator implements ASTVisitor<Expression> {
         }
         else{
             if (claseDeCondicion.equals("unary")){
-               UnaryOpExpr e =  (UnaryOpExpr)stmt.getCondition();
                code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelIf, ".LIF"), cond, null));
             }
             else{
                 if(claseDeCondicion.equals("loc")){
-                    VarLocation e =  (VarLocation)stmt.getCondition();
                     code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(labelIf, ".LIF"), cond, null));
                 }
                 else{
@@ -137,8 +132,8 @@ public class TACGenerator implements ASTVisitor<Expression> {
 
     @Override
     public Expression visit(ForStmt stmt) {
-        pila.push(new Pair<>(++labelId,labelId)); //guardo los valores del begin y end
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(pila.peek().fst(), ".BI"), null, null)); // label del for
+        iterLabels.push(new Pair<>(++labelId,labelId)); //guardo los valores del begin y end
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(iterLabels.peek().fst(), ".BI"), null, null)); // label del for
         Expression from = stmt.getExpr().accept(this);
         VarLocation variableDelFor = new VarLocation(stmt.getId(),stmt.getVar());
         code.add(new TACCommand(TACOpType.STR,variableDelFor,from,null)); //asignacion ojo aca!!!
@@ -150,69 +145,67 @@ public class TACGenerator implements ASTVisitor<Expression> {
         VarLocation var = new VarLocation("temp" + id,d);
         
         code.add(new TACCommand(TACOpType.CMP,variableDelFor,to,var));
-        code.add(new TACCommand(TACOpType.JLE,new IntLiteral(pila.peek().snd(), ".EI"), null, null));
+        code.add(new TACCommand(TACOpType.JLE,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));
         stmt.getBlock().accept(this);
         code.add(new TACCommand(TACOpType.ADD,variableDelFor,new IntLiteral(1,null),variableDelFor));
-        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(pila.peek().fst(), ".BI"), null, null));//salto al comienzo del for
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(pila.peek().snd(), ".EI"), null, null));//label end del for
-        pila.pop(); // elimino los valores de end y begin     
+        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(iterLabels.peek().fst(), ".BI"), null, null));//salto al comienzo del for
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));//label end del for
+        iterLabels.pop(); // elimino los valores de end y begin     
         return null;
     }
 
     @Override
     public Expression visit(WhileStmt stmt) {
-        pila.push(new Pair<>(++labelId,labelId)); //guardo valores de begin y end
+        iterLabels.push(new Pair<>(++labelId,labelId)); //guardo valores de begin y end
 
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(pila.peek().fst(), ".BI"), null, null)); // label del while
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(iterLabels.peek().fst(), ".BI"), null, null)); // label del while
         Expression cond = stmt.getExpr().accept(this); // cmp o lcon o opp
         String claseDeCondicion = stmt.getExpr().getClase();
         if (claseDeCondicion.equals("bool")){
             BoolLiteral e =  (BoolLiteral)stmt.getExpr();
             if (!e.isValue()){
-                code.add(new TACCommand(TACOpType.JMP,new IntLiteral(pila.peek().snd(), ".EI"), null, null));
+                code.add(new TACCommand(TACOpType.JMP,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));
             }
         }
         else{
             if (claseDeCondicion.equals("unary")){
-               UnaryOpExpr e =  (UnaryOpExpr)stmt.getExpr();
-               code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(pila.peek().snd(), ".EI"), cond, null));
+               code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(iterLabels.peek().snd(), ".EI"), cond, null));
             }
             else{ 
                 if(claseDeCondicion.equals("loc")){
-                    VarLocation e =  (VarLocation)stmt.getExpr();
-                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(pila.peek().snd(), ".EI"), cond, null));
+                    code.add(new TACCommand(TACOpType.JNOT,new IntLiteral(iterLabels.peek().snd(), ".EI"), cond, null));
                 }
                 else{
                     BinOpExpr e = (BinOpExpr) stmt.getExpr();
                     switch (e.getOperator()){ // salto condicional
-                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(pila.peek().snd(), ".EI"), null, null)); break;
-                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(pila.peek().snd(), ".EI"), null, null)); break;
-                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(pila.peek().snd(), ".EI"), null, null)); break;
-                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(pila.peek().snd(), ".EI"), null, null)); break;
-                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(pila.peek().snd(), ".EI"), null, null));break;
-                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(pila.peek().snd(), ".EI"), null, null));break;
-                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(pila.peek().snd(), ".EI"), cond, null));break;
-                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(pila.peek().snd(), ".EI"), cond, null));break;
+                        case NOTEQ : code.add(new TACCommand(TACOpType.JNE,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null)); break;
+                        case EQEQ : code.add(new TACCommand(TACOpType.JE,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null)); break;
+                        case GTEQ : code.add(new TACCommand(TACOpType.JGE,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null)); break;
+                        case LTEQ : code.add(new TACCommand(TACOpType.JLE,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null)); break;
+                        case GT : code.add(new TACCommand(TACOpType.JG,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));break;
+                        case LT : code.add(new TACCommand(TACOpType.JL,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));break;
+                        case AND : code.add(new TACCommand(TACOpType.JAND,new IntLiteral(iterLabels.peek().snd(), ".EI"), cond, null));break;
+                        case OR : code.add(new TACCommand(TACOpType.JOR,new IntLiteral(iterLabels.peek().snd(), ".EI"), cond, null));break;
                     }        
                 }
             }
         }
         stmt.getBlock().accept(this);
-        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(pila.peek().fst(), ".BI"), null, null)); //salto al comienzo del while
-        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(pila.peek().snd(), ".EI"), null, null)); //label end del while
-        pila.pop(); //elimino los valores del begin y end
+        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(iterLabels.peek().fst(), ".BI"), null, null)); //salto al comienzo del while
+        code.add(new TACCommand(TACOpType.LBL,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null)); //label end del while
+        iterLabels.pop(); //elimino los valores del begin y end
         return null;
     }
 
     @Override
     public Expression visit(BreakStmt stmt) {
-        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(pila.peek().snd(), ".EI"), null, null));
+        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(iterLabels.peek().snd(), ".EI"), null, null));
         return null;
     }
 
     @Override
     public Expression visit(ContinueStmt stmt) {
-        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(pila.peek().fst(), ".BI"), null, null));
+        code.add(new TACCommand(TACOpType.JMP,new IntLiteral(iterLabels.peek().fst(), ".BI"), null, null));
         return null;
     }
 
@@ -224,14 +217,12 @@ public class TACGenerator implements ASTVisitor<Expression> {
     @Override
     public Expression visit(ExternStmt stmt) {
         stmt.getE().accept(this);
-        code.add(new TACCommand(TACOpType.EXCALL,stmt.getE(), null, null));
         return null;
     }
 
     @Override
     public Expression visit(MethodCallStmt stmt) {
         stmt.getM().accept(this);
-        code.add(new TACCommand(TACOpType.CALL,stmt.getM(),null,null));
         return null;
     }
 
@@ -340,26 +331,26 @@ public class TACGenerator implements ASTVisitor<Expression> {
     @Override
     public Expression visit(Block bl) {
         if (bl.getMethodName()!=null){ //es un metodo
-            //primero busco el anterior metodo para actualizarle su offset maximo con los temporales agregados
-            boolean found = false;
-            for (int j=code.size()-1; j>=0 && !found;j--){
-                if (code.get(j).getOp().equals(MNAME)){
-                    found = true;
-                    IntLiteral il = (IntLiteral)code.get(j).getP1();
-                    il.setAuxValue(Descriptor.getOffsetCorriente());
-                }
-            }
-            //ahora si me ocupo el metodo actual
             IntLiteral i = new IntLiteral(null, bl.getMethodName());
             Descriptor.setOffsetCorriente(bl.getOffSetMax());
-            i.setAuxValue(Descriptor.getOffsetCorriente());
-            code.add(new TACCommand(TACOpType.MNAME, i , null, null));
+            i.setAuxValue(Descriptor.getOffsetCorriente());// offset maximo sin temporales
+            TACCommand mname = new TACCommand(TACOpType.MNAME, i , null, null);
+            code.add(mname);
             cantMetodos++;
-        }
-        if(bl.getStatements()!=null)
+            if(bl.getStatements()!=null)
             for (Statement s : bl.getStatements()){
                  s.accept(this);
             }
+            IntLiteral il = (IntLiteral) mname.getP1();
+            il.setAuxValue(Descriptor.getOffsetCorriente()); // offset maximo con temporales
+            code.add(new TACCommand(TACOpType.RET,null,null,null)); // return por defecto
+        }
+        else{
+            if(bl.getStatements()!=null)
+                for (Statement s : bl.getStatements()){
+                     s.accept(this);
+                }
+        }
         return null;
     }
 
