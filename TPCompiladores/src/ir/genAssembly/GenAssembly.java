@@ -682,7 +682,8 @@ public class GenAssembly {
                 assembly.add("      fdivp %st, %st(1)");
                 assembly.add("      fstps " + offset(res));
             } else {
-                assembly.add("      movl " + offset(loc) + ", %edx");
+                assembly.add("      movl $0, %edx");
+                assembly.add("      movl " + offset(loc) + ", %eax");
                 assembly.add("      movl $" + c.getP2().toString() + ", %ecx");
                 assembly.add("      cltd");
                 assembly.add("      idivl %ecx"); //edx div divisor
@@ -700,8 +701,9 @@ public class GenAssembly {
                 assembly.add("      fdivp %st, %st(1)");
                 assembly.add("      fstps "  + offset(res));
             } else {
+                assembly.add("      movl $0, %edx");
                 assembly.add("      movl " + offset(loc) + ", %ecx");
-                assembly.add("      movl $" + c.getP1().toString() + ", %edx");
+                assembly.add("      movl $" + c.getP1().toString() + ", %eax");
                 assembly.add("      cltd");
                 assembly.add("      idivl %ecx");   //edx div ecx
                 assembly.add("      movl " + " %eax, "  + offset(res));
@@ -719,7 +721,8 @@ public class GenAssembly {
                 VarLocation res = (VarLocation) c.getP3();
                 assembly.add("      fstps " + offset(res));
             } else {
-                assembly.add("      movl $" + c.getP1().toString() + ", %edx");
+                assembly.add("      movl $0, %edx");
+                assembly.add("      movl $" + c.getP1().toString() + ", %eax");
                 assembly.add("      movl $" + c.getP2().toString() + ", %ecx");
                 assembly.add("      cltd");
                 assembly.add("      idivl %ecx");
@@ -737,7 +740,8 @@ public class GenAssembly {
                 assembly.add("      fdivp %st, %st(1)");
                 assembly.add("      fstps " + offset(res));
             } else {
-                assembly.add("      movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
+                assembly.add("      movl $0, %edx");
+                assembly.add("      movl " + offset(loc) + ", %eax"); //muevo el dividendo operando al registro edx
                 assembly.add("      movl " + offset(loc2) + ", %ecx"); //muevo el dividendo operando al registro edx
                 assembly.add("      cltd");
                 assembly.add("      idivl %ecx");
@@ -813,7 +817,8 @@ public class GenAssembly {
     public void mod(TACCommand c) {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP1();
-            assembly.add("      movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
+            assembly.add("      movl $0, %edx");
+            assembly.add("      movl " + offset(loc) + ", %eax"); //muevo el dividendo operando al registro edx
             assembly.add("      movl $" + c.getP2().toString() + ", %ecx");
             assembly.add("      cltd");
             assembly.add("      idivl %ecx"); //edx div divisor
@@ -822,15 +827,17 @@ public class GenAssembly {
         }
         if ((c.getP2() instanceof VarLocation) && (c.getP1() instanceof Literal)) {
             VarLocation loc = (VarLocation) c.getP2();
+            assembly.add("      movl $0, %edx");
             assembly.add("      movl " + offset(loc) + ", %ecx"); //muevo el dividendo operando al registro edx
-            assembly.add("      movl $" + c.getP1().toString() + ", %edx");
+            assembly.add("      movl $" + c.getP1().toString() + ", %eax");
             assembly.add("      cltd");
             assembly.add("      idivl %ecx");   //edx div ecx
             VarLocation res = (VarLocation) c.getP3();
             assembly.add("      movl " + " %edx, "  + offset(res));
         }
         if ((c.getP1() instanceof Literal) && (c.getP2() instanceof Literal)) {
-            assembly.add("      movl $" + c.getP1().toString() + ", %edx");
+            assembly.add("      movl $0, %edx");
+            assembly.add("      movl $" + c.getP1().toString() + ", %eax");
             assembly.add("      movl $" + c.getP2().toString() + ", %ecx");
             assembly.add("      cltd");
             assembly.add("      idivl %ecx");
@@ -840,7 +847,8 @@ public class GenAssembly {
         if ((c.getP1() instanceof VarLocation) && (c.getP2() instanceof VarLocation)) {
             VarLocation loc = (VarLocation) c.getP1();
             VarLocation loc2 = (VarLocation) c.getP2();
-            assembly.add("      movl " + offset(loc) + ", %edx"); //muevo el dividendo operando al registro edx
+            assembly.add("      movl $0, %edx");
+            assembly.add("      movl " + offset(loc) + ", %eax"); //muevo el dividendo operando al registro edx
             assembly.add("      movl " + offset(loc2) + ", %ecx"); //muevo el dividendo operando al registro edx
             assembly.add("      cltd");
             assembly.add("      idivl %ecx");

@@ -198,7 +198,7 @@ float potenciaR(float m, int n){
 void test(){
     float aux;
     aux = 2.0; 
-    externinvk("print_int",void,2);
+    externinvk("print_int",void,gcd(factorial(3),factorial(4)));
     externinvk("print_int",void,nthprimeArray(gcd(factorial(3),factorial(4))));
     
     aux = potenciaR(aux,nthprimeArray(gcd(factorial(3),factorial(4))));

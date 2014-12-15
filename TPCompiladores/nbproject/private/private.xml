@@ -5,8 +5,6 @@
         <group>
             <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/semcheck/TypeCheckVisitor.java</file>
             <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/tpcompiladores/TPCompiladores.java</file>
-            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/parser/parser.java</file>
-            <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/parser/CTDSLexer.java</file>
             <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/gencodint/TACGenerator.java</file>
             <file>file:/home/luciano/Desktop/CompiUltimo/ProyectoCompiladores/TPCompiladores/src/ir/genAssembly/GenAssembly.java</file>
         </group>

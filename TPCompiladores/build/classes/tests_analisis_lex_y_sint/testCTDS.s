@@ -316,7 +316,8 @@ nthprime:
       movl -36(%ebp), %eax
       cmp $1, %eax
       jne .EI11
-      movl -4(%ebp), %edx
+ 	  movl $0, %edx
+      movl -4(%ebp), %eax
       movl -8(%ebp), %ecx
       cltd
       idivl %ecx
@@ -673,65 +674,79 @@ potenciaR:
 test:
       pushl %ebp
       movl %esp, %ebp
-      subl $52,%esp
+      subl $64,%esp
       movl .LF6, %eax
       movl %eax, -4(%ebp)
-      movl 2, %eax
+      movl $3, %eax
       movl %eax, 0(%esp)
-      call print_int
+      call factorial
       movl  %eax, -8(%ebp)
-      movl 3, %eax
+      movl $4, %eax
       movl %eax, 0(%esp)
       call factorial
       movl  %eax, -12(%ebp)
-      movl 4, %eax
+      movl -8(%ebp), %eax
       movl %eax, 0(%esp)
-      call factorial
-      movl  %eax, -16(%ebp)
       movl -12(%ebp), %eax
-      movl %eax, 0(%esp)
-      movl -16(%ebp), %eax
       movl %eax, 4(%esp)
       call gcd
-      movl  %eax, -20(%ebp)
-      movl -20(%ebp), %eax
-      movl %eax, 0(%esp)
-      call nthprimeArray
-      movl  %eax, -24(%ebp)
-      movl -24(%ebp), %eax
+      movl  %eax, -16(%ebp)
+      movl -16(%ebp), %eax
       movl %eax, 0(%esp)
       call print_int
+      movl  %eax, -20(%ebp)
+      movl $3, %eax
+      movl %eax, 0(%esp)
+      call factorial
+      movl  %eax, -24(%ebp)
+      movl $4, %eax
+      movl %eax, 0(%esp)
+      call factorial
       movl  %eax, -28(%ebp)
-      movl 3, %eax
+      movl -24(%ebp), %eax
       movl %eax, 0(%esp)
-      call factorial
-      movl  %eax, -32(%ebp)
-      movl 4, %eax
-      movl %eax, 0(%esp)
-      call factorial
-      movl  %eax, -36(%ebp)
-      movl -32(%ebp), %eax
-      movl %eax, 0(%esp)
-      movl -36(%ebp), %eax
+      movl -28(%ebp), %eax
       movl %eax, 4(%esp)
       call gcd
-      movl  %eax, -40(%ebp)
-      movl -40(%ebp), %eax
+      movl  %eax, -32(%ebp)
+      movl -32(%ebp), %eax
       movl %eax, 0(%esp)
       call nthprimeArray
+      movl  %eax, -36(%ebp)
+      movl -36(%ebp), %eax
+      movl %eax, 0(%esp)
+      call print_int
+      movl  %eax, -40(%ebp)
+      movl $3, %eax
+      movl %eax, 0(%esp)
+      call factorial
       movl  %eax, -44(%ebp)
+      movl $4, %eax
+      movl %eax, 0(%esp)
+      call factorial
+      movl  %eax, -48(%ebp)
+      movl -44(%ebp), %eax
+      movl %eax, 0(%esp)
+      movl -48(%ebp), %eax
+      movl %eax, 4(%esp)
+      call gcd
+      movl  %eax, -52(%ebp)
+      movl -52(%ebp), %eax
+      movl %eax, 0(%esp)
+      call nthprimeArray
+      movl  %eax, -56(%ebp)
       movl -4(%ebp), %eax
       movl %eax, 0(%esp)
-      movl -44(%ebp), %eax
+      movl -56(%ebp), %eax
       movl %eax, 4(%esp)
       call potenciaR
-      movl  %eax, -48(%ebp)
-      movl -48(%ebp), %eax
+      movl  %eax, -60(%ebp)
+      movl -60(%ebp), %eax
       movl %eax, -4(%ebp)
       movl -4(%ebp), %eax
       movl %eax, 0(%esp)
       call print_float
-      movl  %eax, -52(%ebp)
+      movl  %eax, -64(%ebp)
       leave
       ret
 

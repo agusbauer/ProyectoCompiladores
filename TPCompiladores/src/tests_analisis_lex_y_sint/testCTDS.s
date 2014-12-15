@@ -316,7 +316,8 @@ nthprime:
       movl -36(%ebp), %eax
       cmp $1, %eax
       jne .EI11
-      movl -4(%ebp), %edx
+      movl $0, %edx
+      movl -4(%ebp), %eax
       movl -8(%ebp), %ecx
       cltd
       idivl %ecx
@@ -432,7 +433,8 @@ int2bin:
 .endtrue15:
       movl  %eax, -24(%ebp)
       jle .LIF15
-      movl 8(%ebp), %edx
+      movl $0, %edx
+      movl 8(%ebp), %eax
       movl $2, %ecx
       cltd
       idivl %ecx
@@ -479,7 +481,8 @@ int2bin:
       movl  %eax, -48(%ebp)
       movl -48(%ebp), %eax
       movl %eax, -12(%ebp)
-      movl 8(%ebp), %edx
+      movl $0, %edx
+      movl 8(%ebp), %eax
       movl $2, %ecx
       cltd
       idivl %ecx
@@ -557,7 +560,8 @@ gcd:
 .endtrue18:
       movl  %eax, -16(%ebp)
       jge .EI21
-      movl 8(%ebp), %edx
+      movl $0, %edx
+      movl 8(%ebp), %eax
       movl -4(%ebp), %ecx
       cltd
       idivl %ecx
@@ -571,7 +575,8 @@ gcd:
       movl $1, %eax
 .endtrue19:
       movl  %eax, -24(%ebp)
-      movl 12(%ebp), %edx
+      movl $0, %edx
+      movl 12(%ebp), %eax
       movl -4(%ebp), %ecx
       cltd
       idivl %ecx
